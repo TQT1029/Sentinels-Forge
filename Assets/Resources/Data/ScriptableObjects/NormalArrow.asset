@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cc85c1aac9cc200449720f1efb3ecab1, type: 3}
+  m_Name: NormalArrow
+  m_EditorClassIdentifier: Assembly-CSharp::ProjectileData
+  prefab: {fileID: 9056048759155004448, guid: 49f115d2512799a4bb7cba7e0a8fbd7c, type: 3}
+  baseDamage: 5
+  damageVariation: 0.5
+  velocity: 1
+  lifeTime: 5
