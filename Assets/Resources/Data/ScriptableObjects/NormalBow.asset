@@ -12,6 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 749770022afebe7499e1603a169da35d, type: 3}
   m_Name: NormalBow
   m_EditorClassIdentifier: Assembly-CSharp::WeaponStats
+  weaponType: 0
+  listOfAvailableProjectiles:
+  - {fileID: 11400000, guid: d4169740d76ea294bbfbded2e22be33c, type: 2}
   rangeRadius: 10
-  leftAngle: 45
-  rightAngle: -45
+  launchVelocity: 20
+  leftAngle: -45
+  rightAngle: 45
