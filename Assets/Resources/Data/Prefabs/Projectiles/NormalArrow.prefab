@@ -10,9 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 2279574507992638837}
   - component: {fileID: 7075524661034611779}
-  - component: {fileID: 1059724663556173081}
   - component: {fileID: 7648261909369994564}
-  - component: {fileID: -4296374832370579565}
+  - component: {fileID: -3370339058134026268}
   m_Layer: 0
   m_Name: NormalArrow
   m_TagString: Untagged
@@ -30,8 +29,8 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 3, y: 3, z: 3}
-  m_ConstrainProportionsScale: 1
+  m_LocalScale: {x: 3, y: 1.5, z: 3}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -94,42 +93,6 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
---- !u!58 &1059724663556173081
-CircleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9056048759155004448}
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_CompositeOperation: 0
-  m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0}
-  m_Radius: 0.08
 --- !u!50 &7648261909369994564
 Rigidbody2D:
   serializedVersion: 5
@@ -146,7 +109,7 @@ Rigidbody2D:
   m_LinearDamping: 0
   m_AngularDamping: 0.05
   m_GravityScale: 1
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: e5cc93f5d13e9f8428b2929c7aa54ce4, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -157,7 +120,7 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
---- !u!114 &-4296374832370579565
+--- !u!114 &-3370339058134026268
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -166,7 +129,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 9056048759155004448}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d69866d819895e14b9f932f1cfd8f933, type: 3}
+  m_Script: {fileID: 11500000, guid: d142153cfdc7b1e4b83ba20e6bbb4d91, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Projectile
+  m_EditorClassIdentifier: Assembly-CSharp::ProjectileArrow
   rb: {fileID: 7648261909369994564}

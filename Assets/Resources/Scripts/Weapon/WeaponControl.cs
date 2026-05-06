@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class PlayerControl : MonoBehaviour
+public class WeaponControl : MonoBehaviour
 {
     private Camera mainCam;
     private Vector3 anchorPoint;
@@ -16,7 +16,7 @@ public class PlayerControl : MonoBehaviour
 
     private void Awake()
     {
-        if (mainCam == null) mainCam = Camera.main;
+        mainCam = WaveManager.Instance.MainCamera;
 
         // Sửa thứ tự: Tìm GameObject trước rồi mới lấy Component
         if (launcherPoint == null)
@@ -55,6 +55,8 @@ public class PlayerControl : MonoBehaviour
         {
             currentAngle = calculateRotationAngle();
             launchVelocity = calculateLaunchVelocity() * weaponData.launchVelocity;
+
+            Debug.DrawRay(transform.position, new Vector3(Mathf.Cos(currentAngle * Mathf.Deg2Rad), Mathf.Sin(currentAngle * Mathf.Deg2Rad), 0) * launchVelocity, Color.red, 0.1f);
         }
     }
 
@@ -71,7 +73,6 @@ public class PlayerControl : MonoBehaviour
         if (weaponData.leftAngle <= angle && angle <= weaponData.rightAngle)
         {
             transform.rotation = Quaternion.Euler(0, 0, angle);
-            Debug.DrawRay(transform.position, direction, Color.red);
             return angle;
         }
 

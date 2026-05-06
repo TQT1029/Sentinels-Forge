@@ -3,7 +3,7 @@ using UnityEngine.Pool;
 
 public class ProjectileSpawner : MonoBehaviour
 {
-    public IObjectPool<Projectile> projectilePool;
+    public IObjectPool<Projectile> projectilePool { get; private set; }
     [SerializeField] private GameObject projectilesStoreObj;
     public ProjectileData projectileData;
 
@@ -21,7 +21,11 @@ public class ProjectileSpawner : MonoBehaviour
 
         if (projectilesStoreObj == null)
         {
-            projectilesStoreObj = new GameObject("ProjectilesStoreObj");
+            projectilesStoreObj = GameObject.Find("ProjectilesStoreObj");
+            if (projectilesStoreObj == null)
+            {
+                projectilesStoreObj = new GameObject("ProjectilesStoreObj");
+            }
         }
     }
 
