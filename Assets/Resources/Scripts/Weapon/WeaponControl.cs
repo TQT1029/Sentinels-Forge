@@ -13,6 +13,7 @@ public class WeaponControl : MonoBehaviour
     private bool isDragging = false;
     private float currentAngle = 0;
     private float launchVelocity = 0;
+    private float lastLaunchTime = 0;
 
     private void Awake()
     {
@@ -41,6 +42,7 @@ public class WeaponControl : MonoBehaviour
 
     private void Update()
     {
+
         if (Input.GetMouseButtonDown(0))
         {
             isDragging = true;
@@ -55,6 +57,11 @@ public class WeaponControl : MonoBehaviour
         {
             currentAngle = calculateRotationAngle();
             launchVelocity = calculateLaunchVelocity() * weaponData.launchVelocity;
+
+            Debug.DrawRay(transform.position, new Vector3(Mathf.Cos(currentAngle * Mathf.Deg2Rad), Mathf.Sin(currentAngle * Mathf.Deg2Rad), 0) * launchVelocity, Color.blueViolet, 0.1f);
+
+            currentAngle += +Random.Range(-weaponData.angleVariation, weaponData.angleVariation); // Thêm một chút biến động vào góc bắn để tạo hiệu ứng bắn không quá đều đặn
+            launchVelocity += Random.Range(-weaponData.launchVelocity * 0.1f, weaponData.launchVelocity * 0.1f); // Thêm một chút biến động vào vận tốc bắn để tạo hiệu ứng bắn không quá đều đặn
 
             Debug.DrawRay(transform.position, new Vector3(Mathf.Cos(currentAngle * Mathf.Deg2Rad), Mathf.Sin(currentAngle * Mathf.Deg2Rad), 0) * launchVelocity, Color.red, 0.1f);
         }
@@ -91,8 +98,9 @@ public class WeaponControl : MonoBehaviour
 
     private void Shoot()
     {
-        if (spawner != null)
+        if (spawner != null && Time.time - lastLaunchTime >= weaponData.launchCooldown)
         {
+            lastLaunchTime = Time.time;
             Projectile projectile = spawner.projectilePool.Get();
             if (projectile.rb != null)
             {

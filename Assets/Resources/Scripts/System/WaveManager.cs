@@ -7,7 +7,7 @@ public class WaveManager : Singleton<WaveManager>
 
     public int CurrentWave { get; private set; } = 0;
 
-    public int EmnemyAlive { get; private set; } = 0;
+    public int EnemyAlive { get; private set; } = 0;
 
     protected override void Awake()
     {
@@ -18,13 +18,13 @@ public class WaveManager : Singleton<WaveManager>
 
     public void EnemySpawned()
     {
-        EmnemyAlive++;
+        EnemyAlive++;
     }
 
     public void EnemyKilled()
     {
-        EmnemyAlive--;
-        if (EmnemyAlive <= 0)
+        EnemyAlive--;
+        if (EnemyAlive <= 0)
         {
             StartNextWave();
         }
@@ -33,7 +33,7 @@ public class WaveManager : Singleton<WaveManager>
     public void StartNextWave()
     {
         CurrentWave++;
-        EmnemyAlive = 0;
+        EnemyAlive = 0;
         //EnemySpawner.Instance.StartSpawning(CurrentWave);
     }
 }

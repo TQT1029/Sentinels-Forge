@@ -6,12 +6,17 @@ public class Projectile : MonoBehaviour
     protected IObjectPool<Projectile> managedPool;
     public Rigidbody2D rb;
 
+    protected ProjectileData projectileData;
+
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
     }
 
-
+    public void SetData(ProjectileData data)
+    {
+        projectileData = data;
+    }
 
     public void setPool(IObjectPool<Projectile> pool)
     {

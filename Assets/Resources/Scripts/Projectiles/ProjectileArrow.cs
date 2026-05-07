@@ -2,8 +2,10 @@ using UnityEngine;
 
 public class ProjectileArrow : Projectile
 {
-
     private Transform stuckTarget;
+    private bool isStuck = false;
+    private bool hasDealtDamage = false;
+
     private Vector3 positionOffset;
     private Quaternion rotationOffset;
 
@@ -47,6 +49,8 @@ public class ProjectileArrow : Projectile
     protected override void ReturnToPool()
     {
         stuckTarget = null;
+        hasDealtDamage = false;
+        isStuck = false;
         base.ReturnToPool();
     }
 
@@ -60,19 +64,45 @@ public class ProjectileArrow : Projectile
         {
             if (hit.collider.gameObject.CompareTag("Ground"))
             {
-                rb.linearVelocity = Vector3.zero;
-                rb.gravityScale = 0f;
-                rb.simulated = false;
+                if (!isStuck) StuckingArrow(hit);
 
-                stuckTarget = hit.collider.transform;
+                return true;
+            }
+            else if (hit.collider.gameObject.layer == LayerMask.NameToLayer("Enemy"))
+            {
+                EnemyAI enemy = hit.transform.GetComponent<EnemyAI>();
 
-                positionOffset = stuckTarget.InverseTransformPoint(transform.position);
-                rotationOffset = Quaternion.Inverse(stuckTarget.rotation) * transform.rotation;
+                if (enemy != null)
+                {
+                    if (!hasDealtDamage)
+                    {
+                        enemy.TakeDamage(projectileData.baseDamage + RandomUtils.RandomWithSteps(-projectileData.damageVariation, projectileData.damageVariation, 0.5f), 0.5f);
+
+                        hasDealtDamage = true;
+                    }
+
+                    if (!isStuck) StuckingArrow(hit);
+                }
 
                 return true;
             }
         }
+
         return false;
+    }
+
+    private void StuckingArrow(RaycastHit2D hit)
+    {
+        rb.linearVelocity = Vector3.zero;
+        rb.gravityScale = 0f;
+        rb.simulated = false;
+
+        stuckTarget = hit.collider.transform;
+
+        positionOffset = stuckTarget.InverseTransformPoint(transform.position);
+        rotationOffset = Quaternion.Inverse(stuckTarget.rotation) * transform.rotation;
+
+        isStuck = true;
     }
 
 }

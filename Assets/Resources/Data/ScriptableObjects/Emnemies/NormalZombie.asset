@@ -13,8 +13,10 @@ MonoBehaviour:
   m_Name: NormalZombie
   m_EditorClassIdentifier: Assembly-CSharp::EmnemyData
   emnemyName: Normal Zombie
+  emnemyType: 0
   maxHealth: 100
   moveSpeed: 2
-  attackRange: 1
+  attackRange: 1.5
   attackDamage: 10
+  damageVariation: 2
   attackCooldown: 1

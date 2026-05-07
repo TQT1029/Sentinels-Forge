@@ -33,6 +33,7 @@ public class ProjectileSpawner : MonoBehaviour
     {
         GameObject projectileObj = Instantiate(projectileData.prefab, transform.position, Quaternion.Euler(0, 0, transform.rotation.eulerAngles.z + 90), projectilesStoreObj.transform);
         Projectile projectileComponent = projectileObj.GetComponent<Projectile>();
+        projectileComponent.SetData(projectileData);
         projectileComponent.setPool(projectilePool);
         //Debug.Log("[ProjectileSpawner] Created projectile: " + projectileComponent);
 

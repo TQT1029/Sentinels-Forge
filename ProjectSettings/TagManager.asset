@@ -7,14 +7,15 @@ TagManager:
   - LauncherPoint
   - Ground
   - Tower
+  - NormalZombie
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Tower
   - Water
   - UI
-  - 
+  - Enemy
   - 
   - 
   - 
