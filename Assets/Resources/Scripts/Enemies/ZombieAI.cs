@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class NormalZombieAI : EnemyAI
+public class ZombieAI : EnemyAI
 {
 
     protected override void Attack()
@@ -9,6 +9,6 @@ public class NormalZombieAI : EnemyAI
 
         float damage = enemyData.attackDamage + RandomUtils.RandomWithSteps(-enemyData.damageVariation, enemyData.damageVariation, 0.25f);
 
-        Debug.Log($"[NormalZombieAI] Attacking tower with {damage} damage!");
+        Debug.Log($"[ZombieAI] Attacking tower with {damage} damage!");
     }
 }

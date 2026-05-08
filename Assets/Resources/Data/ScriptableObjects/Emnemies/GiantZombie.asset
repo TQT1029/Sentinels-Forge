@@ -10,13 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5a1a3f3b21befe1419fe4d0f3608aa6d, type: 3}
-  m_Name: NormalZombie
+  m_Name: GiantZombie
   m_EditorClassIdentifier: Assembly-CSharp::EmnemyData
-  emnemyName: Normal Zombie
+  emnemyName: Giant Zombie
   emnemyType: 0
-  maxHealth: 25
-  moveSpeed: 2
-  attackRange: 1.5
-  attackDamage: 10
+  maxHealth: 60
+  moveSpeed: 1
+  attackRange: 3
+  attackDamage: 20
   damageVariation: 2
-  attackCooldown: 1
+  attackCooldown: 1.5

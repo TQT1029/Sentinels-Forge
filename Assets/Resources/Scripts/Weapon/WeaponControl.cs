@@ -2,50 +2,57 @@ using UnityEngine;
 
 public class WeaponControl : MonoBehaviour
 {
-    private Camera mainCam;
-    private Vector3 anchorPoint;
-    [SerializeField] private float maxDrag = 10f;
+    protected Camera mainCam;
+    protected Vector3 anchorPoint;
+    [SerializeField] protected float maxDrag = 10f;
+    protected float distanceDrag = 0;
 
-    [SerializeField] private ProjectileSpawner spawner;
+    [SerializeField, Min(0)] protected float minLaunchVelocity = 0.3f; // Vận tốc tối thiểu khi bắn, đảm bảo đạn không bị quá yếu
+
+    protected Vector3 startDragPoint;
+
     public GameObject launcherPoint;
+    [SerializeField] protected ProjectileSpawner projectileSpawner;
     public WeaponData weaponData;
 
-    private bool isDragging = false;
-    private float currentAngle = 0;
-    private float launchVelocity = 0;
-    private float lastLaunchTime = 0;
+    protected bool isDragging = false;
+    protected float currentAngle = 0;
+    protected float launchVelocity = 0;
+    protected float lastLaunchTime = 0;
 
-    private void Awake()
+    protected virtual void Awake()
     {
         mainCam = WaveManager.Instance.MainCamera;
 
-        // Sửa thứ tự: Tìm GameObject trước rồi mới lấy Component
         if (launcherPoint == null)
         {
             Transform foundPoint = transform.Find("LauncherPoint");
             if (foundPoint != null) launcherPoint = foundPoint.gameObject;
         }
 
-        if (spawner == null && launcherPoint != null)
+        if (projectileSpawner == null && launcherPoint != null)
         {
-            spawner = launcherPoint.GetComponent<ProjectileSpawner>();
+            projectileSpawner = launcherPoint.GetComponent<ProjectileSpawner>();
         }
     }
 
-    private void Start()
+    protected virtual void Start()
     {
-        if (anchorPoint == null || anchorPoint == Vector3.zero)
+        if (anchorPoint == Vector3.zero)
         {
             anchorPoint = transform.position;
         }
     }
 
-    private void Update()
+    protected virtual void Update()
     {
-
         if (Input.GetMouseButtonDown(0))
         {
             isDragging = true;
+            
+            Vector3 mousePos = Input.mousePosition;
+            mousePos.z = 10f;
+            startDragPoint = mainCam.ScreenToWorldPoint(mousePos);
         }
         else if (Input.GetMouseButtonUp(0) && isDragging)
         {
@@ -55,19 +62,11 @@ public class WeaponControl : MonoBehaviour
 
         if (isDragging)
         {
-            currentAngle = calculateRotationAngle();
-            launchVelocity = calculateLaunchVelocity() * weaponData.launchVelocity;
-
-            Debug.DrawRay(transform.position, new Vector3(Mathf.Cos(currentAngle * Mathf.Deg2Rad), Mathf.Sin(currentAngle * Mathf.Deg2Rad), 0) * launchVelocity, Color.blueViolet, 0.1f);
-
-            currentAngle += +Random.Range(-weaponData.angleVariation, weaponData.angleVariation); // Thêm một chút biến động vào góc bắn để tạo hiệu ứng bắn không quá đều đặn
-            launchVelocity += Random.Range(-weaponData.launchVelocity * 0.1f, weaponData.launchVelocity * 0.1f); // Thêm một chút biến động vào vận tốc bắn để tạo hiệu ứng bắn không quá đều đặn
-
-            Debug.DrawRay(transform.position, new Vector3(Mathf.Cos(currentAngle * Mathf.Deg2Rad), Mathf.Sin(currentAngle * Mathf.Deg2Rad), 0) * launchVelocity, Color.red, 0.1f);
+            VibrateWeapon();
         }
     }
 
-    private float calculateRotationAngle()
+    protected virtual float CalculateRotationAngle()
     {
         Vector3 mousePos = Input.mousePosition;
         mousePos.z = 10f;
@@ -86,22 +85,38 @@ public class WeaponControl : MonoBehaviour
         return transform.rotation.eulerAngles.z;
     }
 
-    private float calculateLaunchVelocity()
+    protected virtual void CalculateDragDistance()
     {
-        Vector3 mousePos = Input.mousePosition;
-        mousePos.z = 10f;
-        Vector3 worldMousePos = mainCam.ScreenToWorldPoint(mousePos);
-        worldMousePos.z = anchorPoint.z;
-        float distance = Vector3.Distance(worldMousePos, anchorPoint);
-        return Mathf.Clamp01(distance / maxDrag);
+        Vector3 currentMousePos = Input.mousePosition;
+        currentMousePos.z = 10f;
+        Vector3 worldCurrentPos = mainCam.ScreenToWorldPoint(currentMousePos);
+        
+        distanceDrag = Vector3.Distance(startDragPoint, worldCurrentPos);
     }
 
-    private void Shoot()
+    protected virtual float CalculateLaunchVelocity()
     {
-        if (spawner != null && Time.time - lastLaunchTime >= weaponData.launchCooldown)
+        CalculateDragDistance();
+
+        return Mathf.Max(minLaunchVelocity, Mathf.Clamp01(distanceDrag / maxDrag));
+    }
+
+    protected virtual void VibrateWeapon()
+    {
+        currentAngle = CalculateRotationAngle();
+        launchVelocity = CalculateLaunchVelocity() * weaponData.launchVelocity;
+        
+        Debug.DrawRay(transform.position, new Vector3(Mathf.Cos(currentAngle * Mathf.Deg2Rad), Mathf.Sin(currentAngle * Mathf.Deg2Rad), 0) * launchVelocity, Color.red, 0.1f);
+    }
+
+    protected virtual void Shoot()
+    {
+        // Kiểm tra Cooldown từ WeaponData để tránh xả đạn liên tục
+        if (projectileSpawner != null && Time.time - lastLaunchTime >= weaponData.attackCooldown) 
         {
             lastLaunchTime = Time.time;
-            Projectile projectile = spawner.projectilePool.Get();
+            
+            Projectile projectile = projectileSpawner.projectilePool.Get(); 
             if (projectile.rb != null)
             {
                 Vector2 launchDirection = new Vector2(Mathf.Cos(currentAngle * Mathf.Deg2Rad), Mathf.Sin(currentAngle * Mathf.Deg2Rad));

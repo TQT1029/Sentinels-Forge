@@ -143,6 +143,11 @@ public static class RandomUtils
         return rawHeight;
     }
 
+    public static Vector2 RandomVector2(Vector2 startPosition, Vector2 endPosition)
+    {
+        return new Vector2(Random.Range(startPosition.x, endPosition.x), Random.Range(startPosition.y, endPosition.y));
+    }
+
     /// <summary>
     /// Thay thế một GameObject hiện tại bằng một GameObject khác dựa trên xác suất phần trăm,
     /// kèm theo cơ chế phá hủy có kiểm soát.

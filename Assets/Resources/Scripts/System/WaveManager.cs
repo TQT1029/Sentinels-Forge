@@ -16,6 +16,11 @@ public class WaveManager : Singleton<WaveManager>
         TowerTransform = GameObject.FindGameObjectWithTag("Tower").transform;   
     }
 
+    protected virtual void Start()
+    {
+        StartNextWave();
+    }
+
     public void EnemySpawned()
     {
         EnemyAlive++;
@@ -34,6 +39,6 @@ public class WaveManager : Singleton<WaveManager>
     {
         CurrentWave++;
         EnemyAlive = 0;
-        //EnemySpawner.Instance.StartSpawning(CurrentWave);
+        EnemySpawner.Instance.StartingWave(CurrentWave);
     }
 }

@@ -1,11 +1,14 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.Pool;
 
 public class EnemyAI : MonoBehaviour
 {
     [field: SerializeField] public EnemyData enemyData { get; private set; }
     protected Rigidbody2D rb;
     protected Transform towerTransform;
+
+    private IObjectPool<EnemyAI> managedPool;
 
     protected float currentHealth;
     protected float percentHealth => currentHealth / enemyData.maxHealth;
@@ -25,9 +28,17 @@ public class EnemyAI : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();        
     }
 
-    protected virtual void Start()
+    public void SetPool(IObjectPool<EnemyAI> pool)
+    {
+        managedPool = pool;
+    }
+
+
+    public virtual void ResetStats()
     {
         currentHealth = enemyData.maxHealth;
+        isInvincible = false;
+        checkingTime = 0f;
     }
 
     protected virtual void Update()
@@ -140,5 +151,15 @@ public class EnemyAI : MonoBehaviour
          gameObject.SetActive(false); // Thay bằng lệnh Release của Object Pool nếu bạn đang dùng
 
         WaveManager.Instance.EnemyKilled();
+
+        // Xử lý thu hồi về Pool
+        if (gameObject.activeInHierarchy && managedPool != null)
+        {
+            managedPool.Release(this);
+        }
+        else
+        {
+            gameObject.SetActive(false);
+        }
     }
 }

@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 7075524661034611779}
   - component: {fileID: 7648261909369994564}
   - component: {fileID: -3370339058134026268}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: NormalArrow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
