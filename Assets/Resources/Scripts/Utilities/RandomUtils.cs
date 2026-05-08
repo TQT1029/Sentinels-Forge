@@ -78,7 +78,7 @@ public static class RandomUtils
     /// <summary>
     /// Tính xác suất dựa trên trọng số (Weight) của vật phẩm so với tổng trọng số.
     /// <para><b>Công dụng:</b> Dùng để chọn vật phẩm trong danh sách (Loot Table). 
-    /// Vật có weight cao sẽ dễ ra hơn, vật weight thấp sẽ hiếm hơn.</para>
+    /// Vật có gravityScale cao sẽ dễ ra hơn, vật gravityScale thấp sẽ hiếm hơn.</para>
     /// </summary>
     public static bool ChanceWeight(float weight, float totalWeight)
     {

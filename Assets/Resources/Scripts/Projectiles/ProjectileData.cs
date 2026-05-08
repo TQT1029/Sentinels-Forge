@@ -11,7 +11,7 @@ public class ProjectileData : ScriptableObject
     public float damageVariation = 0.5f; // Damage dao động trong khoảng baseDamage ± damageVariation
 
     [Space(10)] 
-    public float weight = 1;//Trọng lượng của đạn để tính khoảng cách rơi
+    public float gravityScale = 1;// Hệ số trọng lực ảnh hưởng đến quỹ đạo bay của đạn (1 là bình thường, 0 là không chịu trọng lực, >1 là chịu trọng lực mạnh hơn)
     public float stunDuration = 0f; // Thời gian làm choáng (nếu có)
     public float lifeTime = 5f; 
 }

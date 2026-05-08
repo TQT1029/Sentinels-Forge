@@ -5,11 +5,11 @@ public class BowControl : WeaponControl
     private float angleAfterVibration; // Góc bắn cơ bản trước khi thêm biến động
     private float launchVelocityAfterVibration; // Vận tốc bắn cơ bản trước khi thêm biến động
 
-    private LineRenderer lineRenderer;
 
     [Header("Trajectory Settings")]
     [SerializeField] private int trajectoryStepCount = 30; // Số điểm gãy để tạo thành đường cong
     [SerializeField] private float trajectoryTimeStep = 0.05f; // Khoảng cách thời gian giữa các điểm (càng nhỏ càng mịn nhưng ngắn)
+    private LineRenderer lineRenderer;
     protected override void Awake()
     {
         base.Awake();
@@ -36,7 +36,7 @@ public class BowControl : WeaponControl
         {
             lastLaunchTime = Time.time;
 
-            Projectile projectile = projectileSpawner.projectilePool.Get();
+            Projectile projectile = projectileSpawner.CurrentPool.Get();
             if (projectile.rb != null)
             {
                 Vector2 launchDirection = new Vector2(Mathf.Cos(angleAfterVibration * Mathf.Deg2Rad), Mathf.Sin(angleAfterVibration * Mathf.Deg2Rad));
@@ -45,19 +45,16 @@ public class BowControl : WeaponControl
         }
     }
 
-    // Bắt buộc override từ class cha
     protected override void DrawTrajectory()
     {
         lineRenderer.positionCount = trajectoryStepCount;
 
-        // Vị trí bắt đầu tính quỹ đạo
         Vector2 startPos = launcherPoint != null ? launcherPoint.transform.position : transform.position;
 
         // Vận tốc ban đầu dạng Vector2
         Vector2 startVelocity = new Vector2(Mathf.Cos(currentBaseAngle * Mathf.Deg2Rad), Mathf.Sin(currentBaseAngle * Mathf.Deg2Rad)) * launchBaseVelocity;
 
-        // Lấy hệ số trọng lực. Nếu đạn có gravityScale khác 1, nhân thêm vào đây (VD: lấy từ projectileData.weight)
-        float gravity = Physics2D.gravity.y;
+        float gravity = Physics2D.gravity.y * projectileSpawner.projectileData.gravityScale;
 
         for (int i = 0; i < trajectoryStepCount; i++)
         {

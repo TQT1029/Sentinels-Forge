@@ -24,9 +24,14 @@ public class Projectile : MonoBehaviour
         projectileSpawner = spawner;
     }
 
-    public void setPool(IObjectPool<Projectile> pool)
+    public void SetPool(IObjectPool<Projectile> pool)
     {
         managedPool = pool;
+    }
+
+    public void SetupPhysic()
+    {
+        rb.gravityScale = projectileData.gravityScale;
     }
 
     /// <summary>

@@ -4,7 +4,10 @@ using UnityEngine;
 public class ProjectileArrow : Projectile
 {
     [SerializeField] private const float CollisionCheckInterval = 0.5f;
-    private static List<Projectile> stuckProjectiles = new List<Projectile>();
+
+    // Gom nhóm các mũi tên theo từng mục tiêu cụ thể
+    private static Dictionary<Transform, List<ProjectileArrow>> stuckArrowsMap = new Dictionary<Transform, List<ProjectileArrow>>();
+
     private Transform stuckTarget;
     private bool isStuck = false;
     private bool hasDealtDamage = false;
@@ -14,18 +17,25 @@ public class ProjectileArrow : Projectile
 
     private void Update()
     {
-        RotateTowardsVelocity();
-        CheckCollision();
+        if (!isStuck)
+        {
+            RotateTowardsVelocity();
+            CheckCollision();
+        }
     }
 
     private void LateUpdate()
     {
-        if (stuckTarget != null)
+        if (isStuck && stuckTarget != null)
         {
-            // TransformPoint sẽ nhân khoảng cách với scale của quái, giúp đạn bám đúng trên bề mặt
-            transform.position = stuckTarget.TransformPoint(positionOffset);
+            // Safety check: Tự động rớt ra nếu quái vật bị tắt (trả về pool) mà quên gọi hàm giải phóng
+            if (!stuckTarget.gameObject.activeInHierarchy)
+            {
+                ReturnToPool();
+                return;
+            }
 
-            // Giữ góc xoay đồng bộ với góc xoay của quái
+            transform.position = stuckTarget.TransformPoint(positionOffset);
             transform.rotation = stuckTarget.rotation * rotationOffset;
         }
     }
@@ -45,30 +55,40 @@ public class ProjectileArrow : Projectile
 
         rb.linearVelocity = Vector3.zero;
         rb.angularVelocity = 0f;
-        rb.gravityScale = 1f;
+        rb.gravityScale = projectileData.gravityScale;
         rb.simulated = true;
     }
 
     protected override void ReturnToPool()
     {
+        // Gỡ mũi tên khỏi bản đồ quản lý trước khi thu hồi
+        if (stuckTarget != null && stuckArrowsMap.ContainsKey(stuckTarget))
+        {
+            stuckArrowsMap[stuckTarget].Remove(this);
+            if (stuckArrowsMap[stuckTarget].Count == 0)
+            {
+                stuckArrowsMap.Remove(stuckTarget);
+            }
+        }
+
         stuckTarget = null;
         hasDealtDamage = false;
         isStuck = false;
+
         base.ReturnToPool();
     }
 
     private bool CheckCollision()
     {
         Vector2 direction = rb.linearVelocity;
-        //float distance = rb.linearVelocity.magnitude * Time.fixedDeltaTime;
         RaycastHit2D hit = Physics2D.Raycast(transform.position, direction, CollisionCheckInterval);
         Debug.DrawRay(transform.position, direction.normalized * CollisionCheckInterval, Color.green, 0.1f);
+
         if (hit.collider != null)
         {
             if (hit.collider.gameObject.CompareTag("Ground"))
             {
                 if (!isStuck) StuckingArrow(hit);
-
                 return true;
             }
             else if (hit.collider.gameObject.layer == LayerMask.NameToLayer("Enemy"))
@@ -82,16 +102,19 @@ public class ProjectileArrow : Projectile
                         enemy.TakeDamage(projectileData.baseDamage + RandomUtils.RandomWithSteps(-projectileData.damageVariation, projectileData.damageVariation, 0.5f), 0.5f);
                         hasDealtDamage = true;
 
-                        if (enemy.IsDead) { ReturnToPool(); }
+                        if (enemy.IsDead)
+                        {
+                            ReturnToPool();
+                            ReleaseArrowsOnTarget(hit.transform);
+                            return true;
+                        }
                     }
 
                     if (!isStuck) StuckingArrow(hit);
                 }
-
                 return true;
             }
         }
-
         return false;
     }
 
@@ -107,6 +130,23 @@ public class ProjectileArrow : Projectile
         rotationOffset = Quaternion.Inverse(stuckTarget.rotation) * transform.rotation;
 
         isStuck = true;
+
+        if (!stuckArrowsMap.ContainsKey(stuckTarget))
+        {
+            stuckArrowsMap[stuckTarget] = new List<ProjectileArrow>();
+        }
+        stuckArrowsMap[stuckTarget].Add(this);
     }
 
+    private void ReleaseArrowsOnTarget(Transform target)
+    {
+        if (stuckArrowsMap.TryGetValue(target, out List<ProjectileArrow> arrows))
+        {
+            for (int i = arrows.Count - 1; i >= 0; i--)
+            {
+                arrows[i].ReturnToPool();
+            }
+            stuckArrowsMap.Remove(target);
+        }
+    }
 }

@@ -13,7 +13,7 @@ public abstract class WeaponControl : MonoBehaviour
 
     public GameObject launcherPoint;
     [SerializeField] protected ProjectileSpawner projectileSpawner;
-    public WeaponData weaponData;
+    [field: SerializeField] public WeaponData weaponData { get; private set; }
 
     protected bool isDragging = false;
     protected float currentBaseAngle = 0;// Góc bắn cơ bản chưa có biến động
@@ -46,10 +46,15 @@ public abstract class WeaponControl : MonoBehaviour
 
     protected virtual void Update()
     {
+        // Kiểm tra an toàn thay vì dùng try-catch để tối ưu FPS
+        if (Input.GetKeyDown(KeyCode.Keypad1)) ChangeProjectile(1);
+        else if (Input.GetKeyDown(KeyCode.Keypad2)) ChangeProjectile(2);
+        else if (Input.GetKeyDown(KeyCode.Keypad3)) ChangeProjectile(3);
+        else if (Input.GetKeyDown(KeyCode.Keypad4)) ChangeProjectile(4);
+
         if (Input.GetMouseButtonDown(0))
         {
             isDragging = true;
-            
             Vector3 mousePos = Input.mousePosition;
             mousePos.z = 10f;
             startDragPoint = mainCam.ScreenToWorldPoint(mousePos);
@@ -67,7 +72,6 @@ public abstract class WeaponControl : MonoBehaviour
             DrawTrajectory();
         }
     }
-
     protected virtual float CalculateRotationAngle()
     {
         Vector3 mousePos = Input.mousePosition;
@@ -92,7 +96,7 @@ public abstract class WeaponControl : MonoBehaviour
         Vector3 currentMousePos = Input.mousePosition;
         currentMousePos.z = 10f;
         Vector3 worldCurrentPos = mainCam.ScreenToWorldPoint(currentMousePos);
-        
+
         distanceDrag = Vector3.Distance(startDragPoint, worldCurrentPos);
     }
 
@@ -107,23 +111,49 @@ public abstract class WeaponControl : MonoBehaviour
     {
         currentBaseAngle = CalculateRotationAngle();
         launchBaseVelocity = CalculateLaunchVelocity() * weaponData.launchVelocity;
-        
+
         Debug.DrawRay(transform.position, new Vector3(Mathf.Cos(currentBaseAngle * Mathf.Deg2Rad), Mathf.Sin(currentBaseAngle * Mathf.Deg2Rad), 0) * launchBaseVelocity, Color.red, 0.1f);
     }
 
     protected virtual void Shoot()
     {
         // Kiểm tra Cooldown từ WeaponData để tránh xả đạn liên tục
-        if (projectileSpawner != null && Time.time - lastLaunchTime >= weaponData.attackCooldown) 
+        if (projectileSpawner != null && Time.time - lastLaunchTime >= weaponData.attackCooldown)
         {
             lastLaunchTime = Time.time;
-            
-            Projectile projectile = projectileSpawner.projectilePool.Get(); 
+
+            Projectile projectile = projectileSpawner.CurrentPool.Get();
             if (projectile.rb != null)
             {
                 Vector2 launchDirection = new Vector2(Mathf.Cos(currentBaseAngle * Mathf.Deg2Rad), Mathf.Sin(currentBaseAngle * Mathf.Deg2Rad));
                 projectile.rb.linearVelocity = launchDirection * launchBaseVelocity;
             }
+        }
+    }
+
+
+    protected virtual void ChangeProjectile(int index)
+    {
+        // Trừ 1 vì list trong C# bắt đầu từ 0 (Keypad 1 = index 0)
+        int listIndex = index - 1;
+
+        if (weaponData.listOfAvailableProjectiles != null && listIndex >= 0 && listIndex < weaponData.listOfAvailableProjectiles.Count)
+        {
+            ChangeProjectileData(weaponData.listOfAvailableProjectiles[listIndex]);
+        }
+        else
+        {
+            Debug.LogWarning($"[WeaponControl] Không có loại đạn nào ở slot {index}.");
+        }
+    }
+
+    // Hàm đổi đạn
+    private void ChangeProjectileData(ProjectileData newData)
+    {
+        if (projectileSpawner != null)
+        {
+            projectileSpawner.projectileData = newData;
+            Debug.Log($"[WeaponControl] Projectile data changed to: {projectileSpawner.projectileData}");
         }
     }
 
