@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class WeaponControl : MonoBehaviour
+public abstract class WeaponControl : MonoBehaviour
 {
     protected Camera mainCam;
     protected Vector3 anchorPoint;
@@ -16,8 +16,8 @@ public class WeaponControl : MonoBehaviour
     public WeaponData weaponData;
 
     protected bool isDragging = false;
-    protected float currentAngle = 0;
-    protected float launchVelocity = 0;
+    protected float currentBaseAngle = 0;// Góc bắn cơ bản chưa có biến động
+    protected float launchBaseVelocity = 0;// Vận tốc bắn cơ bản chưa có biến động  
     protected float lastLaunchTime = 0;
 
     protected virtual void Awake()
@@ -57,12 +57,14 @@ public class WeaponControl : MonoBehaviour
         else if (Input.GetMouseButtonUp(0) && isDragging)
         {
             isDragging = false;
+            HideTrajectory();
             Shoot();
         }
 
         if (isDragging)
         {
             VibrateWeapon();
+            DrawTrajectory();
         }
     }
 
@@ -103,10 +105,10 @@ public class WeaponControl : MonoBehaviour
 
     protected virtual void VibrateWeapon()
     {
-        currentAngle = CalculateRotationAngle();
-        launchVelocity = CalculateLaunchVelocity() * weaponData.launchVelocity;
+        currentBaseAngle = CalculateRotationAngle();
+        launchBaseVelocity = CalculateLaunchVelocity() * weaponData.launchVelocity;
         
-        Debug.DrawRay(transform.position, new Vector3(Mathf.Cos(currentAngle * Mathf.Deg2Rad), Mathf.Sin(currentAngle * Mathf.Deg2Rad), 0) * launchVelocity, Color.red, 0.1f);
+        Debug.DrawRay(transform.position, new Vector3(Mathf.Cos(currentBaseAngle * Mathf.Deg2Rad), Mathf.Sin(currentBaseAngle * Mathf.Deg2Rad), 0) * launchBaseVelocity, Color.red, 0.1f);
     }
 
     protected virtual void Shoot()
@@ -119,9 +121,19 @@ public class WeaponControl : MonoBehaviour
             Projectile projectile = projectileSpawner.projectilePool.Get(); 
             if (projectile.rb != null)
             {
-                Vector2 launchDirection = new Vector2(Mathf.Cos(currentAngle * Mathf.Deg2Rad), Mathf.Sin(currentAngle * Mathf.Deg2Rad));
-                projectile.rb.linearVelocity = launchDirection * launchVelocity;
+                Vector2 launchDirection = new Vector2(Mathf.Cos(currentBaseAngle * Mathf.Deg2Rad), Mathf.Sin(currentBaseAngle * Mathf.Deg2Rad));
+                projectile.rb.linearVelocity = launchDirection * launchBaseVelocity;
             }
         }
     }
+
+    /// <summary>
+    /// Hiển thị quỹ đạo bay dự kiến của đạn.
+    /// </summary>
+    protected abstract void DrawTrajectory();
+
+    /// <summary>
+    /// Xoá quỹ đạo bay khi bắn hoặc huỷ ngắm.
+    /// </summary>
+    protected abstract void HideTrajectory();
 }

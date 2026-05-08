@@ -20,6 +20,8 @@ public class EnemyAI : MonoBehaviour
     protected float previousAttackTime = 0f;
 
     protected bool isInvincible = false;
+    public bool IsDead => currentHealth <= 0;
+
 
     //protected float percentHealth => (float)enemyData.CurrentHealth / enemyData.MaxHealth;
     protected virtual void Awake()

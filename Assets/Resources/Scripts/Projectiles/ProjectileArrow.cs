@@ -1,7 +1,10 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class ProjectileArrow : Projectile
 {
+    [SerializeField] private const float CollisionCheckInterval = 0.5f;
+    private static List<Projectile> stuckProjectiles = new List<Projectile>();
     private Transform stuckTarget;
     private bool isStuck = false;
     private bool hasDealtDamage = false;
@@ -58,8 +61,8 @@ public class ProjectileArrow : Projectile
     {
         Vector2 direction = rb.linearVelocity;
         //float distance = rb.linearVelocity.magnitude * Time.fixedDeltaTime;
-        RaycastHit2D hit = Physics2D.Raycast(transform.position, direction, 0.35f);
-        Debug.DrawRay(transform.position, direction.normalized * 0.35f, Color.green, 0.1f);
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, direction, CollisionCheckInterval);
+        Debug.DrawRay(transform.position, direction.normalized * CollisionCheckInterval, Color.green, 0.1f);
         if (hit.collider != null)
         {
             if (hit.collider.gameObject.CompareTag("Ground"))
@@ -77,8 +80,9 @@ public class ProjectileArrow : Projectile
                     if (!hasDealtDamage)
                     {
                         enemy.TakeDamage(projectileData.baseDamage + RandomUtils.RandomWithSteps(-projectileData.damageVariation, projectileData.damageVariation, 0.5f), 0.5f);
-
                         hasDealtDamage = true;
+
+                        if (enemy.IsDead) { ReturnToPool(); }
                     }
 
                     if (!isStuck) StuckingArrow(hit);

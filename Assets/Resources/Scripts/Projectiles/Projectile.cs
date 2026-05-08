@@ -4,9 +4,10 @@ using UnityEngine.Pool;
 public class Projectile : MonoBehaviour
 {
     protected IObjectPool<Projectile> managedPool;
-    public Rigidbody2D rb;
+    public Rigidbody2D rb {  get; private set; }
 
     protected ProjectileData projectileData;
+    protected ProjectileSpawner projectileSpawner;
 
     private void Awake()
     {
@@ -16,6 +17,11 @@ public class Projectile : MonoBehaviour
     public void SetData(ProjectileData data)
     {
         projectileData = data;
+    }
+
+    public void SetSpawner(ProjectileSpawner spawner)
+    {
+        projectileSpawner = spawner;
     }
 
     public void setPool(IObjectPool<Projectile> pool)

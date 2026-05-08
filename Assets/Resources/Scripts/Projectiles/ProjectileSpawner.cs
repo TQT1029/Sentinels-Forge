@@ -4,7 +4,7 @@ using UnityEngine.Pool;
 public class ProjectileSpawner : MonoBehaviour
 {
     public IObjectPool<Projectile> projectilePool { get; private set; }
-    [SerializeField] private GameObject projectilesStoreObj;
+    [field:SerializeField] public GameObject projectilesStoreObj {  get; private set; }
     public ProjectileData projectileData;
 
     private void Awake()
@@ -34,6 +34,7 @@ public class ProjectileSpawner : MonoBehaviour
         GameObject projectileObj = Instantiate(projectileData.prefab, transform.position, Quaternion.Euler(0, 0, transform.rotation.eulerAngles.z + 90), projectilesStoreObj.transform);
         Projectile projectileComponent = projectileObj.GetComponent<Projectile>();
         projectileComponent.SetData(projectileData);
+        projectileComponent.SetSpawner(this);
         projectileComponent.setPool(projectilePool);
         //Debug.Log("[ProjectileSpawner] Created projectile: " + projectileComponent);
 
