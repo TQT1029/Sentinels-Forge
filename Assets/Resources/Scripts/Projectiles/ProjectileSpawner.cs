@@ -59,7 +59,6 @@ public class ProjectileSpawner : MonoBehaviour
         projectileComponent.SetSpawner(this);
         projectileComponent.SetPool(poolsMap[data]);
 
-        projectileComponent.SetupPhysic();
         return projectileComponent;
     }
 
@@ -67,7 +66,6 @@ public class ProjectileSpawner : MonoBehaviour
     {
         projectile.transform.position = transform.position;
 
-        // Sửa lỗi Quaternion ở đây: Phải dùng eulerAngles.z thay vì .z
         projectile.transform.rotation = Quaternion.Euler(0, 0, transform.rotation.eulerAngles.z - 90);
         projectile.gameObject.SetActive(true);
 

@@ -10,7 +10,6 @@ public class ProjectileArrow : Projectile
 
     private Transform stuckTarget;
     private bool isStuck = false;
-    private bool hasDealtDamage = false;
 
     private Vector3 positionOffset;
     private Quaternion rotationOffset;
@@ -72,7 +71,6 @@ public class ProjectileArrow : Projectile
         }
 
         stuckTarget = null;
-        hasDealtDamage = false;
         isStuck = false;
 
         base.ReturnToPool();
@@ -97,20 +95,22 @@ public class ProjectileArrow : Projectile
 
                 if (enemy != null)
                 {
-                    if (!hasDealtDamage)
-                    {
-                        enemy.TakeDamage(projectileData.baseDamage + RandomUtils.RandomWithSteps(-projectileData.damageVariation, projectileData.damageVariation, 0.5f), 0.5f);
-                        hasDealtDamage = true;
 
+                    bool shouldKeepFlying = ProcessHit(enemy);
+
+
+                    // Nếu không xuyên và không kẹt, thì mới dính vào quái vật
+                    if (!shouldKeepFlying)
+                    {
                         if (enemy.IsDead)
                         {
                             ReturnToPool();
                             ReleaseArrowsOnTarget(hit.transform);
                             return true;
                         }
-                    }
 
-                    if (!isStuck) StuckingArrow(hit);
+                        if (!isStuck) StuckingArrow(hit);
+                    }
                 }
                 return true;
             }

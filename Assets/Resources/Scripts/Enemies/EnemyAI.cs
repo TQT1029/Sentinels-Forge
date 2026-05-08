@@ -109,6 +109,7 @@ public class EnemyAI : MonoBehaviour
         currentHealth -= amount;
 
         OnHit();
+        Debug.Log($"[EnemyAI] {gameObject.name} took {amount} damage! Remaining HP: {currentHealth}");
 
         if (currentHealth <= 0)
         {
@@ -141,7 +142,7 @@ public class EnemyAI : MonoBehaviour
     /// </summary>
     protected virtual void OnHit()
     {
-        Debug.Log("[EnemyAI] "+gameObject.name + " took damage! Remaining HP: " + currentHealth);
+        //Debug.Log($"[EnemyAI] {gameObject.name} took damage! Remaining HP: {currentHealth}");
     }
 
     /// <summary>
