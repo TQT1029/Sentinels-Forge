@@ -1,12 +1,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ProjectileArrow : Projectile
+public class ProjectileBow : Projectile
 {
     [SerializeField] private const float CollisionCheckInterval = 0.5f;
 
     // Gom nhóm các mũi tên theo từng mục tiêu cụ thể
-    private static Dictionary<Transform, List<ProjectileArrow>> stuckArrowsMap = new Dictionary<Transform, List<ProjectileArrow>>();
+    private static Dictionary<Transform, List<ProjectileBow>> stuckArrowsMap = new Dictionary<Transform, List<ProjectileBow>>();
 
     private Transform stuckTarget;
     private bool isStuck = false;
@@ -86,7 +86,12 @@ public class ProjectileArrow : Projectile
         {
             if (hit.collider.gameObject.CompareTag("Ground"))
             {
-                if (!isStuck) StuckingArrow(hit);
+                bool shouldKeepFlying = ProcessEnvironmentHit(hit);
+
+                if (!shouldKeepFlying)
+                {
+                    if (!isStuck) StuckingArrow(hit); // Không nảy thì găm vào tường
+                }
                 return true;
             }
             else if (hit.collider.gameObject.layer == LayerMask.NameToLayer("Enemy"))
@@ -96,7 +101,7 @@ public class ProjectileArrow : Projectile
                 if (enemy != null)
                 {
 
-                    bool shouldKeepFlying = ProcessHit(enemy);
+                    bool shouldKeepFlying = ProcessHitEnemy(enemy);
 
 
                     // Nếu không xuyên và không kẹt, thì mới dính vào quái vật
@@ -133,14 +138,14 @@ public class ProjectileArrow : Projectile
 
         if (!stuckArrowsMap.ContainsKey(stuckTarget))
         {
-            stuckArrowsMap[stuckTarget] = new List<ProjectileArrow>();
+            stuckArrowsMap[stuckTarget] = new List<ProjectileBow>();
         }
         stuckArrowsMap[stuckTarget].Add(this);
     }
 
     private void ReleaseArrowsOnTarget(Transform target)
     {
-        if (stuckArrowsMap.TryGetValue(target, out List<ProjectileArrow> arrows))
+        if (stuckArrowsMap.TryGetValue(target, out List<ProjectileBow> arrows))
         {
             for (int i = arrows.Count - 1; i >= 0; i--)
             {

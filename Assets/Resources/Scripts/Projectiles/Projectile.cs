@@ -11,14 +11,15 @@ public class Projectile : MonoBehaviour
     public ProjectileData projectileData { get; private set; }
     protected ProjectileSpawner projectileSpawner;
 
-    [SerializeField] protected List<ModifierBase> modifiers;
+    [SerializeField] public List<ModifierBase> modifiers; // Danh sách các modifier đang có hiệu lực trên viên đạn này (có thể có 0 modifier)
 
-    protected HashSet<EnemyAI> hitTargets = new HashSet<EnemyAI>();
+    protected HashSet<EnemyAI> hitTargets = new HashSet<EnemyAI>(); // Danh sách quái đã gây damage
 
     [Header("Runtime States (Dữ liệu động)")]
-    public float currentDamage;
-    public int pierceCount; // Số lần xuyên còn lại
-    public int bounceCount; // Số lần nảy còn lại
+    [HideInInspector] public float currentDamage;
+    [HideInInspector] public int pierceCount; // Số lần xuyên còn lại
+    [HideInInspector] public int bounceCount; // Số lần nảy còn lại
+    [HideInInspector] public int splitCount; // Số lần chia tách còn lại
 
     private void Awake()
     {
@@ -37,7 +38,7 @@ public class Projectile : MonoBehaviour
     /// <summary>
     /// Hàm này chạy khi projectile được lấy ra khỏi pool, có thể override để thêm logic khởi tạo riêng cho từng loại projectile
     /// </summary>
-    /// <param name="lifeTime"></param>
+    /// <param name="lifeTime">Thời gian tồn tại trước khi bị tự động thu hồi về pool</param>
     public virtual void Init(float lifeTime)
     {
         currentDamage = projectileData.baseDamage + projectileData.GetDamageAfterVariation();
@@ -70,9 +71,9 @@ public class Projectile : MonoBehaviour
         }
     }
 
-    protected virtual bool ProcessHit(EnemyAI enemy)
+    protected virtual bool ProcessHitEnemy(EnemyAI enemy)
     {
-        if (enemy == null || hitTargets.Contains(enemy)) return true; // Đã đánh trúng con này rồi thì coi như bay xuyên qua luôn (bỏ qua)
+        if (enemy == null || hitTargets.Contains(enemy)) return true; // Đã đánh trúng con này rồi thì không tính damage nữa, nhưng đạn vẫn tiếp tục bay và có thể đánh trúng con khác hoặc tương tác với môi trường
 
         hitTargets.Add(enemy);
 
@@ -80,9 +81,9 @@ public class Projectile : MonoBehaviour
         {
             foreach (var mod in modifiers)
             {
-                if (mod.OnHit(this, enemy))
+                if (mod.OnHitEnemy(this, enemy))
                 {
-                    return true; // Đạn tiếp tục bay và chuyển sang xử lý modifier tiếp theo nếu có
+                    return true; // Đạn đã bắn trúng quái tiếp tục bay và chuyển sang xử lý modifier
                 }
             }
         }
@@ -91,6 +92,21 @@ public class Projectile : MonoBehaviour
 
         return false; // Đạn dừng lại không bay nữa (Xử lý cuối để cho class con)
 
+    }
+
+    public virtual bool ProcessEnvironmentHit(RaycastHit2D hit)
+    {
+        if (modifiers != null)
+        {
+            foreach (var mod in modifiers)
+            {
+                if (mod.OnEnvironmentHit(this, hit))
+                {
+                    return true; // Đã tương tác với môi trường và modifier xử lý thành công, đạn sẽ tiếp tục bay và chuyển sang xử lý modifier
+                }
+            }
+        }
+        return false; // Không có modifier nào cản lại, đạn sẽ dính vào tường hoặc nổ
     }
 
 

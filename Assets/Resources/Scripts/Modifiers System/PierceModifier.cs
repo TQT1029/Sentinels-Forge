@@ -12,7 +12,7 @@ public class PierceModifier : ModifierBase
         projectile.pierceCount += additionalPierces;
     }
 
-    public override bool OnHit(Projectile projectile, EnemyAI enemy)
+    public override bool OnHitEnemy(Projectile projectile, EnemyAI enemy)
     {
         if (projectile.pierceCount > 0)
         {
@@ -22,6 +22,8 @@ public class PierceModifier : ModifierBase
             // Gây sát thương và giảm sát thương cho lần xuyên sau 
             enemy.TakeDamage(projectile.currentDamage);
             projectile.currentDamage = projectile.currentDamage * damageReductionPerHit + projectile.projectileData.GetDamageAfterVariation();
+
+            Debug.Log($"[PierceModifier] Projectile hit enemy. Remaining pierces: {projectile.pierceCount}, Current damage: {projectile.currentDamage}");
 
             // Yêu cầu giữ đạn sống, ngăn chạy các modifier phía sau
             return true;

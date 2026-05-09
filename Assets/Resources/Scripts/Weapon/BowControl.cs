@@ -2,8 +2,8 @@ using UnityEngine;
 [RequireComponent(typeof(LineRenderer))]
 public class BowControl : WeaponControl
 {
-    private float angleAfterVibration; // Góc bắn cơ bản trước khi thêm biến động
-    private float launchVelocityAfterVibration; // Vận tốc bắn cơ bản trước khi thêm biến động
+    private float angleAfterVibration;
+    private float launchVelocityAfterVibration;
 
 
     [Header("Trajectory Settings")]
@@ -18,15 +18,12 @@ public class BowControl : WeaponControl
     }
     protected override void VibrateWeapon()
     {
-        currentBaseAngle = CalculateRotationAngle();
-        launchBaseVelocity = CalculateLaunchVelocity() * weaponData.launchVelocity;
+        base.VibrateWeapon();
 
-        Debug.DrawRay(transform.position, new Vector3(Mathf.Cos(currentBaseAngle * Mathf.Deg2Rad), Mathf.Sin(currentBaseAngle * Mathf.Deg2Rad), 0) * launchBaseVelocity, Color.blueViolet, 0.1f);
+        angleAfterVibration = currentBaseAngle + weaponData.GetVibrationAngle();
+        launchVelocityAfterVibration = launchBaseVelocity + weaponData.GetVibrationLaunchVelocity();
 
-        angleAfterVibration = currentBaseAngle + Random.Range(-weaponData.angleVibration, weaponData.angleVibration); // Thêm một chút biến động vào góc bắn để tạo hiệu ứng bắn không quá đều đặn
-        launchVelocityAfterVibration = launchBaseVelocity + Random.Range(-weaponData.launchVelocity * 0.1f, weaponData.launchVelocity * 0.1f); // Thêm một chút biến động vào vận tốc bắn để tạo hiệu ứng bắn không quá đều đặn
-
-        Debug.DrawRay(transform.position, new Vector3(Mathf.Cos(angleAfterVibration * Mathf.Deg2Rad), Mathf.Sin(angleAfterVibration * Mathf.Deg2Rad), 0) * launchVelocityAfterVibration, Color.red, 0.1f);
+        Debug.DrawRay(transform.position, new Vector3(Mathf.Cos(angleAfterVibration * Mathf.Deg2Rad), Mathf.Sin(angleAfterVibration * Mathf.Deg2Rad), 0) * launchVelocityAfterVibration, Color.red);
     }
 
     protected override void Shoot()

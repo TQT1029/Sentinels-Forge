@@ -8,7 +8,7 @@ public class ProjectileSpawner : MonoBehaviour
     private Dictionary<ProjectileData, IObjectPool<Projectile>> poolsMap;
 
     [field: SerializeField] public GameObject projectilesStoreObj { get; private set; }
-    public ProjectileData projectileData; // Loại đạn đang được chọn
+    [HideInInspector] public ProjectileData projectileData; // Loại đạn đang được chọn
 
     // Property này tự động trả về Pool của loại đạn đang chọn. 
     // Nếu loại đạn này chưa có Pool, nó sẽ tự động tạo mới (Lazy Initialization)
@@ -49,6 +49,11 @@ public class ProjectileSpawner : MonoBehaviour
                 projectilesStoreObj = new GameObject("ProjectilesStoreObj");
             }
         }
+    }
+
+    public void SetupData(ProjectileData data)
+    {
+        projectileData = data;
     }
     private Projectile CreateProjectile(ProjectileData data)
     {

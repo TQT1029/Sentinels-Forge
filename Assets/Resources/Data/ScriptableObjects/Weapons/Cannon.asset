@@ -12,11 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 749770022afebe7499e1603a169da35d, type: 3}
   m_Name: Cannon
   m_EditorClassIdentifier: Assembly-CSharp::WeaponData
-  weaponType: 0
-  listOfAvailableProjectiles: []
+  weaponType: 1
+  listOfAvailableProjectiles:
+  - {fileID: 11400000, guid: acfff19df7f2411409af8c55f9e8ee49, type: 2}
   rangeRadius: 10
-  launchVelocity: 1
-  attackCooldown: 0.2
+  launchVelocity: 50
+  vibrationVelocityStrength: 0.2
+  attackCooldown: 1
   leftAngle: -45
   rightAngle: 45
   angleVibration: 5

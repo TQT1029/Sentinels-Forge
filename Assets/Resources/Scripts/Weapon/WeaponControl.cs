@@ -34,6 +34,15 @@ public abstract class WeaponControl : MonoBehaviour
         {
             projectileSpawner = launcherPoint.GetComponent<ProjectileSpawner>();
         }
+
+        try
+        {
+            projectileSpawner.SetupData(weaponData.listOfAvailableProjectiles[0]);
+        }
+        catch (System.Exception ex)
+        {
+            Debug.LogError($"[WeaponControl] Missing projectile data: {ex.Message}");
+        }
     }
 
     protected virtual void Start()

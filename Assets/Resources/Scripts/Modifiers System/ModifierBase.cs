@@ -21,5 +21,7 @@ public abstract class ModifierBase : ScriptableObject
     /// TRUE = Đã xử lý và muốn giữ đạn sống (bỏ qua các Mod phía sau trong lần va chạm này).
     /// FALSE = Không can thiệp hoặc để đạn chết (nhường quyền cho Mod phía sau).
     /// </summary>
-    public virtual bool OnHit(Projectile projectile, EnemyAI enemy) { return false; }
+    public virtual bool OnHitEnemy(Projectile projectile, EnemyAI enemy) { return false; }
+
+    public virtual bool OnEnvironmentHit(Projectile projectile, RaycastHit2D hit) { return false; }
 }
