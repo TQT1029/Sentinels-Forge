@@ -55,7 +55,7 @@ public class ProjectileBow : Projectile
         base.Init(lifeTime);
     }
 
-    protected override void ReturnToPool()
+    public override void ReturnToPool()
     {
         // Gỡ mũi tên khỏi bản đồ quản lý trước khi thu hồi
         if (stuckTarget != null && stuckArrowsMap.ContainsKey(stuckTarget))
@@ -73,7 +73,7 @@ public class ProjectileBow : Projectile
         base.ReturnToPool();
     }
 
-    private bool CheckCollision()
+    private void CheckCollision()
     {
         Vector2 direction = rb.linearVelocity;
         RaycastHit2D hit = Physics2D.Raycast(transform.position, direction, CollisionCheckInterval);
@@ -81,15 +81,22 @@ public class ProjectileBow : Projectile
 
         if (hit.collider != null)
         {
-            if (hit.collider.gameObject.CompareTag("Ground"))
+            if (hit.collider.gameObject.layer == LayerMask.NameToLayer("SpawnerZone"))
             {
-                bool shouldKeepFlying = ProcessEnvironmentHit(hit);
+                ReturnToPool();
+            }
+
+            if (hit.collider.gameObject.layer == LayerMask.NameToLayer("Ground"))
+            {
+                HitData hitData = new HitData(hit, null);
+
+                bool shouldKeepFlying = ProcessHit(hitData);
 
                 if (!shouldKeepFlying)
                 {
-                    if (!isStuck) StuckingArrow(hit); // Không nảy thì găm vào tường
+                    if (!isStuck) StuckingArrow(hit);
                 }
-                return true;
+
             }
             else if (hit.collider.gameObject.layer == LayerMask.NameToLayer("Enemy"))
             {
@@ -97,8 +104,10 @@ public class ProjectileBow : Projectile
 
                 if (enemy != null)
                 {
+                    HitData hitData = new HitData(hit, enemy);
 
-                    bool shouldKeepFlying = ProcessHitEnemy(enemy, currentVelocity.magnitude);
+                    bool shouldKeepFlying = ProcessHit(hitData);
+
 
 
                     // Nếu không xuyên và không kẹt, thì mới dính vào quái vật
@@ -108,16 +117,13 @@ public class ProjectileBow : Projectile
                         {
                             ReturnToPool();
                             ReleaseArrowsOnTarget(hit.transform);
-                            return true;
                         }
 
                         if (!isStuck) StuckingArrow(hit);
                     }
                 }
-                return true;
             }
         }
-        return false;
     }
 
     private void StuckingArrow(RaycastHit2D hit)

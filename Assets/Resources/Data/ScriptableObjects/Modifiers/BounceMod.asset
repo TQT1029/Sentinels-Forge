@@ -15,4 +15,4 @@ MonoBehaviour:
   modifierName: Bounce
   description: 
   additionalBounces: 3
-  bounciness: 0.8
+  speedRetention: 0.7

@@ -139,6 +139,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dcdcfba8172fe314597fa4ae85ee580e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemiesSpawner
+  spawnerZoneCollider: {fileID: 2332292178258305851}
   poolConfigs:
   - prefab: {fileID: 3386949240277275631, guid: 249bf1f428edd434c8cc234f596fc32a, type: 3}
     defaultCapacity: 0

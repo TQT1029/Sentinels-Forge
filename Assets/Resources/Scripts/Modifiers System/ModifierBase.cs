@@ -1,27 +1,23 @@
 using UnityEngine;
+using System;
+public class HitActionContext
+{
+    public bool TerminateProjectile = true; // Mặc định chạm là huỷ viên đạn
+    public bool CancelDamage = false;       // Có gây dame không?
 
+    public Action PostHitActions;
+}
 public abstract class ModifierBase : ScriptableObject
 {
     [Header("Base Settings")]
     public string modifierName;
     public string description;
 
-    /// <summary>
-    /// Chạy 1 lần khi đạn vừa được bắn ra khỏi nòng để thiết lập các chỉ số (State) ban đầu cho viên đạn.
-    /// </summary>
-    public virtual void OnLaunch(Projectile projectile) { }
+    // Khởi tạo RuntimeState cho đạn khi vừa bắn ra
+    public virtual void OnLaunch(Projectile projectile, ProjectileRuntimeState state) { }
 
-    /// <summary>
-    /// Cập nhật mỗi frame (Dùng cho Homing, bay lượn...)
-    /// </summary>
-    public virtual void OnUpdate(Projectile projectile) { }
+    public virtual void OnUpdate(Projectile projectile, ProjectileRuntimeState state) { }
 
-    /// <summary>
-    /// Xử lý va chạm. 
-    /// TRUE = Đã xử lý và muốn giữ đạn sống (bỏ qua các Mod phía sau trong lần va chạm này).
-    /// FALSE = Không can thiệp hoặc để đạn chết (nhường quyền cho Mod phía sau).
-    /// </summary>
-    public virtual bool OnHitEnemy(Projectile projectile, EnemyAI enemy) { return false; }
-
-    public virtual bool OnEnvironmentHit(Projectile projectile, RaycastHit2D hit) { return false; }
+    // Xử lý va chạm
+    public virtual void OnHit(Projectile projectile, ProjectileRuntimeState state, HitData hitData, HitActionContext hitContext) { }
 }

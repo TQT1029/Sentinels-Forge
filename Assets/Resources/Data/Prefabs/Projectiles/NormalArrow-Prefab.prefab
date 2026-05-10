@@ -133,9 +133,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ProjectileArrow
   modifiers:
-  - {fileID: 11400000, guid: 361a6fb1604c2164e9dd1417c7a078ce, type: 2}
   - {fileID: 11400000, guid: fd3c187ca97f3e64d9b7e4294dccc7be, type: 2}
-  currentDamage: 0
-  pierceCount: 0
-  bounceCount: 0
-  splitCount: 0
+  - {fileID: 11400000, guid: 361a6fb1604c2164e9dd1417c7a078ce, type: 2}

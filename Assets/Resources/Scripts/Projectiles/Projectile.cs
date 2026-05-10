@@ -16,16 +16,11 @@ public class Projectile : MonoBehaviour
 
     protected HashSet<EnemyAI> hitTargets = new HashSet<EnemyAI>(); // Danh sách quái đã gây damage
 
-    [Header("Runtime States (Dữ liệu động)")]
-    [HideInInspector] public float currentDamage;
-    [HideInInspector] public int pierceCount; // Số lần xuyên còn lại
-    [HideInInspector] public int bounceCount; // Số lần nảy còn lại
-    [HideInInspector] public int splitCount; // Số lần chia tách còn lại
+    public ProjectileRuntimeState RuntimeState { get; private set; } = new ProjectileRuntimeState();
 
-    [HideInInspector] public float damageMultiplier = 1f; // Hệ số nhân sát thương, có thể bị modifier thay đổi tạm thời
     protected float launchVelocity;
 
-    private void Awake()
+    protected virtual void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
     }
@@ -37,8 +32,6 @@ public class Projectile : MonoBehaviour
 
     protected virtual void ResetPhysic()
     {
-        launchVelocity = weaponControl.weaponData.launchVelocity;
-
         rb.linearVelocity = Vector3.zero;
         rb.angularVelocity = 0f;
         rb.gravityScale = projectileData.gravityScale;
@@ -46,26 +39,23 @@ public class Projectile : MonoBehaviour
     }
 
     /// <summary>
-    /// Hàm này chạy khi projectile được lấy ra khỏi pool, có thể override để thêm logic khởi tạo riêng cho từng loại projectile
+    /// Hàm này chạy khi projectile được lấy ra khỏi pool và tái sử dụng
     /// </summary>
     /// <param name="lifeTime">Thời gian tồn tại trước khi bị tự động thu hồi về pool</param>
     public virtual void Init(float lifeTime)
     {
-        pierceCount = 0;
-        bounceCount = 0;
-        splitCount = 0;
-        damageMultiplier = 1f;
+        launchVelocity = weaponControl.weaponData.launchVelocity;
 
-        // Xóa danh sách hit targets trước khi tái sử dụng
-        hitTargets.Clear();
+        RuntimeState.Reset(projectileData.baseDamage);
+
+        ClearHitTargets();
+
         ResetPhysic();
 
+        // Kích hoạt tất cả modifier
         if (modifiers != null)
         {
-            foreach (var mod in modifiers)
-            {
-                mod.OnLaunch(this);
-            }
+            foreach (var mod in modifiers) mod.OnLaunch(this, RuntimeState);
         }
 
         Invoke(nameof(ReturnToPool), lifeTime);
@@ -73,55 +63,50 @@ public class Projectile : MonoBehaviour
 
     private void Update()
     {
+        RuntimeState.Velocity = rb.linearVelocity;
 
         if (modifiers != null)
         {
             foreach (var mod in modifiers)
             {
-                mod.OnUpdate(this);
+                mod.OnUpdate(this, RuntimeState);
             }
         }
     }
 
-    protected virtual bool ProcessHitEnemy(EnemyAI enemy, float impactVelocity)
+    /// <summary>
+    /// Bất kể là đạn Raycast hay đạn Collider, khi va chạm quái đều gọi hàm này.
+    /// </summary>
+    public virtual bool ProcessHit(HitData hitData)
     {
-        if (enemy == null || hitTargets.Contains(enemy)) return true; // Đã đánh trúng con này rồi thì không tính damage nữa, nhưng đạn vẫn tiếp tục bay và có thể đánh trúng con khác hoặc tương tác với môi trường
+        if (hitData.Enemy != null)
+        {
+            if (hitTargets.Contains(hitData.Enemy)) return true; // Tránh hit đúp
+            hitTargets.Add(hitData.Enemy);
+        }
 
-        hitTargets.Add(enemy);
+        // Tạo context cho cú hit này
+        HitActionContext hitContext = new HitActionContext();
 
-        float speedRatio = impactVelocity / launchVelocity;
-        currentDamage = projectileData.baseDamage * speedRatio * damageMultiplier;
-
+        // Chạy qua tât cả Modifier để xào nấu Context và RuntimeState
         if (modifiers != null)
         {
             foreach (var mod in modifiers)
             {
-                if (mod.OnHitEnemy(this, enemy))
-                {
-                    return true; // Đạn đã bắn trúng quái tiếp tục bay và chuyển sang xử lý modifier
-                }
+                mod.OnHit(this, RuntimeState, hitData, hitContext);
             }
         }
 
-        enemy.TakeDamage(currentDamage); // Nếu không có modifier nào xử lý, áp dụng sát thương bình thường
-
-        return false; // Đạn dừng lại không bay nữa (Xử lý cuối để cho class con)
-
-    }
-
-    public virtual bool ProcessEnvironmentHit(RaycastHit2D hit)
-    {
-        if (modifiers != null)
+        // Xử lý Hậu quả (Resolution) sau khi các modifier đã chốt
+        if (hitData.Enemy != null && !hitContext.CancelDamage)
         {
-            foreach (var mod in modifiers)
-            {
-                if (mod.OnEnvironmentHit(this, hit))
-                {
-                    return true; // Đã tương tác với môi trường và modifier xử lý thành công, đạn sẽ tiếp tục bay và chuyển sang xử lý modifier
-                }
-            }
+            CalculateDamage(rb.linearVelocity.magnitude);
+            hitData.Enemy.TakeDamage(RuntimeState.CurrentDamage);
         }
-        return false; // Không có modifier nào cản lại, đạn sẽ dính vào tường hoặc nổ
+
+        hitContext.PostHitActions?.Invoke();
+
+        return !hitContext.TerminateProjectile;
     }
 
 
@@ -133,7 +118,7 @@ public class Projectile : MonoBehaviour
     /// <summary>
     /// Hàm này chạy khi projectile cần được trả về pool, có thể override để thêm logic dọn dẹp riêng cho từng loại projectile
     /// </summary>
-    protected virtual void ReturnToPool()
+    public virtual void ReturnToPool()
     {
         // Kiểm tra xem object còn đang active không trước khi release (phòng ngừa lỗi)
         if (gameObject.activeInHierarchy)
@@ -142,5 +127,21 @@ public class Projectile : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Tính toán damage dựa trên vận tốc va chạm của projectile.
+    /// </summary>
+    /// <param name="impactVelocity">Vận tốc va chạm của projectile</param>
+    protected virtual void CalculateDamage(float impactVelocity)
+    {
+        float speedRatio = impactVelocity / launchVelocity;
+        RuntimeState.CurrentDamage = projectileData.baseDamage * speedRatio * RuntimeState.DamageMultiplier;
 
+        Debug.Log($"[Projectile] Stats: CurrentDamage={RuntimeState.CurrentDamage},impactVelocity={impactVelocity} , ratio={speedRatio}, DamageMultiplier={RuntimeState.DamageMultiplier}");
+    }
+
+
+    public void ClearHitTargets()
+    {
+        hitTargets.Clear();
+    }
 }

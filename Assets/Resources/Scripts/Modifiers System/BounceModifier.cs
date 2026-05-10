@@ -1,41 +1,40 @@
 using UnityEngine;
-/// <summary>
-/// Tự động nảy lên khi chạm đất hoặc tường.
-/// </summary>
+
 [CreateAssetMenu(fileName = "BounceMod", menuName = "Game/Modifiers/Bounce")]
 public class BounceModifier : ModifierBase
 {
-    [Header("Bounce Settings")]
-    public int additionalBounces = 3;
+    public int additionalBounces = 2;
+    public float speedRetention = 0.7f; // Tỉ lệ giữ lại tốc độ sau mỗi lần nảy
+    private const string BOUNCE_COUNT = "BounceCount";
+    
 
-    [Tooltip("Hệ số giữ lại vận tốc sau khi nảy (1 = không giảm tốc, 0.5 = giảm một nửa)")]
-    [Range(0f, 1f)] public float bounciness = 1f;
-
-    public override void OnLaunch(Projectile projectile)
+    public override void OnLaunch(Projectile projectile, ProjectileRuntimeState state)
     {
-        // Cấp thêm lượt nảy cho viên đạn
-        projectile.bounceCount += additionalBounces;
+        state.AddStat(BOUNCE_COUNT, additionalBounces);
     }
 
-    public override bool OnEnvironmentHit(Projectile projectile, RaycastHit2D hit)
+    public override void OnHit(Projectile projectile, ProjectileRuntimeState state, HitData hitData, HitActionContext hitContext)
     {
-        if (projectile.bounceCount > 0)
+        if (hitData.Enemy != null) return;
+        int bouncesLeft = state.GetStat(BOUNCE_COUNT);
+
+        if (bouncesLeft > 0)
         {
-            projectile.bounceCount--;
+            state.SetStat(BOUNCE_COUNT, bouncesLeft - 1);
 
-            Vector2 currentVelocity = projectile.rb.linearVelocity;
+            // Logic phản xạ tia (Toán học)
+            Vector2 currentVel = projectile.rb.linearVelocity;
+            Vector2 reflected = Vector2.Reflect(currentVel.normalized, hitData.Normal);
+            projectile.rb.linearVelocity = reflected * currentVel.magnitude * speedRetention;
 
-            Vector2 reflectedDirection = Vector2.Reflect(currentVelocity.normalized, hit.normal);
+            // Đẩy nhẹ đạn ra khỏi tường để chống kẹt (chống Double-hit vật lý)
+            projectile.transform.position = hitData.Point + hitData.Normal * 0.05f;
 
-            projectile.rb.linearVelocity = reflectedDirection * currentVelocity.magnitude * bounciness;
+            // CỐT LÕI: Yêu cầu đạn KHÔNG tự hủy (Để nó bay tiếp theo hướng mới)
+            hitContext.TerminateProjectile = false;
 
-            projectile.transform.position = hit.point + hit.normal * 0.05f;
-
-
-            Debug.Log($"[BounceModifier] Projectile bounced. Remaining bounces: {projectile.bounceCount}");
-            return true; // Yêu cầu đạn tiếp tục bay, không được găm vào tường
+            // Xoá danh sách quái đã trúng để đạn nảy lại có thể đánh trúng con cũ
+             projectile.ClearHitTargets(); // Nếu bạn public hàm này bên Projectile
         }
-
-        return false; // Hết số lượt nảy, nhường quyền cho đạn găm vào tường
     }
 }

@@ -221,6 +221,8 @@ MonoBehaviour:
   launcherPoint: {fileID: 5071094259502449173}
   projectileSpawner: {fileID: 5847823005988273471}
   <weaponData>k__BackingField: {fileID: 11400000, guid: bb410a37b42a8a949ba90be3297e70ef, type: 2}
+  trajectoryStepCount: 30
+  trajectoryTimeStep: 0.05
 --- !u!1 &5071094259502449173
 GameObject:
   m_ObjectHideFlags: 0
@@ -303,7 +305,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 7482667652216324306, guid: 75f5f34dc1b5347e0b8351032682f224, type: 3}
+  m_Sprite: {fileID: 7482667652216324306, guid: 48e93eef0688c4a259cb0eddcd8661f7, type: 3}
   m_Color: {r: 1, g: 0.54905653, b: 0.54905653, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -325,5 +327,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0e6518800e53e224892ba188bf66f8c8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ProjectileSpawner
+  weaponControl: {fileID: 0}
   <projectilesStoreObj>k__BackingField: {fileID: 0}
   projectileData: {fileID: 11400000, guid: d4169740d76ea294bbfbded2e22be33c, type: 2}

@@ -5,8 +5,8 @@ public class CannonControl : WeaponControl
 {
     private float angleAfterVibration;
     private float launchVelocityAfterVibration;
-    
-    
+
+
     protected override void VibrateWeapon()
     {
         base.VibrateWeapon();
@@ -18,12 +18,4 @@ public class CannonControl : WeaponControl
         Debug.DrawRay(transform.position, new Vector3(Mathf.Cos(angleAfterVibration * Mathf.Deg2Rad), Mathf.Sin(angleAfterVibration * Mathf.Deg2Rad), 0) * launchVelocityAfterVibration, Color.red);
     }
 
-    protected override void DrawTrajectory()
-    {
-        
-    }
-    protected override void HideTrajectory()
-    {
-        
-    }
 }

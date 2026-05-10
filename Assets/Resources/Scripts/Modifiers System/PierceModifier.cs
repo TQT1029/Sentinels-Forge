@@ -4,32 +4,32 @@ using UnityEngine;
 public class PierceModifier : ModifierBase
 {
     public int additionalPierces = 1;
-    public float damageReductionPerHit = 0.8f; // Giảm còn 80%
+    public float damageReduction = 0.8f;
 
-    public override void OnLaunch(Projectile projectile)
+    // Dùng string hằng số làm Key truy xuất RuntimeState
+    private const string PIERCE_COUNT = "PierceCount";
+
+    public override void OnLaunch(Projectile projectile, ProjectileRuntimeState state)
     {
-        // Khởi tạo state: Cấp cho viên đạn số lượt xuyên
-        projectile.pierceCount += additionalPierces;
+        state.AddStat(PIERCE_COUNT, additionalPierces);
     }
 
-    public override bool OnHitEnemy(Projectile projectile, EnemyAI enemy)
+    public override void OnHit(Projectile projectile, ProjectileRuntimeState state, HitData hitData, HitActionContext hitContext)
     {
-        if (projectile.pierceCount > 0)
+        // Pierce chỉ hoạt động nếu đụng quái vật
+        if (hitData.Enemy == null) return;
+
+        int piercesLeft = state.GetStat(PIERCE_COUNT);
+
+        if (piercesLeft > 0)
         {
-            // Trừ lượt xuyên
-            projectile.pierceCount--;
-
-            // Gây sát thương và giảm sát thương cho lần xuyên sau 
-            enemy.TakeDamage(projectile.currentDamage);
-            projectile.damageMultiplier = projectile.damageMultiplier * damageReductionPerHit;
-
-            Debug.Log($"[PierceModifier] Projectile hit enemy. Remaining pierces: {projectile.pierceCount}, Current damage: {projectile.currentDamage}");
-
-            // Yêu cầu giữ đạn sống, ngăn chạy các modifier phía sau
-            return true;
+            state.SetStat(PIERCE_COUNT, piercesLeft - 1); // Trừ số lượt xuyên
+            hitContext.PostHitActions += () =>
+            {
+                state.DamageMultiplier *= damageReduction;
+            };
+            // CỐT LÕI: Yêu cầu đạn KHÔNG tự hủy (Bay tiếp)
+            hitContext.TerminateProjectile = false;
         }
-
-        // Hết lượt xuyên, nhường quyền xử lý lại cho các Modifier xếp sau nó
-        return false;
     }
 }

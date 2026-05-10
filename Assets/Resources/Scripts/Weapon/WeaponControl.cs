@@ -1,5 +1,5 @@
 using UnityEngine;
-
+[RequireComponent(typeof(LineRenderer))]
 public abstract class WeaponControl : MonoBehaviour
 {
     protected Camera mainCam;
@@ -20,9 +20,16 @@ public abstract class WeaponControl : MonoBehaviour
     protected float launchBaseVelocity = 0;// Vận tốc bắn cơ bản chưa có biến động  
     protected float lastLaunchTime = 0;
 
+    [Header("Trajectory Settings")]
+    [SerializeField] private int trajectoryStepCount = 30; // Số điểm gãy để tạo thành đường cong
+    [SerializeField] private float trajectoryTimeStep = 0.05f; // Khoảng cách thời gian giữa các điểm (càng nhỏ càng mịn nhưng ngắn)
+    private LineRenderer lineRenderer;
+
+
     protected virtual void Awake()
     {
         mainCam = WaveManager.Instance.MainCamera;
+        lineRenderer = GetComponent<LineRenderer>();
 
         if (launcherPoint == null)
         {
@@ -120,8 +127,6 @@ public abstract class WeaponControl : MonoBehaviour
     {
         currentBaseAngle = CalculateRotationAngle();
         launchBaseVelocity = CalculateLaunchVelocity() * weaponData.launchVelocity;
-
-        Debug.DrawRay(transform.position, new Vector3(Mathf.Cos(currentBaseAngle * Mathf.Deg2Rad), Mathf.Sin(currentBaseAngle * Mathf.Deg2Rad), 0) * launchBaseVelocity, Color.red, 0.1f);
     }
 
     protected virtual void Shoot()
@@ -169,10 +174,36 @@ public abstract class WeaponControl : MonoBehaviour
     /// <summary>
     /// Hiển thị quỹ đạo bay dự kiến của đạn.
     /// </summary>
-    protected abstract void DrawTrajectory();
+    protected virtual void DrawTrajectory()
+    {
+        lineRenderer.positionCount = trajectoryStepCount;
+
+        Vector2 startPos = launcherPoint != null ? launcherPoint.transform.position : transform.position;
+
+        // Vận tốc ban đầu dạng Vector2
+        Vector2 startVelocity = new Vector2(Mathf.Cos(currentBaseAngle * Mathf.Deg2Rad), Mathf.Sin(currentBaseAngle * Mathf.Deg2Rad)) * launchBaseVelocity;
+
+        Debug.DrawRay(transform.position, new Vector3(Mathf.Cos(currentBaseAngle * Mathf.Deg2Rad), Mathf.Sin(currentBaseAngle * Mathf.Deg2Rad), 0) * launchBaseVelocity, Color.blue);
+
+        float gravity = Physics2D.gravity.y * projectileSpawner.projectileData.gravityScale;
+
+        for (int i = 0; i < trajectoryStepCount; i++)
+        {
+            float time = i * trajectoryTimeStep;
+
+            // Công thức tính toạ độ theo thời gian t
+            Vector2 pointPos = startPos + (startVelocity * time);
+            pointPos.y += 0.5f * gravity * time * time;
+
+            lineRenderer.SetPosition(i, pointPos);
+        }
+    }
 
     /// <summary>
     /// Xoá quỹ đạo bay khi bắn hoặc huỷ ngắm.
     /// </summary>
-    protected abstract void HideTrajectory();
+    protected virtual void HideTrajectory()
+    {
+        lineRenderer.positionCount = 0;
+    }
 }

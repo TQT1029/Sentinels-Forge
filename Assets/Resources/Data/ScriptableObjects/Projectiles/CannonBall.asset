@@ -17,4 +17,4 @@ MonoBehaviour:
   damageVariation: 0.05
   gravityScale: 3
   stunDuration: 1
-  lifeTime: 30
+  lifeTime: 10

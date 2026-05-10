@@ -19,6 +19,8 @@ public class EnemyPoolConfig
 
 public class EnemySpawner : Singleton<EnemySpawner>
 {
+    [SerializeField] private Collider2D spawnerZoneCollider;
+
     [SerializeField] private List<EnemyPoolConfig> poolConfigs;
 
     private Dictionary<EnemyAI, IObjectPool<EnemyAI>> enemyPools;
@@ -58,6 +60,8 @@ public class EnemySpawner : Singleton<EnemySpawner>
                 enemiesStoreObj = new GameObject("EnemiesStore");
             }
         }
+
+        spawnerZoneCollider = GetComponent<Collider2D>();
     }
 
     private EnemyAI CreateEnemy(EnemyAI prefab)
@@ -72,7 +76,7 @@ public class EnemySpawner : Singleton<EnemySpawner>
     private void OnGetEnemy(EnemyAI enemy)
     {
         enemy.gameObject.SetActive(true);
-        // Bắt buộc reset HP và State mỗi lần lấy từ Pool ra, nếu không quái sẽ giữ HP <= 0 của lần chết trước
+        // Bắt buộc reset HP và RuntimeState mỗi lần lấy từ Pool ra, nếu không quái sẽ giữ HP <= 0 của lần chết trước
         enemy.ResetStats();
     }
 
@@ -155,5 +159,15 @@ public class EnemySpawner : Singleton<EnemySpawner>
     {
         // Thay đổi vị trí kẻ địch trước khi triệu hồi
         return RandomUtils.RandomVector2(startPoint.position, endPoint.position);
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.layer == LayerMask.NameToLayer("Projectile"))
+        {
+            Projectile projectile = collision.gameObject.GetComponent<Projectile>();
+
+            projectile.ReturnToPool();
+        }
     }
 }
