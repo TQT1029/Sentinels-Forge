@@ -13,11 +13,13 @@ public class ProjectileBow : Projectile
 
     private Vector3 positionOffset;
     private Quaternion rotationOffset;
+    private Vector2 currentVelocity;
 
     private void Update()
     {
         if (!isStuck)
         {
+            currentVelocity = rb.linearVelocity;
             RotateTowardsVelocity();
             CheckCollision();
         }
@@ -51,11 +53,6 @@ public class ProjectileBow : Projectile
     public override void Init(float lifeTime)
     {
         base.Init(lifeTime);
-
-        rb.linearVelocity = Vector3.zero;
-        rb.angularVelocity = 0f;
-        rb.gravityScale = projectileData.gravityScale;
-        rb.simulated = true;
     }
 
     protected override void ReturnToPool()
@@ -101,7 +98,7 @@ public class ProjectileBow : Projectile
                 if (enemy != null)
                 {
 
-                    bool shouldKeepFlying = ProcessHitEnemy(enemy);
+                    bool shouldKeepFlying = ProcessHitEnemy(enemy, currentVelocity.magnitude);
 
 
                     // Nếu không xuyên và không kẹt, thì mới dính vào quái vật

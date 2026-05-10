@@ -21,7 +21,7 @@ public class PierceModifier : ModifierBase
 
             // Gây sát thương và giảm sát thương cho lần xuyên sau 
             enemy.TakeDamage(projectile.currentDamage);
-            projectile.currentDamage = projectile.currentDamage * damageReductionPerHit + projectile.projectileData.GetDamageAfterVariation();
+            projectile.damageMultiplier = projectile.damageMultiplier * damageReductionPerHit;
 
             Debug.Log($"[PierceModifier] Projectile hit enemy. Remaining pierces: {projectile.pierceCount}, Current damage: {projectile.currentDamage}");
 

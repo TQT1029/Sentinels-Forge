@@ -2,36 +2,55 @@ using UnityEngine;
 
 public class ProjectileCannon : Projectile
 {
+    private Vector2 currentVelocity;
+    private Collider2D projectileCollider;
 
-    public override void Init(float lifeTime)
+    private void Start()
     {
-        base.Init(lifeTime);
+        projectileCollider = GetComponent<Collider2D>();
+    }
 
-        rb.linearVelocity = Vector3.zero;
-        rb.angularVelocity = 0f;
-        rb.gravityScale = projectileData.gravityScale;
-        rb.simulated = true;
+    protected override void ReturnToPool()
+    {
+        base.ReturnToPool();
+
+        projectileCollider.excludeLayers = 0;
+
+    }
+    private void Update()
+    {
+        currentVelocity = rb.linearVelocity;
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if(collision.gameObject.layer == LayerMask.NameToLayer("Ground"))
-        {
-            currentDamage = 0;
-        }
-        else if (collision.gameObject.layer == LayerMask.NameToLayer("Enemy"))
+        if (collision.gameObject.layer == LayerMask.NameToLayer("Enemy"))
         {
             EnemyAI enemy = collision.gameObject.GetComponent<EnemyAI>();
             if (enemy != null)
             {
-                ProcessHitEnemy(enemy);
+                ProcessHitEnemy(enemy, currentVelocity.magnitude);
             }
         }
-        else
+        if (collision.gameObject.layer == LayerMask.NameToLayer("Ground"))
         {
-            // Tương tác với môi trường, có thể thêm hiệu ứng va chạm hoặc logic khác ở đây
+            damageMultiplier = 0f;
+
+            OnTouchGround();
+        }
+
+        if (collision.gameObject.layer == LayerMask.NameToLayer("SpawnerZone"))
+        {
             ReturnToPool();
         }
 
+    }
+
+
+    private void OnTouchGround()
+    {
+        if (projectileCollider == null) return;
+
+        projectileCollider.excludeLayers = LayerMask.GetMask("Enemy", "Projectile");
     }
 }

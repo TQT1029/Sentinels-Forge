@@ -4,6 +4,8 @@ using UnityEngine.Pool;
 
 public class ProjectileSpawner : MonoBehaviour
 {
+    public WeaponControl weaponControl;
+
     // Dictionary lưu trữ Pool riêng cho từng loại đạn
     private Dictionary<ProjectileData, IObjectPool<Projectile>> poolsMap;
 
@@ -49,6 +51,8 @@ public class ProjectileSpawner : MonoBehaviour
                 projectilesStoreObj = new GameObject("ProjectilesStoreObj");
             }
         }
+
+        weaponControl = GetComponentInParent<WeaponControl>();
     }
 
     public void SetupData(ProjectileData data)
@@ -60,8 +64,9 @@ public class ProjectileSpawner : MonoBehaviour
         GameObject projectileObj = Instantiate(data.prefab, transform.position, Quaternion.Euler(0, 0, transform.rotation.eulerAngles.z + 90), projectilesStoreObj.transform);
         Projectile projectileComponent = projectileObj.GetComponent<Projectile>();
 
-        projectileComponent.SetData(data);
+        projectileComponent.SetProjectileData(data);
         projectileComponent.SetSpawner(this);
+        projectileComponent.SetWeaponControl(weaponControl);
         projectileComponent.SetPool(poolsMap[data]);
 
         return projectileComponent;

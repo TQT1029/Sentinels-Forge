@@ -8,12 +8,13 @@ public class ProjectileData : ScriptableObject
     [Space(10)]
     public float baseDamage = 1;
     [Range(0f, 1f), Tooltip("Damage dao động ±damageVariation*baseDamage")] public float damageVariation = 0.05f; // Damage dao động trong khoảng baseDamage ± damageVariation*baseDamage
-    public float GetDamageAfterVariation()
-    {
-        return RandomUtils.RandomWithSteps(-damageVariation, damageVariation, 0.001f) * baseDamage;
-    }
     [Space(10)] 
     public float gravityScale = 1;// Hệ số trọng lực ảnh hưởng đến quỹ đạo bay của đạn
     [Min(0)] public float stunDuration = 0f; // Thời gian làm choáng mục tiêu (0 = không choáng)
     [Min(1f)] public float lifeTime = 5f; // Thời gian tồn tại của đạn (0 = không giới hạn)
+    public float GetDamageAfterVariation()
+    {
+        return RandomUtils.RandomWithSteps(-damageVariation, damageVariation, 0.001f) * baseDamage;
+    }
+
 }

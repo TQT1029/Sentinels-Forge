@@ -7,7 +7,7 @@ public abstract class WeaponControl : MonoBehaviour
     [SerializeField] protected float maxDrag = 10f;
     protected float distanceDrag = 0;
 
-    [SerializeField, Min(0)] protected float minLaunchVelocity = 0.3f; // Vận tốc tối thiểu khi bắn, đảm bảo đạn không bị quá yếu
+    [SerializeField, Min(0)] protected float minLaunchVelocity = 0.3f; // Vận tốc tối thiểu khi bắn
 
     protected Vector3 startDragPoint;
 

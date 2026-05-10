@@ -16,9 +16,9 @@ MonoBehaviour:
   listOfAvailableProjectiles:
   - {fileID: 11400000, guid: acfff19df7f2411409af8c55f9e8ee49, type: 2}
   rangeRadius: 10
-  launchVelocity: 50
+  launchVelocity: 35
   vibrationVelocityStrength: 0.2
   attackCooldown: 1
   leftAngle: -45
-  rightAngle: 45
+  rightAngle: 90
   angleVibration: 5

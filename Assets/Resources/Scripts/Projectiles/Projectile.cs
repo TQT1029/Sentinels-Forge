@@ -10,8 +10,9 @@ public class Projectile : MonoBehaviour
 
     public ProjectileData projectileData { get; private set; }
     protected ProjectileSpawner projectileSpawner;
+    protected WeaponControl weaponControl;
 
-    [SerializeField] public List<ModifierBase> modifiers; // Danh sách các modifier đang có hiệu lực trên viên đạn này (có thể có 0 modifier)
+    [SerializeField] public List<ModifierBase> modifiers; // Danh sách các modifier đang có hiệu lực 
 
     protected HashSet<EnemyAI> hitTargets = new HashSet<EnemyAI>(); // Danh sách quái đã gây damage
 
@@ -21,18 +22,27 @@ public class Projectile : MonoBehaviour
     [HideInInspector] public int bounceCount; // Số lần nảy còn lại
     [HideInInspector] public int splitCount; // Số lần chia tách còn lại
 
+    [HideInInspector] public float damageMultiplier = 1f; // Hệ số nhân sát thương, có thể bị modifier thay đổi tạm thời
+    protected float launchVelocity;
+
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
     }
 
-    public void SetData(ProjectileData data) => projectileData = data;
+    public void SetProjectileData(ProjectileData data) => projectileData = data;
     public void SetSpawner(ProjectileSpawner spawner) => projectileSpawner = spawner;
+    public void SetWeaponControl(WeaponControl control) => weaponControl = control;
     public void SetPool(IObjectPool<Projectile> pool) => managedPool = pool;
 
-    private void ResetPhysic()
+    protected virtual void ResetPhysic()
     {
+        launchVelocity = weaponControl.weaponData.launchVelocity;
+
+        rb.linearVelocity = Vector3.zero;
+        rb.angularVelocity = 0f;
         rb.gravityScale = projectileData.gravityScale;
+        rb.simulated = true;
     }
 
     /// <summary>
@@ -41,9 +51,10 @@ public class Projectile : MonoBehaviour
     /// <param name="lifeTime">Thời gian tồn tại trước khi bị tự động thu hồi về pool</param>
     public virtual void Init(float lifeTime)
     {
-        currentDamage = projectileData.baseDamage + projectileData.GetDamageAfterVariation();
         pierceCount = 0;
         bounceCount = 0;
+        splitCount = 0;
+        damageMultiplier = 1f;
 
         // Xóa danh sách hit targets trước khi tái sử dụng
         hitTargets.Clear();
@@ -62,6 +73,7 @@ public class Projectile : MonoBehaviour
 
     private void Update()
     {
+
         if (modifiers != null)
         {
             foreach (var mod in modifiers)
@@ -71,11 +83,14 @@ public class Projectile : MonoBehaviour
         }
     }
 
-    protected virtual bool ProcessHitEnemy(EnemyAI enemy)
+    protected virtual bool ProcessHitEnemy(EnemyAI enemy, float impactVelocity)
     {
         if (enemy == null || hitTargets.Contains(enemy)) return true; // Đã đánh trúng con này rồi thì không tính damage nữa, nhưng đạn vẫn tiếp tục bay và có thể đánh trúng con khác hoặc tương tác với môi trường
 
         hitTargets.Add(enemy);
+
+        float speedRatio = impactVelocity / launchVelocity;
+        currentDamage = projectileData.baseDamage * speedRatio * damageMultiplier;
 
         if (modifiers != null)
         {

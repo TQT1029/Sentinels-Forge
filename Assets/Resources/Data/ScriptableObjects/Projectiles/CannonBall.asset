@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: CannonBall
   m_EditorClassIdentifier: Assembly-CSharp::ProjectileData
   prefab: {fileID: 426274753539640166, guid: 1fe62cdfb14ad8643b15f20bfcce017e, type: 3}
-  baseDamage: 50
+  baseDamage: 25
   damageVariation: 0.05
   gravityScale: 3
   stunDuration: 1
