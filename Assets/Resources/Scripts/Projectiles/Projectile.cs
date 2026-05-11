@@ -9,12 +9,12 @@ public class Projectile : MonoBehaviour
     public Rigidbody2D rb { get; private set; }
 
     public ProjectileData projectileData { get; private set; }
-    protected ProjectileSpawner projectileSpawner;
+    public ProjectileSpawner projectileSpawner { get; private set; }
     protected WeaponControl weaponControl;
 
     [SerializeField] public List<ModifierBase> modifiers; // Danh sách các modifier đang có hiệu lực 
 
-    protected HashSet<EnemyAI> hitTargets = new HashSet<EnemyAI>(); // Danh sách quái đã gây damage
+    public HashSet<EnemyAI> hitTargets = new HashSet<EnemyAI>(); // Danh sách quái đã gây damage
 
     public ProjectileRuntimeState RuntimeState { get; private set; } = new ProjectileRuntimeState();
 
@@ -61,7 +61,7 @@ public class Projectile : MonoBehaviour
         Invoke(nameof(ReturnToPool), lifeTime);
     }
 
-    private void Update()
+    protected virtual void Update()
     {
         RuntimeState.Velocity = rb.linearVelocity;
 
@@ -135,8 +135,6 @@ public class Projectile : MonoBehaviour
     {
         float speedRatio = impactVelocity / launchVelocity;
         RuntimeState.CurrentDamage = projectileData.baseDamage * speedRatio * RuntimeState.DamageMultiplier;
-
-        Debug.Log($"[Projectile] Stats: CurrentDamage={RuntimeState.CurrentDamage},impactVelocity={impactVelocity} , ratio={speedRatio}, DamageMultiplier={RuntimeState.DamageMultiplier}");
     }
 
 

@@ -7,6 +7,7 @@ public class ProjectileRuntimeState
     public float CurrentDamage;
     public float DamageMultiplier = 1f;
     public Vector2 Velocity; // Vận tốc hiện tại trước khi va chạm. (Được cập nhật liên tục qua Update)
+    public Transform HomingTarget;
 
     // BLACKBOARD: Lưu trữ mọi state của các Modifier (Không GC sau warmup)
     private Dictionary<string, int> customIntStats = new Dictionary<string, int>();
@@ -15,6 +16,8 @@ public class ProjectileRuntimeState
     {
         CurrentDamage = baseDamage;
         DamageMultiplier = 1f;
+        Velocity = Vector2.zero;
+        HomingTarget = null;
         customIntStats.Clear(); // Tránh GC, chỉ clear data cũ
     }
 

@@ -1,7 +1,7 @@
 using UnityEngine;
 
 
-public enum EmnemyType
+public enum EnemyType
 {
     Melee,
     Ranged,
@@ -9,12 +9,11 @@ public enum EmnemyType
     Boss
 }
 
-[CreateAssetMenu(fileName = "EnemyData", menuName = "Game/Emnemy/EnemyData")]
+[CreateAssetMenu(fileName = "EnemyData", menuName = "Game/Enemy/EnemyData")]
 public class EnemyData : ScriptableObject
 {
-    public string emnemyName="";
-    public EmnemyType emnemyType= EmnemyType.Melee;
-
+    public string enemyName="";
+    public EnemyType enemyType= EnemyType.Melee;
     [Space(10)]
     [Min(1)] public float maxHealth=100f;
     [Min(0.005f)] public float moveSpeed=2f;

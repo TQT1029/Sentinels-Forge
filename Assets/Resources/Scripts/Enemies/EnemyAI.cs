@@ -1,15 +1,18 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Pool;
 
-public class EnemyAI : MonoBehaviour
+public abstract class EnemyAI : MonoBehaviour
 {
     [field: SerializeField] public EnemyData enemyData { get; private set; }
-    protected Rigidbody2D rb;
+    public Rigidbody2D rb { get; private set; }
     protected Transform towerTransform;
 
     private IObjectPool<EnemyAI> managedPool;
 
+    public Dictionary<EffectData, RuntimeEffect> activeEffects = new Dictionary<EffectData, RuntimeEffect>();
+    private List<EffectData> effectsToRemove = new List<EffectData>(); // Cache để tránh lỗi xóa trong vòng lặp
     protected float currentHealth;
     protected float percentHealth => currentHealth / enemyData.maxHealth;
 
@@ -22,12 +25,15 @@ public class EnemyAI : MonoBehaviour
     protected bool isInvincible = false;
     public bool IsDead => currentHealth <= 0;
 
+    [HideInInspector] public bool isStunned = false;
+    [HideInInspector] public float speedMultiplier = 1f; // Dùng cho hiệu ứng Slow (Làm chậm)
+
 
     //protected float percentHealth => (float)enemyData.CurrentHealth / enemyData.MaxHealth;
     protected virtual void Awake()
     {
         towerTransform = WaveManager.Instance.TowerTransform;
-        rb = GetComponent<Rigidbody2D>();        
+        rb = GetComponent<Rigidbody2D>();
     }
 
     public void SetPool(IObjectPool<EnemyAI> pool)
@@ -35,67 +41,78 @@ public class EnemyAI : MonoBehaviour
         managedPool = pool;
     }
 
+    // THÊM: Quản lý thêm hiệu ứng
+    public void AddEffect(EffectData effectData)
+    {
+        if (IsDead) return;
+
+        if (activeEffects.ContainsKey(effectData))
+        {
+            // Trạng thái cộng dồn (Stacking/Refresh): Đã có hiệu ứng này rồi thì reset lại thời gian
+            activeEffects[effectData].TimeRemaining = effectData.baseDuration;
+        }
+        else
+        {
+            // Chưa có thì tạo mới và áp dụng
+            RuntimeEffect newEffect = effectData.CreateRuntimeEffect(this);
+            activeEffects.Add(effectData, newEffect);
+            newEffect.OnApply();
+        }
+    }
 
     public virtual void ResetStats()
     {
         currentHealth = enemyData.maxHealth;
         isInvincible = false;
         checkingTime = 0f;
+
+        // Bắt buộc Reset tất cả trạng thái trước khi lấy khỏi Pool
+        isStunned = false;
+        speedMultiplier = 1f;
+
+        // Xóa sạch hiệu ứng cũ (Không gọi OnRemove để tránh logic chạy đè)
+        activeEffects.Clear();
     }
 
     protected virtual void Update()
     {
+        HandleEffects(); // Chạy bộ đếm thời gian của hiệu ứng
+
+        if (isStunned) return; // CỐT LÕI: Đang choáng thì bỏ qua toàn bộ Update bên dưới (Không đi, không đánh)
+
         checkingTime += Time.deltaTime;
 
-        if (checkingTime >= 1f / checkingFrequency)
+        ProcessAI();
+    }
+    protected abstract void ProcessAI();
+
+    private void HandleEffects()
+    {
+        if (activeEffects.Count == 0) return;
+
+        effectsToRemove.Clear();
+
+        foreach (var kvp in activeEffects)
         {
-            checkingTime = 0f;
+            RuntimeEffect effect = kvp.Value;
 
-            if (IsInAttackRange())
-            {
-                if (Time.time - previousAttackTime >= enemyData.attackCooldown)
-                {
-                    Attack();
-                    previousAttackTime = Time.time;
-                }
+            effect.OnTick(Time.deltaTime); // Chạy logic tick (VD: Độc trừ máu)
+            effect.TimeRemaining -= Time.deltaTime; // Giảm thời gian
 
-                rb.linearVelocity = new Vector2(0, rb.linearVelocityY);
-            }
-            else
+            if (effect.IsFinished)
             {
-                Move();
+                effect.OnRemove(); // Gọi logic kết thúc (VD: Mở khóa Stun)
+                effectsToRemove.Add(kvp.Key);
             }
         }
+
+        // Dọn dẹp các hiệu ứng đã hết hạn
+        foreach (var key in effectsToRemove)
+        {
+            activeEffects.Remove(key);
+        }
     }
-
-    protected virtual void FixedUpdate() { }
-
-    protected virtual void Move()
-    {
-        rb.linearVelocity = new Vector2(-enemyData.moveSpeed, rb.linearVelocityY);
-    }
-
-
-    protected virtual bool IsInAttackRange()
-    {
-        Vector2 direction = towerTransform.position - transform.position;
-        RaycastHit2D hit = Physics2D.Raycast(transform.position, direction, enemyData.attackRange, LayerMask.GetMask("Tower"));
-
-        Debug.DrawRay(transform.position, direction.normalized * enemyData.attackRange, Color.green);
-
-        if (hit == default) return false;
-
-        return true;
-
-    }
-    /// <summary>
-    /// Hàm này xử lý việc kẻ địch tấn công tháp. Trong lớp cơ sở, nó chỉ ghi log một thông điệp. Các lớp con có thể override hàm này để thực hiện các hành động tấn công
-    /// </summary>
-    protected virtual void Attack()
-    {
-        Debug.Log($"[EnemyAI] {enemyData.emnemyName} Attacking tower!");
-    }
-
+        
     /// <summary>
     /// Hàm chính để gọi từ bên ngoài
     /// </summary>
@@ -104,7 +121,7 @@ public class EnemyAI : MonoBehaviour
     public virtual void TakeDamage(float amount, float invincibilityTime = 0f)
     {
         if (isInvincible || currentHealth <= 0)
-            return ;
+            return;
 
         currentHealth -= amount;
 
@@ -150,8 +167,14 @@ public class EnemyAI : MonoBehaviour
     /// </summary>
     protected virtual void Die()
     {
-        Debug.Log("[EnemyAI]"+gameObject.name + " has died.");
-         gameObject.SetActive(false); // Thay bằng lệnh Release của Object Pool nếu bạn đang dùng
+        foreach (var effect in activeEffects.Values)
+        {
+            effect.OnRemove();
+        }
+        activeEffects.Clear();
+
+        Debug.Log("[EnemyAI]" + gameObject.name + " has died.");
+        gameObject.SetActive(false); // Thay bằng lệnh Release của Object Pool nếu bạn đang dùng
 
         WaveManager.Instance.EnemyKilled();
 

@@ -5,13 +5,17 @@ public class HitActionContext
     public bool TerminateProjectile = true; // Mặc định chạm là huỷ viên đạn
     public bool CancelDamage = false;       // Có gây dame không?
 
-    public Action PostHitActions;
+    public Action PostHitActions; // Hành động bổ sung sau khi xử lý hit xong.
+    public bool HasSplit = false;
+    public bool HasHomed = false;
 }
 public abstract class ModifierBase : ScriptableObject
 {
     [Header("Base Settings")]
     public string modifierName;
     public string description;
+
+    protected ProjectileSpawner projectileSpawner;
 
     // Khởi tạo RuntimeState cho đạn khi vừa bắn ra
     public virtual void OnLaunch(Projectile projectile, ProjectileRuntimeState state) { }

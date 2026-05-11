@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5a1a3f3b21befe1419fe4d0f3608aa6d, type: 3}
   m_Name: GiantZombie
   m_EditorClassIdentifier: Assembly-CSharp::EmnemyData
-  emnemyName: Giant Zombie
-  emnemyType: 0
-  maxHealth: 60
+  enemyName: 
+  enemyType: 0
+  maxHealth: 100
   moveSpeed: 1
   attackRange: 3
   attackDamage: 20

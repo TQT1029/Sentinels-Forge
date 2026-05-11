@@ -15,8 +15,10 @@ public class ProjectileBow : Projectile
     private Quaternion rotationOffset;
     private Vector2 currentVelocity;
 
-    private void Update()
+    protected override void Update()
     {
+        base.Update();
+
         if (!isStuck)
         {
             currentVelocity = rb.linearVelocity;
