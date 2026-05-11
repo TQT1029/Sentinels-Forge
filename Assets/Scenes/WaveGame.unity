@@ -183,6 +183,42 @@ PrefabInstance:
       propertyPath: spawnerZoneCollider
       value: 
       objectReference: {fileID: 1665104937}
+    - target: {fileID: 7699106593953365393, guid: 1e0ee4627434dbb4ebb15502571eea49, type: 3}
+      propertyPath: poolConfigs.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 7699106593953365393, guid: 1e0ee4627434dbb4ebb15502571eea49, type: 3}
+      propertyPath: poolConfigs.Array.data[1].cost
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 7699106593953365393, guid: 1e0ee4627434dbb4ebb15502571eea49, type: 3}
+      propertyPath: poolConfigs.Array.data[2].cost
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 7699106593953365393, guid: 1e0ee4627434dbb4ebb15502571eea49, type: 3}
+      propertyPath: poolConfigs.Array.data[0].prefab
+      value: 
+      objectReference: {fileID: 1705093583265997487, guid: 249bf1f428edd434c8cc234f596fc32a, type: 3}
+    - target: {fileID: 7699106593953365393, guid: 1e0ee4627434dbb4ebb15502571eea49, type: 3}
+      propertyPath: poolConfigs.Array.data[1].prefab
+      value: 
+      objectReference: {fileID: -3351628845146748295, guid: a1b978b524723d84ba970874ca52355a, type: 3}
+    - target: {fileID: 7699106593953365393, guid: 1e0ee4627434dbb4ebb15502571eea49, type: 3}
+      propertyPath: poolConfigs.Array.data[2].prefab
+      value: 
+      objectReference: {fileID: 6344284725224277396, guid: 45cc106f01fedf8438b0d9249ac040eb, type: 3}
+    - target: {fileID: 7699106593953365393, guid: 1e0ee4627434dbb4ebb15502571eea49, type: 3}
+      propertyPath: poolConfigs.Array.data[2].maxSize
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 7699106593953365393, guid: 1e0ee4627434dbb4ebb15502571eea49, type: 3}
+      propertyPath: poolConfigs.Array.data[1].unlockAtWave
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7699106593953365393, guid: 1e0ee4627434dbb4ebb15502571eea49, type: 3}
+      propertyPath: poolConfigs.Array.data[2].unlockAtWave
+      value: 2
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -691,6 +727,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1885382146}
   - component: {fileID: 1885382145}
+  - component: {fileID: 1885382147}
   m_Layer: 0
   m_Name: System
   m_TagString: Untagged
@@ -725,6 +762,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1885382147
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1885382144}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6d03bdf43aef6ea4585631a8c9b53416, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyProjectileManager
 --- !u!1 &1914498656
 GameObject:
   m_ObjectHideFlags: 0

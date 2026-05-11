@@ -4,7 +4,7 @@ using UnityEngine.Pool;
 [RequireComponent(typeof(Rigidbody2D))]
 public class EnemyProjectile : MonoBehaviour
 {
-    [SerializeField] private float speed = 10f;
+    [SerializeField] private float speed = 15f;
     [SerializeField] private float lifeTime = 4f;
 
     private float damage;
@@ -18,27 +18,31 @@ public class EnemyProjectile : MonoBehaviour
 
     public void SetPool(IObjectPool<EnemyProjectile> pool) => managedPool = pool;
 
+    private void Update()
+    {
+        // Xoay đầu đạn (mũi tên, quả cầu lửa) về hướng bay
+        float angle = Mathf.Atan2(rb.linearVelocity.y, rb.linearVelocity.x) * Mathf.Rad2Deg;
+        transform.rotation = Quaternion.Euler(0, 0, angle);
+    }
     public void Fire(Vector2 direction, float dmg)
     {
         damage = dmg;
         rb.linearVelocity = direction * speed;
-
-        // Xoay đầu đạn (mũi tên, quả cầu lửa) về hướng bay
-        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-        transform.rotation = Quaternion.Euler(0, 0, angle);
+        rb.gravityScale = Random.Range(0.8f, 1.2f); // Tạo hiệu ứng bay lượn tự nhiên hơn cho đạn
 
         Invoke(nameof(ReturnToPool), lifeTime);
     }
 
     // Ưu tiên dùng OnTriggerEnter2D kết hợp Rigidbody2D (Kinematic) cho quái để nhẹ CPU
-    private void OnTriggerEnter2D(Collider2D collision)
+    private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.CompareTag("Tower")) // Giả sử Căn cứ có tag là Tower
+        if (collision.gameObject.CompareTag("Tower"))
         {
             // Base/Tower.Instance.TakeDamage(damage); 
+            Debug.Log($"[EnemyProjectile] Hit the tower for {damage} damage!");
             ReturnToPool();
         }
-        else if (collision.CompareTag("Ground"))
+        else if (collision.gameObject.CompareTag("Ground"))
         {
             ReturnToPool();
         }

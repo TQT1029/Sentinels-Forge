@@ -6,7 +6,14 @@ public class EnemyProjectileManager : Singleton<EnemyProjectileManager>
 {
     // Map Prefab -> Pool để xài chung đạn cho mọi loại quái Ranged
     private Dictionary<EnemyProjectile, IObjectPool<EnemyProjectile>> projectilePools = new Dictionary<EnemyProjectile, IObjectPool<EnemyProjectile>>();
+    private Transform enemyProjectilesStoreObj;
 
+    protected override void Awake()
+    {
+        base.Awake();
+        // Tạo một GameObject để chứa tất cả đạn của quái, giúp Hierarchy gọn hơn
+        enemyProjectilesStoreObj = new GameObject("EnemyProjectilesStoreObj").transform;
+    }   
     public void SpawnProjectile(EnemyProjectile prefab, Vector3 spawnPos, Vector3 targetPos, float damage)
     {
         if (!projectilePools.ContainsKey(prefab))
@@ -14,7 +21,7 @@ public class EnemyProjectileManager : Singleton<EnemyProjectileManager>
             // Lazy initialization: Chỉ tạo Pool khi có con quái đầu tiên cần loại đạn này
             projectilePools[prefab] = new ObjectPool<EnemyProjectile>(
                 createFunc: () => {
-                    EnemyProjectile proj = Instantiate(prefab);
+                    EnemyProjectile proj = Instantiate(prefab, enemyProjectilesStoreObj);
                     proj.SetPool(projectilePools[prefab]);
                     return proj;
                 },

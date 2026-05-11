@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 1460239507910486288}
   - component: {fileID: 2286572939820110339}
   - component: {fileID: 6680610473982070587}
-  - component: {fileID: 3386949240277275631}
+  - component: {fileID: 1705093583265997487}
   m_Layer: 6
   m_Name: NormalZombie
   m_TagString: NormalZombie
@@ -157,7 +157,7 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 4
---- !u!114 &3386949240277275631
+--- !u!114 &1705093583265997487
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -166,7 +166,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 7057805717610334465}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 540b5f17500f82c4eb6139bd22b6c70a, type: 3}
+  m_Script: {fileID: 11500000, guid: ca577e0ba92813f4f865a98b89eca115, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::NormalZombieAI
+  m_EditorClassIdentifier: Assembly-CSharp::MeleeEnemyAI
   <enemyData>k__BackingField: {fileID: 11400000, guid: 35520acba81b427429c7dd7f2a6b3c79, type: 2}
+  isStunned: 0
+  speedMultiplier: 1
+  bufferDistance: 0

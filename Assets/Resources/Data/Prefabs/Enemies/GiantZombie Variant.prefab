@@ -20,6 +20,10 @@ PrefabInstance:
       propertyPath: m_Color.r
       value: 0.06737405
       objectReference: {fileID: 0}
+    - target: {fileID: 1705093583265997487, guid: 249bf1f428edd434c8cc234f596fc32a, type: 3}
+      propertyPath: <enemyData>k__BackingField
+      value: 
+      objectReference: {fileID: 11400000, guid: 83ed54b1b9938c349ae30229b667bca6, type: 2}
     - target: {fileID: 2184335152038401304, guid: 249bf1f428edd434c8cc234f596fc32a, type: 3}
       propertyPath: m_LocalScale.x
       value: 2

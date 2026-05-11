@@ -1,60 +1,41 @@
 using UnityEngine;
 
-public class RangedEnemyAI : EnemyAI
+public class MeleeEnemyAI : EnemyAI
 {
-    [Header("Ranged Settings")]
-    [SerializeField] private EnemyProjectile projectilePrefab;
-    [SerializeField] private Transform firePoint;
-
-    // Khoảng cách an toàn để quái không đi quá sát (Có thể chỉnh trong Inspector)
-    [SerializeField] private float bufferDistance = 1.5f;
-
+    [Header("Melee Settings")]
     private float nextAttackTime = 0f;
-
-    private float actualAttackRange; 
-    private float velocityXRef; 
-
-    protected override void Awake()
-    {
-        base.Awake();
-        if (firePoint == null) firePoint = transform;
-    }
-
-    public override void ResetStats()
-    {
-        base.ResetStats();
-
-        actualAttackRange = enemyData.attackRange + Random.Range(-0.5f, 0.5f);
-
-        actualAttackRange = Mathf.Max(0.5f, actualAttackRange);
-    }
+    [SerializeField] private float bufferDistance = 0f;
+    private float velocityXRef; // Biến tham chiếu nội bộ dùng cho hàm SmoothDamp
 
     protected override void ProcessAI()
     {
+        // Kiểm tra khoảng cách
         float distanceToTower = Vector2.Distance(transform.position, towerTransform.position);
 
         ApproachingTower(distanceToTower);
 
-        if (distanceToTower <= actualAttackRange)
+        if (distanceToTower <= enemyData.attackRange)
         {
+            // Đã vào tầm đánh -> Dừng lại
+            rb.linearVelocity = Vector2.zero;
+
+            // Logic Cooldown tấn công
             if (Time.time >= nextAttackTime)
             {
                 Attack();
                 nextAttackTime = Time.time + enemyData.attackCooldown;
             }
         }
+
+
     }
 
     private void Attack()
     {
+        // Tính toán sát thương có độ lệch (Variation)
         float finalDamage = enemyData.attackDamage + RandomUtils.RandomWithSteps(-enemyData.damageVariation, enemyData.damageVariation, 0.25f);
 
-        EnemyProjectileManager.Instance.SpawnProjectile(
-            projectilePrefab,
-            firePoint.position,
-            towerTransform.position,
-            finalDamage
-        );
+        Debug.Log($"[MeleeEnemyAI] {gameObject.name} attacks the tower for {finalDamage} damage!");
     }
 
     private void ApproachingTower(float distanceToTower)
@@ -62,12 +43,12 @@ public class RangedEnemyAI : EnemyAI
         float targetVelocityX = 0f;
 
         // Tính toán vận tốc mong muốn (Target Velocity)
-        if (distanceToTower > actualAttackRange)
+        if (distanceToTower > enemyData.attackRange)
         {
             // Chưa tới tầm -> Tốc độ mong muốn là đi thẳng tới
             targetVelocityX = -enemyData.moveSpeed * speedMultiplier;
         }
-        else if (distanceToTower >= actualAttackRange - bufferDistance)
+        else if (distanceToTower >= enemyData.attackRange - bufferDistance)
         {
             // Vừa đúng tầm bắn -> Tốc độ mong muốn là 0 (Đứng lại)
             targetVelocityX = 0f;
