@@ -10,7 +10,7 @@ public class SplitModifier : ModifierBase
 
     private const string SPLIT_COUNT = "SplitCount";
 
-    public override void OnLaunch(Projectile projectile, ProjectileRuntimeState state)
+    public override void OnFire(Projectile projectile, ProjectileRuntimeState state)
     {
         projectileSpawner = projectile.projectileSpawner;
         state.AddStat(SPLIT_COUNT, additionalSplits);

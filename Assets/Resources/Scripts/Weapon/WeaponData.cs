@@ -4,36 +4,46 @@ using UnityEngine;
 
 public enum WeaponType
 {
-    Bow,
-    Cannon,
-    Laser
+    Single,     // Cung, Sniper (Bắn 1 viên/lần)
+    Burst,      // Súng trường (Bắn 3 viên liên tục rồi nghỉ)
+    Auto,       // Súng máy (Đè chuột là xả đạn liên tục)
+    Shotgun,    // Đại bác chùm (Bắn 1 lần ra X viên theo hình nón)
+    Laser       // Bắn tia Beam thẳng (Raycast liên tục)
 }
 
 [CreateAssetMenu(fileName = "WeaponData", menuName = "Game/Weapon/Weapon Stats")]
 public class WeaponData : ScriptableObject
 {
-    public WeaponType weaponType= WeaponType.Bow;
+    [Header("Core Settings")]
+    public WeaponType weaponType = WeaponType.Single;
     public List<ProjectileData> listOfAvailableProjectiles = new List<ProjectileData>();
 
-    [Space(10)]
-    public float rangeRadius = 10; // Khoảng cách khi đạn ra khỏi bán kính này sẽ tự biến mất
-    public float launchVelocity = 1;
-    [Range(0f,1f)] public float vibrationVelocityStrength = 0.1f; // Độ mạnh của biến động vận tốc
-    public float attackCooldown = 0.2f; 
+    public int leftAngle = -45;
+    public int rightAngle = 45;
 
-    [Space(10)]
-    public float leftAngle = -45; // Góc trái của vùng tấn công
-    public float rightAngle = 45; // Góc phải của vùng tấn công
-    [Range(0f,45f)] public float angleVibration = 5; // Độ lệch ngẫu nhiên của góc bắn, giúp tạo hiệu ứng bắn không quá đều đặn
+    public float fireVelocity = 15f;
+    public float fireCooldown = 0.5f; // Thời gian nghỉ giữa các lần bóp cò
 
-    public float GetVibrationAngle()
+    [Header("Inaccuracy / Spread")]
+    [Range(0f, 45f)] public float angleVibration = 5f; // Độ lệch góc
+    [Range(0f, 1f)] public float velocityVibration = 0.1f; // Độ lệch lực bắn
+
+    [Header("Shotgun / Multi-shot Settings")]
+    public int projectilesPerShot = 1; // Số đạn bắn ra cùng lúc (Shotgun = 5)
+    public float spreadAngle = 30f; // Góc tỏa của Shotgun
+
+    [Header("Burst Settings")]
+    public int burstCount = 3; // Số viên trong 1 loạt đạn
+    public float burstInterval = 0.1f; // Độ trễ giữa các viên trong cùng 1 loạt
+
+    public float GetAngleVibration()
     {
         return Random.Range(-angleVibration, angleVibration);
     }
 
-    public float GetVibrationLaunchVelocity()
+    public float GetVelocityVibration(float finalVelocity)
     {
-        return Random.Range(-launchVelocity * vibrationVelocityStrength, launchVelocity * vibrationVelocityStrength);
+        return Random.Range(-finalVelocity * velocityVibration, finalVelocity * velocityVibration);
     }
 
 }

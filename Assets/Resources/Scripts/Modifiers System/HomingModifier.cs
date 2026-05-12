@@ -12,7 +12,7 @@ public class HomingModifier : ModifierBase
 
     private const string HOMING_COUNT = "HomingCount";
     private const string FRAME_TIMER = "HomingFrameTimer";
-    public override void OnLaunch(Projectile projectile, ProjectileRuntimeState state)
+    public override void OnFire(Projectile projectile, ProjectileRuntimeState state)
     {
         state.AddStat(HOMING_COUNT, additionalHoming);
         state.SetStat(FRAME_TIMER, 0); // Đồng hồ đếm frame để tối ưu quét mục tiêu

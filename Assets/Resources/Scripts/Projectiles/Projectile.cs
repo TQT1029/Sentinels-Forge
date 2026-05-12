@@ -18,7 +18,7 @@ public class Projectile : MonoBehaviour
 
     public ProjectileRuntimeState RuntimeState { get; private set; } = new ProjectileRuntimeState();
 
-    protected float launchVelocity;
+    protected float fireVelocity;
 
     protected virtual void Awake()
     {
@@ -44,7 +44,7 @@ public class Projectile : MonoBehaviour
     /// <param name="lifeTime">Thời gian tồn tại trước khi bị tự động thu hồi về pool</param>
     public virtual void Init(float lifeTime)
     {
-        launchVelocity = weaponControl.weaponData.launchVelocity;
+        fireVelocity = weaponControl.weaponData.fireVelocity;
 
         RuntimeState.Reset(projectileData.baseDamage);
 
@@ -55,7 +55,7 @@ public class Projectile : MonoBehaviour
         // Kích hoạt tất cả modifier
         if (modifiers != null)
         {
-            foreach (var mod in modifiers) mod.OnLaunch(this, RuntimeState);
+            foreach (var mod in modifiers) mod.OnFire(this, RuntimeState);
         }
 
         Invoke(nameof(ReturnToPool), lifeTime);
@@ -133,7 +133,7 @@ public class Projectile : MonoBehaviour
     /// <param name="impactVelocity">Vận tốc va chạm của projectile</param>
     protected virtual void CalculateDamage(float impactVelocity)
     {
-        float speedRatio = impactVelocity / launchVelocity;
+        float speedRatio = impactVelocity / fireVelocity;
         RuntimeState.CurrentDamage = projectileData.baseDamage * speedRatio * RuntimeState.DamageMultiplier;
     }
 

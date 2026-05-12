@@ -14,5 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SplitModifier
   modifierName: Split
   description: 
-  additionalSplits: 2
+  additionalSplits: 1
+  splitNumber: 2
   splitAngle: 30

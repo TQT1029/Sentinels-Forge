@@ -9,7 +9,7 @@ public class PierceModifier : ModifierBase
     // Dùng string hằng số làm Key truy xuất RuntimeState
     private const string PIERCE_COUNT = "PierceCount";
 
-    public override void OnLaunch(Projectile projectile, ProjectileRuntimeState state)
+    public override void OnFire(Projectile projectile, ProjectileRuntimeState state)
     {
         state.AddStat(PIERCE_COUNT, additionalPierces);
     }

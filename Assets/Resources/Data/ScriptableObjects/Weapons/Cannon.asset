@@ -15,10 +15,13 @@ MonoBehaviour:
   weaponType: 1
   listOfAvailableProjectiles:
   - {fileID: 11400000, guid: acfff19df7f2411409af8c55f9e8ee49, type: 2}
-  rangeRadius: 10
-  launchVelocity: 35
-  vibrationVelocityStrength: 0.2
-  attackCooldown: 1
-  leftAngle: -45
-  rightAngle: 90
+  leftAngle: -90
+  rightAngle: 45
+  fireVelocity: 37
+  fireCooldown: 0.5
   angleVibration: 5
+  velocityVibration: 0.1
+  projectilesPerShot: 1
+  spreadAngle: 30
+  burstCount: 3
+  burstInterval: 0.1

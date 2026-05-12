@@ -18,7 +18,7 @@ public abstract class ModifierBase : ScriptableObject
     protected ProjectileSpawner projectileSpawner;
 
     // Khởi tạo RuntimeState cho đạn khi vừa bắn ra
-    public virtual void OnLaunch(Projectile projectile, ProjectileRuntimeState state) { }
+    public virtual void OnFire(Projectile projectile, ProjectileRuntimeState state) { }
 
     public virtual void OnUpdate(Projectile projectile, ProjectileRuntimeState state) { }
 

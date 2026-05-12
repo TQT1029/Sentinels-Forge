@@ -8,7 +8,7 @@ public class BounceModifier : ModifierBase
     private const string BOUNCE_COUNT = "BounceCount";
     
 
-    public override void OnLaunch(Projectile projectile, ProjectileRuntimeState state)
+    public override void OnFire(Projectile projectile, ProjectileRuntimeState state)
     {
         state.AddStat(BOUNCE_COUNT, additionalBounces);
     }
