@@ -32,7 +32,7 @@ public class ProjectileSpawner : MonoBehaviour
                     actionOnDestroy: OnDestroyPoolObject,
                     collectionCheck: false,
                     defaultCapacity: 10,
-                    maxSize: 100
+                    maxSize: 300
                 );
             }
             return poolsMap[projectileData];

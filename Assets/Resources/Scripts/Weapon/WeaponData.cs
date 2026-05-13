@@ -41,9 +41,9 @@ public class WeaponData : ScriptableObject
         return Random.Range(-angleVibration, angleVibration);
     }
 
-    public float GetVelocityVibration(float finalVelocity)
+    public float GetVelocityVibration( float baseVelocity)
     {
-        return Random.Range(-finalVelocity * velocityVibration, finalVelocity * velocityVibration);
+        return Random.Range(-baseVelocity * velocityVibration, baseVelocity * velocityVibration);
     }
 
 }

@@ -36,13 +36,13 @@ public class EnemyProjectile : MonoBehaviour
     // Ưu tiên dùng OnTriggerEnter2D kết hợp Rigidbody2D (Kinematic) cho quái để nhẹ CPU
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.CompareTag("Tower"))
+        if (collision.gameObject.CompareTag(GameConstants.TOWER_TAG))
         {
             // Base/Tower.Instance.TakeDamage(damage); 
-            Debug.Log($"[EnemyProjectile] Hit the tower for {damage} damage!");
+            //Debug.Log($"[EnemyProjectile] Hit the tower for {damage} damage!");
             ReturnToPool();
         }
-        else if (collision.gameObject.CompareTag("Ground"))
+        else if (collision.gameObject.CompareTag(GameConstants.GROUND_TAG))
         {
             ReturnToPool();
         }

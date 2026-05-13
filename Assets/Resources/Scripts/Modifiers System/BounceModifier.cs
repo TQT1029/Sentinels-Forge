@@ -23,18 +23,18 @@ public class BounceModifier : ModifierBase
             state.SetStat(BOUNCE_COUNT, bouncesLeft - 1);
 
             // Logic phản xạ tia (Toán học)
-            Vector2 currentVel = projectile.rb.linearVelocity;
+            Vector2 currentVel = state.Velocity;
             Vector2 reflected = Vector2.Reflect(currentVel.normalized, hitData.Normal);
             projectile.rb.linearVelocity = reflected * currentVel.magnitude * speedRetention;
 
             // Đẩy nhẹ đạn ra khỏi tường để chống kẹt (chống Double-hit vật lý)
             projectile.transform.position = hitData.Point + hitData.Normal * 0.05f;
 
-            // CỐT LÕI: Yêu cầu đạn KHÔNG tự hủy (Để nó bay tiếp theo hướng mới)
+            // Yêu cầu đạn KHÔNG tự hủy (Để nó bay tiếp theo hướng mới)
             hitContext.TerminateProjectile = false;
 
             // Xoá danh sách quái đã trúng để đạn nảy lại có thể đánh trúng con cũ
-             projectile.ClearHitTargets(); // Nếu bạn public hàm này bên Projectile
+             projectile.ClearHitTargets();
         }
     }
 }

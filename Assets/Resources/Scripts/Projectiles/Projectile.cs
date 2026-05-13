@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.Pool;
 using System.Collections.Generic;
+using System;
 
 [RequireComponent(typeof(Rigidbody2D))]
 public class Projectile : MonoBehaviour
@@ -77,6 +78,7 @@ public class Projectile : MonoBehaviour
     /// <summary>
     /// Bất kể là đạn Raycast hay đạn Collider, khi va chạm quái đều gọi hàm này.
     /// </summary>
+    /// <returns> Nếu đạn không tự huỷ thì trả về true, ngược lại false </returns>
     public virtual bool ProcessHit(HitData hitData)
     {
         if (hitData.Enemy != null)
@@ -134,7 +136,7 @@ public class Projectile : MonoBehaviour
     protected virtual void CalculateDamage(float impactVelocity)
     {
         float speedRatio = impactVelocity / fireVelocity;
-        RuntimeState.CurrentDamage = projectileData.baseDamage * speedRatio * RuntimeState.DamageMultiplier;
+        RuntimeState.CurrentDamage = (float)Math.Round(projectileData.baseDamage * speedRatio * RuntimeState.DamageMultiplier, 2);
     }
 
 

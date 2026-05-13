@@ -13,7 +13,7 @@ public class WeaponControl : MonoBehaviour
     {
         if (firePoint == null)
         {
-            Transform foundPoint = transform.Find("FireerPoint");
+            Transform foundPoint = transform.Find("FirePoint");
             if (foundPoint != null) firePoint = foundPoint.gameObject;
         }
 

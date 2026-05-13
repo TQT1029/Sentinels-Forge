@@ -4,10 +4,16 @@
 TagManager:
   serializedVersion: 3
   tags:
-  - LauncherPoint
   - Ground
   - Tower
-  - NormalZombie
+  - Weapon
+  - FirePoint
+  - RangedEnemy
+  - MeleeEnemy
+  - FlyingEnemy
+  - SupportEnemy
+  - BossEnemy
+  - Wall
   layers:
   - Default
   - TransparentFX
@@ -17,10 +23,10 @@ TagManager:
   - UI
   - Enemy
   - Projectile
-  - Ground
+  - 
   - SpawnerZone
   - EnemyProjectile
-  - 
+  - Border
   - 
   - 
   - 

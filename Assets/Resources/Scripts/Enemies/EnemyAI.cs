@@ -28,8 +28,6 @@ public abstract class EnemyAI : MonoBehaviour
     [HideInInspector] public bool isStunned = false;
     [HideInInspector] public float speedMultiplier = 1f; // Dùng cho hiệu ứng Slow (Làm chậm)
 
-
-    //protected float percentHealth => (float)enemyData.CurrentHealth / enemyData.MaxHealth;
     protected virtual void Awake()
     {
         towerTransform = WaveManager.Instance.TowerTransform;

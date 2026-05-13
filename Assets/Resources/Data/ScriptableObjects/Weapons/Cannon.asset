@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 749770022afebe7499e1603a169da35d, type: 3}
   m_Name: Cannon
   m_EditorClassIdentifier: Assembly-CSharp::WeaponData
-  weaponType: 1
+  weaponType: 0
   listOfAvailableProjectiles:
   - {fileID: 11400000, guid: acfff19df7f2411409af8c55f9e8ee49, type: 2}
   leftAngle: -90

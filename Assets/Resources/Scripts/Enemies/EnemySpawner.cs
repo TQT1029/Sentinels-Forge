@@ -9,12 +9,14 @@ public class EnemyPoolConfig
 {
     [Header("Enemy Data")]
     public EnemyAI prefab;
-    public int defaultCapacity = 10;
-    [Min(20)] public int maxSize = 50;
+    [Tooltip("Số lượng mặc định sẽ xuất hiện")] public int defaultCapacity { get; private set; } = 0;
+    [field: Min(20)] public int maxSize { get; private set; } = 100;
 
     [Header("Wave Generation Logic")]
-    public int cost = 10; // Mức tiêu hao ngân sách. Quái boss cost = 100, quái thường cost = 10
-    public int unlockAtWave = 1; // Ngăn quái mạnh xuất hiện quá sớm
+    [Min(1)] public int cost = 10; // Mức tiêu hao ngân sách. Quái elite cost = 100, quái thường cost = 10
+    [Min(1)] public int unlockAtWave = 1; // Ngăn quái mạnh xuất hiện quá sớm
+    [SerializeField] private int lockAtWave = 10; // Dừng spawn ở wave được chọn
+    public int LockAtWave => lockAtWave > unlockAtWave ? lockAtWave : unlockAtWave + 5;
 }
 
 public class EnemySpawner : Singleton<EnemySpawner>
@@ -139,7 +141,7 @@ public class EnemySpawner : Singleton<EnemySpawner>
     {
         List<EnemyAI> queue = new List<EnemyAI>();
 
-        List<EnemyPoolConfig> availableTypes = poolConfigs.FindAll(c => c.unlockAtWave <= currentWave);
+        List<EnemyPoolConfig> availableTypes = poolConfigs.FindAll(c => c.unlockAtWave <= currentWave && currentWave <= c.LockAtWave);
 
         while (budget > 0)
         {
@@ -163,7 +165,7 @@ public class EnemySpawner : Singleton<EnemySpawner>
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.layer == LayerMask.NameToLayer("Projectile"))
+        if (collision.gameObject.layer == GameConstants.INDEX_PROJECTILE_LAYER)
         {
             Projectile projectile = collision.gameObject.GetComponent<Projectile>();
 

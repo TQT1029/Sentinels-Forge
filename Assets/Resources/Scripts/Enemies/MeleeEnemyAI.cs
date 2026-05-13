@@ -35,7 +35,7 @@ public class MeleeEnemyAI : EnemyAI
         // Tính toán sát thương có độ lệch (Variation)
         float finalDamage = enemyData.attackDamage + RandomUtils.RandomWithSteps(-enemyData.damageVariation, enemyData.damageVariation, 0.25f);
 
-        Debug.Log($"[MeleeEnemyAI] {gameObject.name} attacks the tower for {finalDamage} damage!");
+        //Debug.Log($"[MeleeEnemyAI] {gameObject.name} attacks the tower for {finalDamage} damage!");
     }
 
     private void ApproachingTower(float distanceToTower)

@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1001 &5098847072223531857
+--- !u!1001 &8840677675869300314
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -8,17 +8,13 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 4107097457434226434, guid: 18ce2971da1eb3d4fb94c890a7d17037, type: 3}
-      propertyPath: m_LocalScale.x
-      value: 1.8
+    - target: {fileID: 3005498011660609615, guid: 18ce2971da1eb3d4fb94c890a7d17037, type: 3}
+      propertyPath: m_ForceSendLayers.m_Bits
+      value: 2447
       objectReference: {fileID: 0}
-    - target: {fileID: 4107097457434226434, guid: 18ce2971da1eb3d4fb94c890a7d17037, type: 3}
-      propertyPath: m_LocalScale.y
-      value: 1.8
-      objectReference: {fileID: 0}
-    - target: {fileID: 4107097457434226434, guid: 18ce2971da1eb3d4fb94c890a7d17037, type: 3}
-      propertyPath: m_LocalScale.z
-      value: 1.8
+    - target: {fileID: 3005498011660609615, guid: 18ce2971da1eb3d4fb94c890a7d17037, type: 3}
+      propertyPath: m_ForceReceiveLayers.m_Bits
+      value: 2447
       objectReference: {fileID: 0}
     - target: {fileID: 4107097457434226434, guid: 18ce2971da1eb3d4fb94c890a7d17037, type: 3}
       propertyPath: m_LocalPosition.x
@@ -60,18 +56,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 4107097457434226434, guid: 18ce2971da1eb3d4fb94c890a7d17037, type: 3}
-      propertyPath: m_ConstrainProportionsScale
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 5348562992012098190, guid: 18ce2971da1eb3d4fb94c890a7d17037, type: 3}
       propertyPath: m_Name
-      value: GiantZombie Variant
+      value: NormalZombie Variant
       objectReference: {fileID: 0}
     - target: {fileID: 6282887723765348769, guid: 18ce2971da1eb3d4fb94c890a7d17037, type: 3}
       propertyPath: <enemyData>k__BackingField
       value: 
-      objectReference: {fileID: 11400000, guid: 83ed54b1b9938c349ae30229b667bca6, type: 2}
+      objectReference: {fileID: 11400000, guid: 35520acba81b427429c7dd7f2a6b3c79, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

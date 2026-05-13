@@ -83,12 +83,12 @@ public class ProjectileBow : Projectile
 
         if (hit.collider != null)
         {
-            if (hit.collider.gameObject.layer == LayerMask.NameToLayer("SpawnerZone"))
+            if (hit.collider.gameObject.layer == GameConstants.INDEX_SPAWNER_ZONE_LAYER)
             {
                 ReturnToPool();
             }
 
-            if (hit.collider.gameObject.layer == LayerMask.NameToLayer("Ground"))
+            if (hit.collider.gameObject.layer == GameConstants.INDEX_BORDER_LAYER)
             {
                 HitData hitData = new HitData(hit, null);
 
@@ -100,7 +100,7 @@ public class ProjectileBow : Projectile
                 }
 
             }
-            else if (hit.collider.gameObject.layer == LayerMask.NameToLayer("Enemy"))
+            else if (hit.collider.gameObject.layer == GameConstants.INDEX_ENEMY_LAYER)
             {
                 EnemyAI enemy = hit.transform.GetComponent<EnemyAI>();
 

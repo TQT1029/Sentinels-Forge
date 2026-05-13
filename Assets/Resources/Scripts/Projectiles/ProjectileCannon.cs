@@ -15,25 +15,27 @@ public class ProjectileCannon : Projectile
     public override void Init(float lifeTime)
     {
         base.Init(lifeTime);
-        
+
         projectileCollider.excludeLayers = 0;
-        rb.AddTorque(torqueAmount,ForceMode2D.Impulse);
+        projectileCollider.excludeLayers = (1 << GameConstants.INDEX_TOWER_LAYER);
+
+        rb.AddTorque(torqueAmount, ForceMode2D.Impulse);
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.layer == LayerMask.NameToLayer("Enemy"))
+        if (collision.gameObject.layer == GameConstants.INDEX_ENEMY_LAYER)
         {
             EnemyAI enemy = collision.gameObject.GetComponent<EnemyAI>();
 
             HitData hitData = new HitData(collision, enemy);
             bool shouldKeepFlying = ProcessHit(hitData);
         }
-        if (collision.gameObject.layer == LayerMask.NameToLayer("Ground"))
+        if (collision.gameObject.layer == GameConstants.INDEX_BORDER_LAYER && collision.gameObject.CompareTag(GameConstants.GROUND_TAG))
         {
 
             HitData hitData = new HitData(collision, null);
-            bool shouldKeepFlying=ProcessHit(hitData);
+            bool shouldKeepFlying = ProcessHit(hitData);
 
             if (!shouldKeepFlying)
             {
@@ -41,18 +43,28 @@ public class ProjectileCannon : Projectile
             }
         }
 
-        if (collision.gameObject.layer == LayerMask.NameToLayer("SpawnerZone"))
+        if (collision.gameObject.layer == GameConstants.INDEX_SPAWNER_ZONE_LAYER)
         {
             ReturnToPool();
         }
 
     }
 
-
     private void OnTouchGround()
     {
-        if (projectileCollider == null) return;
+        if (projectileCollider == null || !gameObject.activeInHierarchy) return;
+
         RuntimeState.DamageMultiplier = 0;
-        projectileCollider.excludeLayers = LayerMask.GetMask("Enemy", "Projectile");
+        //Dùng toán tử |= để CỘNG THÊM Mask thay vì ghi đè (Tránh làm mất Mask Tower đã set ở trên)
+        projectileCollider.excludeLayers |= (1 << GameConstants.INDEX_ENEMY_LAYER) | (1 << GameConstants.INDEX_PROJECTILE_LAYER);
+    }
+
+    public override void ReturnToPool()
+    {
+        // Nếu viên đạn chạm đất -> bắt đầu đếm 0.1s -> nhưng 0.05s sau nó hết lifeTime và bị thu về Pool.
+        // Nếu không Cancel, hàm OnTouchGround vẫn sẽ nổ ra khi đạn đang nằm trong Pool (hoặc khi vừa được lấy ra cho lần bắn tiếp theo), gây lỗi đạn xuyên quái ngay từ lúc bắn.
+        CancelInvoke(nameof(OnTouchGround));
+
+        base.ReturnToPool();
     }
 }

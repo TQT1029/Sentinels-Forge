@@ -82,7 +82,7 @@ SpriteRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: -1
   m_MaskInteraction: 0
   m_Sprite: {fileID: -2413806693520163455, guid: a86470a33a6bf42c4b3595704624658b, type: 3}
   m_Color: {r: 0.6075471, g: 0.6075471, b: 0.6075471, a: 1}
@@ -110,14 +110,14 @@ CircleCollider2D:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 8
   m_LayerOverridePriority: 0
   m_ForceSendLayers:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 3831
   m_ForceReceiveLayers:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 3831
   m_ContactCaptureLayers:
     serializedVersion: 2
     m_Bits: 4294967295
@@ -171,5 +171,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ProjectileCannon
   modifiers:
   - {fileID: 11400000, guid: 6fd5056cb2a24354dafc87af3aaddadf, type: 2}
-  - {fileID: 11400000, guid: fd3c187ca97f3e64d9b7e4294dccc7be, type: 2}
   - {fileID: 11400000, guid: 361a6fb1604c2164e9dd1417c7a078ce, type: 2}
+  - {fileID: 11400000, guid: f9482ae52f115544d9af47ae85d5a8cf, type: 2}
+  - {fileID: 11400000, guid: fd3c187ca97f3e64d9b7e4294dccc7be, type: 2}
