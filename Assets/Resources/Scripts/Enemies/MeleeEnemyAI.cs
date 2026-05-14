@@ -35,6 +35,8 @@ public class MeleeEnemyAI : EnemyAI
         // Tính toán sát thương có độ lệch (Variation)
         float finalDamage = enemyData.attackDamage + RandomUtils.RandomWithSteps(-enemyData.damageVariation, enemyData.damageVariation, 0.25f);
 
+        //Tower.TakeDamage(finalDamage);
+
         //Debug.Log($"[MeleeEnemyAI] {gameObject.name} attacks the tower for {finalDamage} damage!");
     }
 

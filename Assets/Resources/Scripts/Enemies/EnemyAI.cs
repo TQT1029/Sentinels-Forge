@@ -76,7 +76,7 @@ public abstract class EnemyAI : MonoBehaviour
     {
         HandleEffects(); // Chạy bộ đếm thời gian của hiệu ứng
 
-        if (isStunned) return; // CỐT LÕI: Đang choáng thì bỏ qua toàn bộ Update bên dưới (Không đi, không đánh)
+        if (isStunned) return; // Đang choáng thì bỏ qua toàn bộ Update bên dưới (Không đi, không đánh)
 
         checkingTime += Time.deltaTime;
 

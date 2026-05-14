@@ -18,6 +18,11 @@ public class RangedEnemyAI : EnemyAI
     {
         base.Awake();
         if (firePoint == null) firePoint = transform;
+
+        ValidateBufferDistance();
+
+        actualAttackRange = enemyData.attackRange + Random.Range(-0.5f, 0.5f);
+
     }
 
     public override void ResetStats()
@@ -27,6 +32,7 @@ public class RangedEnemyAI : EnemyAI
         actualAttackRange = enemyData.attackRange + Random.Range(-0.5f, 0.5f);
 
         actualAttackRange = Mathf.Max(0.5f, actualAttackRange);
+        ValidateBufferDistance();
     }
 
     protected override void ProcessAI()
@@ -81,5 +87,23 @@ public class RangedEnemyAI : EnemyAI
         float smoothX = Mathf.SmoothDamp(rb.linearVelocity.x, targetVelocityX, ref velocityXRef, 0.2f);
 
         rb.linearVelocity = new Vector2(smoothX, rb.linearVelocity.y);
+    }
+
+    /// <summary>
+    /// Safety Check: Đảm bảo vùng đệm (buffer) không bao giờ lớn hơn hoặc bằng tầm đánh (range).
+    /// </summary>
+    private void ValidateBufferDistance()
+    {
+        if (bufferDistance >= actualAttackRange)
+        {
+            float oldBuffer = bufferDistance;
+
+            // Ép bufferDistance tối đa chỉ bằng 80% tầm đánh thực tế.
+            // Ví dụ: Tầm đánh là 2, thì buffer lớn nhất chỉ được là 1.6 (quái sẽ đứng ở khoảng cách từ 1.6 đến 2.0 để bắn)
+            bufferDistance = actualAttackRange * 0.8f;
+
+            // Bắn LogWarning để Designer/Tester biết mà sửa lại file Scriptable Object
+            Debug.LogWarning($"[Enemy System - Safety Check] Quái {gameObject.name} có Buffer Distance ({oldBuffer}) >= Attack Range ({actualAttackRange}). Đã tự động giảm Buffer xuống {bufferDistance} để tránh lỗi hành vi.");
+        }
     }
 }

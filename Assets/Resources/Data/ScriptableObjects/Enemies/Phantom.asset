@@ -10,13 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5a1a3f3b21befe1419fe4d0f3608aa6d, type: 3}
-  m_Name: NormalZombie
-  m_EditorClassIdentifier: Assembly-CSharp::EmnemyData
-  enemyName: Normal Zombie
-  enemyType: 0
+  m_Name: Phantom
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyData
+  enemyName: Phantom
+  enemyType: 2
   maxHealth: 50
-  moveSpeed: 2
-  attackRange: 1.5
+  moveSpeed: 7
+  attackRange: 3
   attackDamage: 10
   damageVariation: 2
   attackCooldown: 1
