@@ -45,6 +45,7 @@ public class FlyingEnemyAI : EnemyAI
         if (firePoint == null) firePoint = transform;
 
         actualAttackRange = enemyData.attackRange + Random.Range(-0.5f, 0.5f);
+        ValidateBufferDistance();
 
         randomNoiseOffset = Random.Range(0f, 1000f);
     }
@@ -82,7 +83,7 @@ public class FlyingEnemyAI : EnemyAI
             //Debug.Log($"[FlyingEnemyAI] Tháp Trong phạm vi tấn công");
         }
 
-        //Debug.Log($"[FlyingEnemyAI] khoảng cách tới tháp: {distanceToTower}, phạm ví tấn công thực tế: {actualAttackRange}");
+        //Debug.Log($"[FlyingEnemyAI] khoảng cách tới tháp: {distanceToTower}, phạm ví tấn công thực tế: {actualBuffRange}");
     }
 
     private void Attack(bool useRangedAttack)
@@ -210,7 +211,7 @@ public class FlyingEnemyAI : EnemyAI
             bufferDistance = actualAttackRange * 0.8f;
 
             // Bắn LogWarning để Designer/Tester biết mà sửa lại file Scriptable Object
-            Debug.LogWarning($"[Enemy System - Safety Check] Quái {gameObject.name} có Buffer Distance ({oldBuffer}) >= Attack Range ({actualAttackRange}). Đã tự động giảm Buffer xuống {bufferDistance} để tránh lỗi hành vi.");
+            Debug.LogWarning($"[FlyingEnemyAI] Quái {gameObject.name} có Buffer Distance ({oldBuffer}) >= UsingBuff Range ({actualAttackRange}). Đã tự động giảm Buffer xuống {bufferDistance} để tránh lỗi hành vi.");
         }
     }
 }
