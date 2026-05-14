@@ -912,6 +912,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 996646476848620568, guid: 0762796ec9953c64382878ac2d0ba8e8, type: 3}
+      propertyPath: minAltitude
+      value: 15
+      objectReference: {fileID: 0}
     - target: {fileID: 3339590211859015789, guid: 0762796ec9953c64382878ac2d0ba8e8, type: 3}
       propertyPath: m_LocalPosition.x
       value: 26.5

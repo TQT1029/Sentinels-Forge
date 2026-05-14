@@ -177,9 +177,9 @@ MonoBehaviour:
   projectilePrefab: {fileID: 0}
   firePoint: {fileID: 0}
   bufferDistance: 3
-  minAltitude: 10
-  altitudeCorrectionForce: 15
-  overshootBrakeDistance: 3
+  minAltitude: 20
+  altitudeCorrectionForce: 30
+  overshootBrakeDistance: 5
   sineAmplitude: 2
   sineFrequency: 3
   perlinAmplitude: 2

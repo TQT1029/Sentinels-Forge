@@ -70,13 +70,13 @@ public class FlyingEnemyAI : EnemyAI
         float distanceToTower = Vector2.Distance(transform.position, towerTransform.position);
         Vector2 directionToTower = (towerTransform.position - transform.position).normalized;
 
-        ApproachingTower(distanceToTower, directionToTower, this.approachStyle);
+        ApproachingTower(distanceToTower, directionToTower, approachStyle);
 
         if (distanceToTower <= actualAttackRange)
         {
             if (Time.time >= nextAttackTime)
             {
-                Attack(this.usesRangedAttack);
+                Attack(usesRangedAttack);
                 nextAttackTime = Time.time + enemyData.attackCooldown;
             }
 
