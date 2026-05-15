@@ -170,6 +170,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MeleeEnemyAI
   <enemyData>k__BackingField: {fileID: 0}
+  towerTargetOffset: {x: 0, y: -0.35, z: 0}
   isStunned: 0
   speedMultiplier: 1
   bufferDistance: 0

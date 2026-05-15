@@ -8,6 +8,9 @@ public abstract class EnemyAI : MonoBehaviour
     [field: SerializeField] public EnemyData enemyData { get; private set; }
     public Rigidbody2D rb { get; private set; }
     protected Transform towerTransform;
+    private Bounds towerBounds;
+    [SerializeField, Tooltip("Vị trí lệch so với tâm của tower (%)")] protected Vector3 towerTargetOffset;
+    protected Vector3 actualTargetPosition;
 
     private IObjectPool<EnemyAI> managedPool;
 
@@ -31,7 +34,21 @@ public abstract class EnemyAI : MonoBehaviour
     protected virtual void Awake()
     {
         towerTransform = WaveManager.Instance.TowerTransform;
+        towerBounds = WaveManager.Instance.TowerBounds;
         rb = GetComponent<Rigidbody2D>();
+
+        ResetStats();
+
+        // Tọa độ tâm thực tế của hình ảnh/collider
+        Vector3 center = towerBounds.center;
+
+        // Kích thước chiều rộng và chiều cao
+        Vector3 size = towerBounds.size;
+
+        // Tính % dựa trên Kích thước (Size)
+        actualTargetPosition.x = center.x + (size.x * towerTargetOffset.x);
+        actualTargetPosition.y = center.y + (size.y * towerTargetOffset.y);
+        actualTargetPosition.z = 0f;
     }
 
     public void SetPool(IObjectPool<EnemyAI> pool)
@@ -110,7 +127,7 @@ public abstract class EnemyAI : MonoBehaviour
             activeEffects.Remove(key);
         }
     }
-        
+
     /// <summary>
     /// Hàm chính để gọi từ bên ngoài
     /// </summary>

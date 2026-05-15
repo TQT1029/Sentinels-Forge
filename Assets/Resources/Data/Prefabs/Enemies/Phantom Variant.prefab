@@ -53,8 +53,16 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7466348914866975868, guid: 39689f154453c98419d7c2d326ccaf05, type: 3}
+      propertyPath: minAltitude
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 7466348914866975868, guid: 39689f154453c98419d7c2d326ccaf05, type: 3}
       propertyPath: approachStyle
       value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7466348914866975868, guid: 39689f154453c98419d7c2d326ccaf05, type: 3}
+      propertyPath: overshootBrakeDistance
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 7466348914866975868, guid: 39689f154453c98419d7c2d326ccaf05, type: 3}
       propertyPath: <enemyData>k__BackingField

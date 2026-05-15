@@ -142,7 +142,7 @@ Rigidbody2D:
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
-  m_Mass: 1000
+  m_Mass: 3
   m_LinearDamping: 0
   m_AngularDamping: 0.05
   m_GravityScale: 0
@@ -170,16 +170,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FlyingEnemyAI
   <enemyData>k__BackingField: {fileID: 0}
+  towerTargetOffset: {x: 0, y: 0.35, z: 0}
   isStunned: 0
   speedMultiplier: 1
   approachStyle: 0
   usesRangedAttack: 0
   projectilePrefab: {fileID: 0}
   firePoint: {fileID: 0}
-  bufferDistance: 3
-  minAltitude: 20
-  altitudeCorrectionForce: 30
-  overshootBrakeDistance: 5
+  minAltitude: 13
+  altitudeCorrectionForce: 10
+  overshootBrakeDistance: 3
   sineAmplitude: 2
   sineFrequency: 3
   perlinAmplitude: 2

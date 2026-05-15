@@ -50,6 +50,7 @@ public class ProjectileCannon : Projectile
 
     }
 
+    //TODO: Chỉnh lại để khi dùng modifier split thì đạn split ra nếu chạm đất cũng sẽ bị disable tương tự hàm này tránh cản đường quái và gây thêm damage
     private void OnTouchGround()
     {
         if (projectileCollider == null || !gameObject.activeInHierarchy) return;

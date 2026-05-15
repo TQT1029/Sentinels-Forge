@@ -117,9 +117,7 @@ public static class RandomUtils
         return rawHeight;
     }
     /// <summary>
-    /// Tạo độ cao ngẫu nhiên nhưng "mượt mà" và liên kết với nhau (Perlin Noise).
-    /// <para><b>Công dụng:</b> Thay vì các tấm ván nhảy lung tung (cái cao tít, cái sát đất), 
-    /// hàm này tạo ra độ cao lượn sóng tự nhiên. Tấm sau sẽ có độ cao gần tương đồng tấm trước.</para>
+    /// Lấy ngẫu nhiên độ cao của PerlinNoise 
     /// </summary>
     /// <param name="xPosition">Vị trí trục X hiện tại (làm mốc lấy mẫu).</param>
     /// <param name="scale">Độ "gắt" của địa hình. (0.1 = đồi thoai thoải, 0.5 = núi dốc).</param>
@@ -143,7 +141,13 @@ public static class RandomUtils
         return rawHeight;
     }
 
-    public static Vector2 RandomVector2(Vector2 startPosition, Vector2 endPosition)
+    /// <summary>
+    /// Lấy ngẫu nhiên một vị trí giữa 2 điểm. 
+    /// </summary>
+    /// <param name="startPosition"></param>
+    /// <param name="endPosition"></param>
+    /// <returns></returns>
+    public static Vector2 RandomPosition(Vector2 startPosition, Vector2 endPosition)
     {
         return new Vector2(Random.Range(startPosition.x, endPosition.x), Random.Range(startPosition.y, endPosition.y));
     }

@@ -30,7 +30,7 @@ public class EnemyData : ScriptableObject
     [Min(0f)] public float attackCooldown = 1f;
 
     [Header("Support Class Stats")]
-    public List<EffectData> listAvailableBuffs = new List<EffectData>();
+    public List<EffectData> listOfAvailableBuffs = new List<EffectData>();
     [Min(3f)] public float buffRange = 1.5f;
     [Min(0f)] public float buffCooldown = 1f;
 }

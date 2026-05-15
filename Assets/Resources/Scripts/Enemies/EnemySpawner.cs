@@ -68,7 +68,7 @@ public class EnemySpawner : Singleton<EnemySpawner>
 
     private EnemyAI CreateEnemy(EnemyAI prefab)
     {
-        Vector2 randomPosition = RandomUtils.RandomVector2(startPoint.position, endPoint.position);
+        Vector2 randomPosition = RandomUtils.RandomPosition(startPoint.position, endPoint.position);
 
         EnemyAI enemy = Instantiate(prefab, randomPosition, Quaternion.identity, enemiesStoreObj.transform);
         enemy.SetPool(enemyPools[prefab]);
@@ -160,7 +160,7 @@ public class EnemySpawner : Singleton<EnemySpawner>
     private Vector2 GetRandomSpawnPosition()
     {
         // Thay đổi vị trí kẻ địch trước khi triệu hồi
-        return RandomUtils.RandomVector2(startPoint.position, endPoint.position);
+        return RandomUtils.RandomPosition(startPoint.position, endPoint.position);
     }
 
     private void OnCollisionEnter2D(Collision2D collision)

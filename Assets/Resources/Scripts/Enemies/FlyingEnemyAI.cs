@@ -15,7 +15,7 @@ public class FlyingEnemyAI : EnemyAI
     [SerializeField] private Transform firePoint;
 
     [Header("Safety Settings")]
-    [SerializeField] private float bufferDistance = 1.5f;
+    private float bufferRange = 1.5f;
     [SerializeField, Min(5)] private float minAltitude = 10f; // Độ cao tối thiểu so với mặt đất
     [SerializeField, Min(5)] private float altitudeCorrectionForce = 5f; // Tốc độ đẩy lên khi quá sát đất
     [SerializeField] private float overshootBrakeDistance = 1f; // Khoảng cách bắt đầu phanh gấp nếu lỡ bay quá tháp
@@ -29,8 +29,9 @@ public class FlyingEnemyAI : EnemyAI
     [SerializeField] private float perlinFrequency = 1f; // Tốc độ xê dịch ngẫu nhiên
 
     private float nextAttackTime = 0f;
-    private float groundCheckingTime = 0f;
+    private float handleTime = 0f;
 
+    private bool isInRangeAttack = false;
     private float actualAttackRange;
     // Thay đổi sang Vector2 để SmoothDamp theo cả trục X và Y
     private Vector2 velocityRef;
@@ -43,47 +44,39 @@ public class FlyingEnemyAI : EnemyAI
         base.Awake();
 
         if (firePoint == null) firePoint = transform;
-
-        actualAttackRange = enemyData.attackRange + Random.Range(-0.5f, 0.5f);
-        ValidateBufferDistance();
-
-        randomNoiseOffset = Random.Range(0f, 1000f);
     }
 
     public override void ResetStats()
     {
         base.ResetStats();
 
-        ValidateBufferDistance();
-
         actualAttackRange = enemyData.attackRange + Random.Range(-0.5f, 0.5f);
+        actualAttackRange = Mathf.Max(1.5f, actualAttackRange);
 
-        actualAttackRange = Mathf.Max(0.5f, actualAttackRange);
+        bufferRange = actualAttackRange * 0.8f;
 
-        ValidateBufferDistance();
         randomNoiseOffset = Random.Range(0f, 1000f);
 
     }
 
     protected override void ProcessAI()
     {
-        float distanceToTower = Vector2.Distance(transform.position, towerTransform.position);
-        Vector2 directionToTower = (towerTransform.position - transform.position).normalized;
-
-        ApproachingTower(distanceToTower, directionToTower, approachStyle);
-
-        if (distanceToTower <= actualAttackRange)
+        if (Time.time >= handleTime)
         {
-            if (Time.time >= nextAttackTime)
-            {
-                Attack(usesRangedAttack);
-                nextAttackTime = Time.time + enemyData.attackCooldown;
-            }
+            float distanceToTower = Vector2.Distance(transform.position, actualTargetPosition);
+            Vector2 directionToTower = (actualTargetPosition - transform.position).normalized;
+            isInRangeAttack = IsInRangeAttack(distanceToTower);
 
-            //Debug.Log($"[FlyingEnemyAI] Tháp Trong phạm vi tấn công");
+            ApproachingTower(distanceToTower, directionToTower, approachStyle);
+
+            handleTime = Time.time + 0.05f;
         }
 
-        //Debug.Log($"[FlyingEnemyAI] khoảng cách tới tháp: {distanceToTower}, phạm ví tấn công thực tế: {actualBuffRange}");
+        if (isInRangeAttack && Time.time >= nextAttackTime)
+        {
+            Attack(usesRangedAttack);
+            nextAttackTime = Time.time + enemyData.attackCooldown;
+        }
     }
 
     private void Attack(bool useRangedAttack)
@@ -95,7 +88,7 @@ public class FlyingEnemyAI : EnemyAI
             EnemyProjectileManager.Instance.SpawnProjectile(
                 projectilePrefab,
                 firePoint.position,
-                towerTransform.position,
+                actualTargetPosition,
                 finalDamage
             );
         }
@@ -104,32 +97,51 @@ public class FlyingEnemyAI : EnemyAI
             // Cận chiến
             // Tower.TakeDamage(finalDamage);
         }
-        Debug.Log($"[FlyingEnemyAI] Đã tấn công: {finalDamage}");
+        //Debug.Log($"[FlyingEnemyAI] Đã tấn công: {finalDamage}");
+    }
+
+    private bool IsInRangeAttack(Vector2 directionToTower)
+    {
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, directionToTower, actualAttackRange, GameConstants.MASK_TOWER);
+
+        if (hit.collider != null)
+        {
+            Debug.DrawRay(transform.position, directionToTower * actualAttackRange, Color.green);
+            return true;
+        }
+        Debug.DrawRay(transform.position, directionToTower * actualAttackRange, Color.red);
+
+        return false;
+    }
+
+    private bool IsInRangeAttack(float distanceToTower)
+    {
+        return distanceToTower < actualAttackRange;
     }
     private void ApproachingTower(float distanceToTower, Vector2 directionToTower, FlyingType style)
     {
         Vector2 targetVelocity = Vector2.zero;
 
+        if (!isInRangeAttack)
+        {
+            if (distanceToTower > actualAttackRange)
+            {
+                // Đi thẳng tới mục tiêu theo Vector hướng
+                targetVelocity = directionToTower * (enemyData.moveSpeed * speedMultiplier);
+            }
+            else if (distanceToTower < bufferRange)
+            {
+                // Bị mục tiêu áp sát -> Đi lùi ra xa (Đảo ngược hướng)
+                targetVelocity = -directionToTower * (enemyData.moveSpeed * speedMultiplier);
+            }
+        }
+
         bool isBehindTower = transform.position.x < towerTransform.position.x + overshootBrakeDistance;
+
         if (isBehindTower)
         {
             // Nếu đã bay quá, ép vận tốc hướng ngược lại ngay lập tức để quay về vùng tấn công
             targetVelocity = Vector2.right * (enemyData.moveSpeed * speedMultiplier);
-        }
-        else if (distanceToTower > actualAttackRange)
-        {
-            // Đi thẳng tới mục tiêu theo Vector hướng
-            targetVelocity = directionToTower * (enemyData.moveSpeed * speedMultiplier);
-        }
-        else if (distanceToTower >= actualAttackRange - bufferDistance)
-        {
-            // Dừng lại (Vùng đệm)
-            targetVelocity = Vector2.zero;
-        }
-        else
-        {
-            // Bị mục tiêu áp sát -> Đi lùi ra xa (Đảo ngược hướng)
-            targetVelocity = -directionToTower * (enemyData.moveSpeed * speedMultiplier);
         }
 
         // THÊM DAO ĐỘNG TRỤC Y
@@ -160,22 +172,17 @@ public class FlyingEnemyAI : EnemyAI
 
         // KẾT HỢP VẬN TỐC ĐỊNH HƯỚNG VÀ DAO ĐỘNG
         targetVelocity.y += driftVelocityY;
-
-        if (Time.time >= groundCheckingTime)
-        {
-            targetVelocity.y = ApplyAltitudeSafety(targetVelocity.y);
-            groundCheckingTime = Time.time + 0.05f;
-        }
+        targetVelocity.y = ApplyAltitudeSafety(targetVelocity.y);
 
         // Giảm smoothTime (từ 0.2s xuống 0.1s) khi ở gần tháp hoặc khi đã lỡ bay quá để phanh gấp hơn
-        float currentSmoothTime = (distanceToTower < bufferDistance || isBehindTower) ? 0.05f : 0.15f;
+        float currentSmoothTime = (isInRangeAttack || isBehindTower) ? 0.1f : 0.2f;
         rb.linearVelocity = Vector2.SmoothDamp(rb.linearVelocity, targetVelocity, ref velocityRef, currentSmoothTime);
     }
 
     private float ApplyAltitudeSafety(float currentTargetVelocityY)
     {
         RaycastHit2D groundHit = Physics2D.Raycast(transform.position, Vector2.down, minAltitude, GameConstants.MASK_BORDER);
-        Debug.DrawRay(transform.position, Vector2.down * minAltitude, Color.aquamarine);
+        //Debug.DrawRay(transform.position, Vector2.down * minAltitude, Color.aquamarine);
 
         if (groundHit.collider != null && groundHit.collider.gameObject.CompareTag(GameConstants.GROUND_TAG))
         {
@@ -197,21 +204,5 @@ public class FlyingEnemyAI : EnemyAI
         return currentTargetVelocityY;
     }
 
-    /// <summary>
-    /// Safety Check: Đảm bảo vùng đệm (buffer) không bao giờ lớn hơn hoặc bằng tầm đánh (range).
-    /// </summary>
-    private void ValidateBufferDistance()
-    {
-        if (bufferDistance >= actualAttackRange)
-        {
-            float oldBuffer = bufferDistance;
 
-            // Ép bufferDistance tối đa chỉ bằng 80% tầm đánh thực tế.
-            // Ví dụ: Tầm đánh là 2, thì buffer lớn nhất chỉ được là 1.6 (quái sẽ đứng ở khoảng cách từ 1.6 đến 2.0 để bắn)
-            bufferDistance = actualAttackRange * 0.8f;
-
-            // Bắn LogWarning để Designer/Tester biết mà sửa lại file Scriptable Object
-            Debug.LogWarning($"[FlyingEnemyAI] Quái {gameObject.name} có Buffer Distance ({oldBuffer}) >= UsingBuff Range ({actualAttackRange}). Đã tự động giảm Buffer xuống {bufferDistance} để tránh lỗi hành vi.");
-        }
-    }
 }

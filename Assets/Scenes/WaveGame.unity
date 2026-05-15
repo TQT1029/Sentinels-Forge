@@ -434,6 +434,37 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &998032143
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 998032144}
+  m_Layer: 0
+  m_Name: GameObject
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &998032144
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 998032143}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -24, y: -7, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1247537090
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -761,11 +792,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SupportEnemyAI
   <enemyData>k__BackingField: {fileID: 11400000, guid: c379b0506ad7a4043a74a7a34a5f89de, type: 2}
+  towerTargetOffset: {x: 0, y: -0.35, z: 0}
   isStunned: 0
   speedMultiplier: 1
-  type: 0
+  type: 1
   isSingleTargeted: 1
-  bufferDistance: 1.5
+  bufferRange: 1.5
   nearestAlly: {fileID: 0}
 --- !u!50 &1479439188
 Rigidbody2D:
@@ -915,6 +947,18 @@ PrefabInstance:
     - target: {fileID: 996646476848620568, guid: 0762796ec9953c64382878ac2d0ba8e8, type: 3}
       propertyPath: minAltitude
       value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 996646476848620568, guid: 0762796ec9953c64382878ac2d0ba8e8, type: 3}
+      propertyPath: towerTargetOffset.y
+      value: 0.35
+      objectReference: {fileID: 0}
+    - target: {fileID: 996646476848620568, guid: 0762796ec9953c64382878ac2d0ba8e8, type: 3}
+      propertyPath: directAttackChecking.y
+      value: -0.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 996646476848620568, guid: 0762796ec9953c64382878ac2d0ba8e8, type: 3}
+      propertyPath: overshootBrakeDistance
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 3339590211859015789, guid: 0762796ec9953c64382878ac2d0ba8e8, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1827,11 +1871,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SupportEnemyAI
   <enemyData>k__BackingField: {fileID: 0}
+  towerTargetOffset: {x: 0, y: -0.35, z: 0}
   isStunned: 0
   speedMultiplier: 1
   type: 0
   isSingleTargeted: 1
-  bufferDistance: 1.5
+  bufferRange: 1.5
   nearestAlly: {fileID: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
@@ -1846,3 +1891,4 @@ SceneRoots:
   - {fileID: 7594546360069994351}
   - {fileID: 1479439191}
   - {fileID: 1630388536}
+  - {fileID: 998032144}

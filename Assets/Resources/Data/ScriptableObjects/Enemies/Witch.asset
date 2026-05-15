@@ -20,6 +20,7 @@ MonoBehaviour:
   attackDamage: 10
   damageVariation: 2
   attackCooldown: 1
-  listAvailableBuffs: []
+  listOfAvailableBuffs:
+  - {fileID: 11400000, guid: ebc3fc92b17dc7d46921a2f8bfd3bc14, type: 2}
   buffRange: 7
   buffCooldown: 1

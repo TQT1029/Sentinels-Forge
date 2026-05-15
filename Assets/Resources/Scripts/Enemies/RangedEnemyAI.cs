@@ -7,22 +7,17 @@ public class RangedEnemyAI : EnemyAI
     [SerializeField] private Transform firePoint;
 
     // Khoảng cách an toàn để quái không đi quá sát (Có thể chỉnh trong Inspector)
-    [SerializeField] private float bufferDistance = 1.5f;
+    private float bufferRange = 1.5f;
 
     private float nextAttackTime = 0f;
 
-    private float actualAttackRange; 
-    private float velocityXRef; 
+    private float actualAttackRange;
+    private float velocityXRef;
 
     protected override void Awake()
     {
         base.Awake();
         if (firePoint == null) firePoint = transform;
-
-
-        actualAttackRange = enemyData.attackRange + Random.Range(-0.5f, 0.5f);
-        ValidateBufferDistance();
-
     }
 
     public override void ResetStats()
@@ -30,14 +25,14 @@ public class RangedEnemyAI : EnemyAI
         base.ResetStats();
 
         actualAttackRange = enemyData.attackRange + Random.Range(-0.5f, 0.5f);
+        actualAttackRange = Mathf.Max(3f, actualAttackRange);
 
-        actualAttackRange = Mathf.Max(0.5f, actualAttackRange);
-        ValidateBufferDistance();
+        bufferRange = actualAttackRange * 0.8f;
     }
 
     protected override void ProcessAI()
     {
-        float distanceToTower = Vector2.Distance(transform.position, towerTransform.position);
+        float distanceToTower = Vector2.Distance(transform.position, actualTargetPosition);
 
         ApproachingTower(distanceToTower);
 
@@ -58,7 +53,7 @@ public class RangedEnemyAI : EnemyAI
         EnemyProjectileManager.Instance.SpawnProjectile(
             projectilePrefab,
             firePoint.position,
-            towerTransform.position,
+            actualTargetPosition,
             finalDamage
         );
     }
@@ -73,12 +68,7 @@ public class RangedEnemyAI : EnemyAI
             // Chưa tới tầm -> Tốc độ mong muốn là đi thẳng tới
             targetVelocityX = -enemyData.moveSpeed * speedMultiplier;
         }
-        else if (distanceToTower >= actualAttackRange - bufferDistance)
-        {
-            // Vừa đúng tầm bắn -> Tốc độ mong muốn là 0 (Đứng lại)
-            targetVelocityX = 0f;
-        }
-        else
+        else if (distanceToTower < bufferRange)
         {
             // Quá gần (Bị áp sát) -> Tốc độ mong muốn là đi lùi lại
             targetVelocityX = enemyData.moveSpeed * speedMultiplier;
@@ -89,21 +79,5 @@ public class RangedEnemyAI : EnemyAI
         rb.linearVelocity = new Vector2(smoothX, rb.linearVelocity.y);
     }
 
-    /// <summary>
-    /// Safety Check: Đảm bảo vùng đệm (buffer) không bao giờ lớn hơn hoặc bằng tầm đánh (range).
-    /// </summary>
-    private void ValidateBufferDistance()
-    {
-        if (bufferDistance >= actualAttackRange)
-        {
-            float oldBuffer = bufferDistance;
 
-            // Ép bufferDistance tối đa chỉ bằng 80% tầm đánh thực tế.
-            // Ví dụ: Tầm đánh là 2, thì buffer lớn nhất chỉ được là 1.6 (quái sẽ đứng ở khoảng cách từ 1.6 đến 2.0 để bắn)
-            bufferDistance = actualAttackRange * 0.8f;
-
-            // Bắn LogWarning để Designer/Tester biết mà sửa lại file Scriptable Object
-            Debug.LogWarning($"[RangedEnemyAI] Quái {gameObject.name} có Buffer Distance ({oldBuffer}) >= UsingBuff Range ({actualAttackRange}). Đã tự động giảm Buffer xuống {bufferDistance} để tránh lỗi hành vi.");
-        }
-    }
 }
