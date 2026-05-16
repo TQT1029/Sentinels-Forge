@@ -7,6 +7,7 @@ public class ProjectileCannon : Projectile
     private float torqueAmount = -25f; // Lực xoay khi va chạm với mặt đất
 
     private bool isGrounded = false;
+    private float bounceTime = 0f;
     protected override void Awake()
     {
         base.Awake();
@@ -31,6 +32,20 @@ public class ProjectileCannon : Projectile
 
     private void OnCollisionStay2D(Collision2D collision)
     {
+        if (isGrounded) return;
+
+        if (collision.gameObject.layer == GameConstants.INDEX_BORDER_LAYER && collision.gameObject.CompareTag(GameConstants.GROUND_TAG))
+        {
+            HitData hitData = new HitData(collision, null);
+            bool shouldKeepFlying = ProcessHit(hitData);
+
+            if (!shouldKeepFlying)
+            {
+                isGrounded = true;
+
+                Invoke(nameof(OnTouchGround), delayDisableCollider);
+            }
+        }
     }
 
     private void ProcessCollision(Collision2D collision)
