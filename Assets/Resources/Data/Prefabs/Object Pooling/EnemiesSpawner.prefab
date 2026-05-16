@@ -144,15 +144,23 @@ MonoBehaviour:
   - prefab: {fileID: 3278946641856978939, guid: 73f8efd75c508404b9099b25c80c9905, type: 3}
     cost: 10
     unlockAtWave: 1
-    lockAtWave: 5
+    lockAtWave: 1
   - prefab: {fileID: 1556304747090285934, guid: 07826e9a5e0cbcb4b85591afcac2164f, type: 3}
     cost: 10
     unlockAtWave: 1
-    lockAtWave: 5
+    lockAtWave: 1
   - prefab: {fileID: 1293645236406233840, guid: 45cc106f01fedf8438b0d9249ac040eb, type: 3}
     cost: 15
     unlockAtWave: 2
-    lockAtWave: 10
+    lockAtWave: 2
+  - prefab: {fileID: 6171186966227935251, guid: 3107429b4efdcee4289eb8832b53e0f4, type: 3}
+    cost: 12
+    unlockAtWave: 3
+    lockAtWave: 3
+  - prefab: {fileID: 996646476848620568, guid: 0762796ec9953c64382878ac2d0ba8e8, type: 3}
+    cost: 12
+    unlockAtWave: 4
+    lockAtWave: 4
   enemiesStoreObj: {fileID: 0}
   <startPoint>k__BackingField: {fileID: 126765865187565821}
   <endPoint>k__BackingField: {fileID: 5140304799289375940}

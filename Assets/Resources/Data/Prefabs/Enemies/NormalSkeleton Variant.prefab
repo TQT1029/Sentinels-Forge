@@ -63,7 +63,7 @@ PrefabInstance:
     - target: {fileID: 8133160834690447305, guid: 30c0ae7f43ac7dd46af7b14694832b94, type: 3}
       propertyPath: projectilePrefab
       value: 
-      objectReference: {fileID: 3480557679412807110, guid: e293eae94f97d5b4ca748a72e5e8bdcb, type: 3}
+      objectReference: {fileID: 5976340004694589711, guid: e293eae94f97d5b4ca748a72e5e8bdcb, type: 3}
     - target: {fileID: 8133160834690447305, guid: 30c0ae7f43ac7dd46af7b14694832b94, type: 3}
       propertyPath: <enemyData>k__BackingField
       value: 

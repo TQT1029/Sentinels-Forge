@@ -17,7 +17,7 @@ public abstract class EnemyAI : MonoBehaviour
     public Dictionary<EffectData, RuntimeEffect> activeEffects = new Dictionary<EffectData, RuntimeEffect>();
     private List<EffectData> effectsToRemove = new List<EffectData>(); // Cache để tránh lỗi xóa trong vòng lặp
     protected float currentHealth;
-    protected float percentHealth => currentHealth / enemyData.maxHealth;
+    public float PercentHealth => currentHealth / enemyData.maxHealth;
 
 
     protected float checkingFrequency = 10f; // Số lần check trong 1 giây
@@ -126,6 +126,13 @@ public abstract class EnemyAI : MonoBehaviour
         {
             activeEffects.Remove(key);
         }
+    }
+
+    public virtual void Heal(float amount)
+    {
+        if (IsDead) return;
+        currentHealth = Mathf.Min(currentHealth + amount, enemyData.maxHealth);
+        Debug.Log($"[EnemyAI] {gameObject.name} healed {amount} HP! Current HP: {currentHealth}");
     }
 
     /// <summary>

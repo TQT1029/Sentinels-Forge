@@ -100,20 +100,6 @@ public class FlyingEnemyAI : EnemyAI
         //Debug.Log($"[FlyingEnemyAI] Đã tấn công: {finalDamage}");
     }
 
-    private bool IsInRangeAttack(Vector2 directionToTower)
-    {
-        RaycastHit2D hit = Physics2D.Raycast(transform.position, directionToTower, actualAttackRange, GameConstants.MASK_TOWER);
-
-        if (hit.collider != null)
-        {
-            Debug.DrawRay(transform.position, directionToTower * actualAttackRange, Color.green);
-            return true;
-        }
-        Debug.DrawRay(transform.position, directionToTower * actualAttackRange, Color.red);
-
-        return false;
-    }
-
     private bool IsInRangeAttack(float distanceToTower)
     {
         return distanceToTower < actualAttackRange;

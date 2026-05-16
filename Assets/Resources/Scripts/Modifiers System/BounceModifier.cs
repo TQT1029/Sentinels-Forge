@@ -6,7 +6,7 @@ public class BounceModifier : ModifierBase
     public int additionalBounces = 2;
     public float speedRetention = 0.7f; // Tỉ lệ giữ lại tốc độ sau mỗi lần nảy
     private const string BOUNCE_COUNT = "BounceCount";
-    
+
 
     public override void OnFire(Projectile projectile, ProjectileRuntimeState state)
     {
@@ -34,7 +34,7 @@ public class BounceModifier : ModifierBase
             hitContext.TerminateProjectile = false;
 
             // Xoá danh sách quái đã trúng để đạn nảy lại có thể đánh trúng con cũ
-             projectile.ClearHitTargets();
+            projectile.ClearHitTargets();
         }
     }
 }

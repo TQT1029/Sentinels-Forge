@@ -16,7 +16,7 @@ public class EnemyPoolConfig
     [Min(1)] public int cost = 10; // Mức tiêu hao ngân sách. Quái elite cost = 100, quái thường cost = 10
     [Min(1)] public int unlockAtWave = 1; // Ngăn quái mạnh xuất hiện quá sớm
     [SerializeField] private int lockAtWave = 10; // Dừng spawn ở wave được chọn
-    public int LockAtWave => lockAtWave > unlockAtWave ? lockAtWave : unlockAtWave + 5;
+    public int LockAtWave => lockAtWave >= unlockAtWave ? lockAtWave : unlockAtWave + 5;
 }
 
 public class EnemySpawner : Singleton<EnemySpawner>
@@ -141,7 +141,7 @@ public class EnemySpawner : Singleton<EnemySpawner>
     {
         List<EnemyAI> queue = new List<EnemyAI>();
 
-        List<EnemyPoolConfig> availableTypes = poolConfigs.FindAll(c => c.unlockAtWave <= currentWave && currentWave <= c.LockAtWave);
+        List<EnemyPoolConfig> availableTypes = poolConfigs.FindAll(c => c.unlockAtWave <= currentWave && currentWave <= c.LockAtWave || c.unlockAtWave <= currentWave && c.unlockAtWave == c.LockAtWave);
 
         while (budget > 0)
         {

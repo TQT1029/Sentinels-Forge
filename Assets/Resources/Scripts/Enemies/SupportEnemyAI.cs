@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using static UnityEditor.ShaderGraph.Internal.KeywordDependentCollection;
 
 enum SupportType
 {
@@ -22,7 +23,13 @@ public class SupportEnemyAI : EnemyAI
     private float actualBuffRange;
     private float distanceToNearesAlly = Mathf.Infinity;
     private float velocityXRef;
-    [SerializeField] private Transform nearestAlly;
+    [SerializeField] private Transform primaryTarget;
+
+    [Header("Optimize")]
+    [SerializeField] private int maxTargetsToFind = 25; // Giới hạn tối đa quét 25 mục tiêu cùng lúc
+    private Collider2D[] overlapResults;
+    private List<EnemyAI> cachedAlliesList = new List<EnemyAI>();
+    [SerializeField] private ContactFilter2D enemyFilter;
 
     protected override void Awake()
     {
@@ -34,12 +41,17 @@ public class SupportEnemyAI : EnemyAI
     {
         base.ResetStats();
 
+        if (overlapResults == null)
+        {
+            overlapResults = new Collider2D[maxTargetsToFind];
+        }
+
         actualBuffRange = enemyData.buffRange + Random.Range(-0.5f, 0.5f);
         actualBuffRange = Mathf.Max(3f, actualBuffRange);
 
         bufferRange = actualBuffRange * 0.8f;
 
-        nearestAlly = FindNearestAlly();
+        primaryTarget = FindPrimaryTarget();
         availableAllies.Clear();
     }
 
@@ -49,18 +61,18 @@ public class SupportEnemyAI : EnemyAI
         if (Time.time >= findAllyTime)
         {
 
-            nearestAlly = FindNearestAlly();
+            primaryTarget = FindPrimaryTarget();
 
             findAllyTime = Time.time + 0.1f;
         }
 
 
-        if (nearestAlly != null)
+        if (primaryTarget != null)
         {
-            distanceToNearesAlly = Vector2.Distance(transform.position, nearestAlly.position);
+            distanceToNearesAlly = Vector2.Distance(transform.position, primaryTarget.position);
         }
 
-        ApproachingAlly(nearestAlly, distanceToNearesAlly);
+        ApproachingAlly(isSingleTargeted, primaryTarget, distanceToNearesAlly);
 
         if (distanceToNearesAlly <= actualBuffRange)
         {
@@ -74,35 +86,54 @@ public class SupportEnemyAI : EnemyAI
 
     private void UsingBuff(bool isSingleTargeted, SupportType type)
     {
-        EffectData choiceBuff = ChoiceRandomBuff();
-        if (isSingleTargeted)
+        switch (type)
         {
-            EnemyAI ally = nearestAlly.GetComponent<EnemyAI>();
-            ally.AddEffect(choiceBuff);
-            Debug.Log($"[SupportEnemyAI] Đang buff cho {ally.name}, vị trí {nearestAlly.position}");
+            case SupportType.Buffers:
+                EffectData choiceBuff = ChoiceRandomBuff();
+                if (isSingleTargeted)
+                {
+                    EnemyAI ally = primaryTarget.GetComponent<EnemyAI>();
+                    ally.AddEffect(choiceBuff);
+                    Debug.Log($"[SupportEnemyAI] Đang buff cho {ally.name}, vị trí {primaryTarget.position}");
+                }
+                else
+                {
+                    foreach (var ally in availableAllies)
+                    {
+                        ally.AddEffect(choiceBuff);
+                    }
+
+                    Debug.Log($"[SupportEnemyAI] Đang buff cho tất cả {availableAllies.Count} xung quanh");
+
+                }
+
+                break;
+            case SupportType.Healer:
+                // Tận dụng chỉ số attackDamage làm lượng máu được hồi
+                float healAmount = enemyData.attackDamage;
+
+                if (isSingleTargeted)
+                {
+                    EnemyAI ally = primaryTarget.GetComponent<EnemyAI>();
+                    ally.Heal(healAmount);
+                }
+                else
+                {
+                    foreach (var ally in availableAllies) ally.Heal(healAmount);
+                }
+                break;
         }
-        else
-        {
-            foreach (var ally in availableAllies)
-            {
-                ally.AddEffect(choiceBuff);
-            }
 
-            Debug.Log($"[SupportEnemyAI] Đang buff cho tất cả {availableAllies.Count} xung quanh");
-
-        }
-
-        availableAllies.Clear();//Buff xong xoá để tránh buff nhầm
     }
 
     private EffectData ChoiceRandomBuff()
     {
-        if (enemyData == null && enemyData.listOfAvailableBuffs == null) { return null; }
+        if (enemyData == null || enemyData.listOfAvailableBuffs == null || enemyData.listOfAvailableBuffs.Count == 0) return null;
         return enemyData.listOfAvailableBuffs[Random.Range(0, enemyData.listOfAvailableBuffs.Count)];
     }
 
     //TODO: Cần nâng cấp thêm nếu đang ở dạng buff AoE thì cần tìm vị trí trung tâm tất cả các quái để buff tối ưu nhất
-    private void ApproachingAlly(Transform nearestAlly, float distance)
+    private void ApproachingAlly(bool singleTargeted, Transform nearestAlly, float distance)
     {
         if (nearestAlly == null)
         {
@@ -110,6 +141,61 @@ public class SupportEnemyAI : EnemyAI
             return;
         }
 
+        if (singleTargeted)
+            ApproachingSingleTarget(nearestAlly, distance);
+        else
+            ApproachingOptimize();
+    }
+
+    private void ApproachingTower()
+    {
+        float targetVelocityX = 0f;
+
+        float distance = Vector2.Distance(actualTargetPosition, transform.position);
+        Vector2 direction = (actualTargetPosition - transform.position).normalized;
+
+        if (distance > enemyData.buffRange)
+            targetVelocityX = direction.x * enemyData.moveSpeed;
+        else if (distance < bufferRange) targetVelocityX = -direction.x * enemyData.moveSpeed;
+
+        float smoothX = Mathf.SmoothDamp(rb.linearVelocity.x, targetVelocityX, ref velocityXRef, 0.2f);
+
+        rb.linearVelocity = new Vector2(smoothX, rb.linearVelocity.y);
+
+    }
+
+    /// <summary>
+    /// Logic tìm vị trí tối ưu cho AoE (Tính toán Center of Mass - Trọng tâm)
+    /// Hạn chế di chuyển dư thừa: Điểm đến là trung bình cộng tọa độ X của tất cả đồng minh.
+    /// </summary>
+    private void ApproachingOptimize()
+    {
+        if (availableAllies.Count == 0) return;
+
+        // Tính tọa độ X trung bình của cả bầy
+        float averageX = 0f;
+        foreach (var ally in availableAllies)
+        {
+            averageX += ally.transform.position.x;
+        }
+        averageX /= availableAllies.Count;
+
+        float targetVelocityX = 0f;
+        float distanceToCenter = Mathf.Abs(averageX - transform.position.x);
+        float directionX = Mathf.Sign(averageX - transform.position.x);
+
+        // Chỉ nhúc nhích nếu bầy đàn đã đi ra khỏi vùng an toàn (Chống rung giật)
+        if (distanceToCenter > bufferRange * 0.5f)
+        {
+            targetVelocityX = directionX * enemyData.moveSpeed;
+        }
+
+        float smoothX = Mathf.SmoothDamp(rb.linearVelocity.x, targetVelocityX, ref velocityXRef, 0.2f);
+        rb.linearVelocity = new Vector2(smoothX, rb.linearVelocity.y);
+    }
+
+    private void ApproachingSingleTarget(Transform nearestAlly, float distance)
+    {
         float targetVelocityX = 0f;
         Vector2 direction = (nearestAlly.position - transform.position).normalized;
 
@@ -131,55 +217,73 @@ public class SupportEnemyAI : EnemyAI
 
     }
 
-    private void ApproachingTower()
+    /// <summary>
+    /// Logic phân loại độ ưu tiên (Priority)
+    /// </summary>
+    private Transform FindPrimaryTarget()
     {
-        float targetVelocityX = 0f;
-
-        float distance = Vector2.Distance(actualTargetPosition, transform.position);
-        Vector2 direction = (actualTargetPosition - transform.position).normalized;
-
-        if (distance > enemyData.buffRange)
-            targetVelocityX = direction.x * enemyData.moveSpeed;
-        else if (distance < bufferRange) targetVelocityX = -direction.x * enemyData.moveSpeed;
-
-        float smoothX = Mathf.SmoothDamp(rb.linearVelocity.x, targetVelocityX, ref velocityXRef, 0.2f);
-
-        rb.linearVelocity = new Vector2(smoothX, rb.linearVelocity.y);
-
-    }
-    private Transform FindNearestAlly()
-    {
-        Transform bestTarget = null;
-        float closestDistanceSqr = Mathf.Infinity;
-
         availableAllies = FindAllAllies();
+        if (availableAllies.Count == 0) return null;
 
-        if (availableAllies != null)
-            foreach (var ally in availableAllies)
+        Transform bestTarget = null;
+        float bestScore = Mathf.Infinity; // Điểm càng thấp càng ưu tiên
+
+        foreach (var ally in availableAllies)
+        {
+
+            // Nếu là Healer Đơn Mục Tiêu -> Ưu tiên Máu (HP) thấp nhất
+            if (type == SupportType.Healer && isSingleTargeted)
             {
-                float distance = (transform.position - ally.transform.position).sqrMagnitude;
-                if (distance < closestDistanceSqr)
+                // Bỏ qua quái đầy máu
+                if (ally.PercentHealth >= 0.99f) continue;
+
+                // Điểm ưu tiên = Tỷ lệ máu (Thằng nào máu ít -> Điểm thấp -> Được chọn)
+                if (ally.PercentHealth < bestScore)
                 {
-                    closestDistanceSqr = distance;
+                    bestScore = ally.PercentHealth;
                     bestTarget = ally.transform;
                 }
             }
+            // Nếu là Buffer hoặc AoE -> Ưu tiên vị trí gần nhất
+            else
+            {
+                float distanceSqr = (transform.position - ally.transform.position).sqrMagnitude;
+
+                if (distanceSqr < bestScore)
+                {
+                    bestScore = distanceSqr;
+                    bestTarget = ally.transform;
+                }
+            }
+        }
 
         return bestTarget;
     }
     private List<EnemyAI> FindAllAllies()
     {
-        Collider2D[] hitAllies = Physics2D.OverlapCircleAll(transform.position, enemyData.buffRange, GameConstants.MASK_ENEMY);
+        cachedAlliesList.Clear();
 
-        List<EnemyAI> availableAllies = new List<EnemyAI>();
+        int hitCount = Physics2D.OverlapCircle(
+                    transform.position,
+                    enemyData.buffRange * 2f,
+                    enemyFilter,       // Truyền bộ lọc vào đây
+                    overlapResults     // Nhét kết quả vào rổ này
+                );
 
-        if (availableAllies != null)
-            foreach (Collider2D ally in hitAllies)
+        for (int i = 0; i < hitCount; i++)
+        {
+            Collider2D allyCol = overlapResults[i];
+
+            if (!allyCol.gameObject.CompareTag(GameConstants.SUPPORT_ENEMY_TAG) && allyCol.gameObject != this.gameObject)
             {
-                if (!ally.gameObject.CompareTag(GameConstants.SUPPORT_ENEMY_TAG))
-                    availableAllies.Add(ally.GetComponent<EnemyAI>());
+                EnemyAI allyAI = allyCol.GetComponent<EnemyAI>();
+                if (allyAI != null && !allyAI.IsDead)
+                {
+                    cachedAlliesList.Add(allyAI);
+                }
             }
-        return availableAllies;
-    }
+        }
 
+        return cachedAlliesList;
+    }
 }

@@ -136,6 +136,8 @@ public class Projectile : MonoBehaviour
     protected virtual void CalculateDamage(float impactVelocity)
     {
         float speedRatio = impactVelocity / fireVelocity;
+        if (speedRatio < 0.15f) speedRatio = 0;
+
         RuntimeState.CurrentDamage = (float)Math.Round(projectileData.baseDamage * speedRatio * RuntimeState.DamageMultiplier, 2);
     }
 
