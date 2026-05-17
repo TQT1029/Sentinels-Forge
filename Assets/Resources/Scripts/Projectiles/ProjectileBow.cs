@@ -83,11 +83,13 @@ public class ProjectileBow : Projectile
 
         if (hit.collider != null)
         {
+            bool shouldKeepFlying = false;
+
             if (hit.collider.gameObject.layer == GameConstants.INDEX_BORDER_LAYER && hit.collider.gameObject.CompareTag(GameConstants.GROUND_TAG))
             {
                 HitData hitData = new HitData(hit, null);
 
-                bool shouldKeepFlying = ProcessHit(hitData);
+                shouldKeepFlying = ProcessHit(hitData);
 
                 if (!shouldKeepFlying)
                 {
@@ -103,7 +105,7 @@ public class ProjectileBow : Projectile
                 {
                     HitData hitData = new HitData(hit, enemy);
 
-                    bool shouldKeepFlying = ProcessHit(hitData);
+                    shouldKeepFlying = ProcessHit(hitData);
 
                     // Nếu không xuyên và không kẹt, thì mới dính vào quái vật
                     if (!shouldKeepFlying)

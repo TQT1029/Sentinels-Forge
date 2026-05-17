@@ -63,8 +63,8 @@ public abstract class EnemyAI : MonoBehaviour
 
         if (activeEffects.ContainsKey(effectData))
         {
-            // Trạng thái cộng dồn (Stacking/Refresh): Đã có hiệu ứng này rồi thì reset lại thời gian
-            activeEffects[effectData].TimeRemaining = effectData.baseDuration;
+            // Giao quyền định đoạt logic stack cho chính RuntimeEffect
+            activeEffects[effectData].OnStack();
         }
         else
         {
@@ -74,7 +74,13 @@ public abstract class EnemyAI : MonoBehaviour
             newEffect.OnApply();
         }
     }
-
+    // Tiện ích để các effect dò tìm nhau trên cùng 1 target
+    public RuntimeEffect GetEffect(EffectData effectData)
+    {
+        if (activeEffects.TryGetValue(effectData, out RuntimeEffect effect))
+            return effect;
+        return null;
+    }
     public virtual void ResetStats()
     {
         currentHealth = enemyData.maxHealth;
@@ -112,6 +118,7 @@ public abstract class EnemyAI : MonoBehaviour
             RuntimeEffect effect = kvp.Value;
 
             effect.OnTick(Time.deltaTime); // Chạy logic tick (VD: Độc trừ máu)
+            if (IsDead) break;
             effect.TimeRemaining -= Time.deltaTime; // Giảm thời gian
 
             if (effect.IsFinished)
@@ -120,7 +127,8 @@ public abstract class EnemyAI : MonoBehaviour
                 effectsToRemove.Add(kvp.Key);
             }
         }
-
+        // Nếu quái chết, danh sách đã được dọn sạch trong hàm Die(), ta thoát luôn
+        if (IsDead) return;
         // Dọn dẹp các hiệu ứng đã hết hạn
         foreach (var key in effectsToRemove)
         {

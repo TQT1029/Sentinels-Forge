@@ -54,7 +54,7 @@ public class ProjectileCannon : Projectile
         if (collision.gameObject.layer == GameConstants.INDEX_BORDER_LAYER && collision.gameObject.CompareTag(GameConstants.GROUND_TAG))
         {
             HandleGroundCollision(collision);
-            Debug.Log($"[ProjectileCannon] {gameObject.name} đã va chạm với mặt đất ở vị trí {transform.position}");
+            //Debug.Log($"[ProjectileCannon] {gameObject.name} đã va chạm với mặt đất ở vị trí {transform.position}");
         }
     }
 
@@ -68,7 +68,7 @@ public class ProjectileCannon : Projectile
             if (enemy == null) return;
 
             HandleEnemyCollision(collider, enemy);
-            Debug.Log($"[ProjectileCannon] {gameObject.name} đã va chạm với quái {enemy.gameObject.name} ở vị trí {transform.position}");
+            //Debug.Log($"[ProjectileCannon] {gameObject.name} đã va chạm với quái {enemy.gameObject.name} ở vị trí {transform.position}");
         }
         else if (collider.gameObject.layer == GameConstants.INDEX_SPAWNER_ZONE_LAYER)
         {
@@ -131,8 +131,7 @@ public class ProjectileCannon : Projectile
         if (projCollider == null || !gameObject.activeInHierarchy) return;
 
         RuntimeState.DamageMultiplier = 0;
-        rb.linearVelocity = Vector2.zero;
-        rb.angularVelocity = 0f;
+
         //Dùng toán tử |= để CỘNG THÊM Mask thay vì ghi đè (Tránh làm mất Mask Tower đã set ở trên)
         projCollider.excludeLayers |= GameConstants.MASK_ENEMY;
 

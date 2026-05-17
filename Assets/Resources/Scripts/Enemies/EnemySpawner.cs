@@ -21,7 +21,7 @@ public class EnemyPoolConfig
 
 public class EnemySpawner : Singleton<EnemySpawner>
 {
-    [SerializeField] private Collider2D spawnerZoneCollider;
+    [SerializeField] private int defaultBudget = 0;
 
     [SerializeField] private List<EnemyPoolConfig> poolConfigs;
 
@@ -62,8 +62,6 @@ public class EnemySpawner : Singleton<EnemySpawner>
                 enemiesStoreObj = new GameObject("EnemiesStore");
             }
         }
-
-        spawnerZoneCollider = GetComponent<Collider2D>();
     }
 
     private EnemyAI CreateEnemy(EnemyAI prefab)
@@ -132,7 +130,7 @@ public class EnemySpawner : Singleton<EnemySpawner>
     private int CalculateBudget(int waveIndex)
     {
         // Công thức phi tuyến tính: Wave càng cao, ngân sách tăng càng đột biến
-        int budget = 50 + (waveIndex * 15) + (int)Mathf.Pow(waveIndex, 1.8f);
+        int budget = 50 + (waveIndex * 15) + (int)Mathf.Pow(waveIndex, 1.8f) + defaultBudget;
         Debug.Log($"[EnemySpawner] Wave Budget: {budget}");
         return budget;
     }

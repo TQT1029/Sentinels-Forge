@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: cc85c1aac9cc200449720f1efb3ecab1, type: 3}
-  m_Name: HeavyArrow
+  m_Name: FireArrow
   m_EditorClassIdentifier: Assembly-CSharp::ProjectileData
-  prefab: {fileID: 6435867995134164602, guid: c9716c9e9feea5645954a4e06feefbf2, type: 3}
-  baseDamage: 10
-  damageVariation: 1
-  gravityScale: 2
+  prefab: {fileID: 8104087228625920000, guid: dc58909696003db4285ee58228103362, type: 3}
+  baseDamage: 1
+  damageVariation: 0.02
+  gravityScale: 1
   lifeTime: 10

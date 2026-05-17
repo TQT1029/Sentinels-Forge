@@ -17,12 +17,12 @@ public class RuntimeStun : RuntimeEffect
     {
         Target.isStunned = true; 
         Target.rb.linearVelocity = Vector2.zero; 
-        Debug.Log($"[Effect] {Target.name} bị choáng!");
+        //Debug.Log($"[Effect] {Target.name} bị choáng!");
     }
 
     public override void OnRemove()
     {
         Target.isStunned = false; // Tắt cờ choáng trả lại tự do
-        Debug.Log($"[Effect] {Target.name} hết choáng.");
+        //Debug.Log($"[Effect] {Target.name} hết choáng.");
     }
 }

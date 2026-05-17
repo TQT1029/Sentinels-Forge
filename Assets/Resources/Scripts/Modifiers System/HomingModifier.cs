@@ -118,7 +118,7 @@ public class HomingModifier : ModifierBase
         
         if (bestTarget != null)
         {
-            Debug.Log($"[Homing] Found new target: {bestTarget.name}, Position: {bestTarget.position}");
+            //Debug.Log($"[HomingModifier] Found new target: {bestTarget.name}, Position: {bestTarget.position}");
         }
 
         return bestTarget;

@@ -114,10 +114,10 @@ CircleCollider2D:
   m_LayerOverridePriority: 0
   m_ForceSendLayers:
     serializedVersion: 2
-    m_Bits: 3831
+    m_Bits: 4023
   m_ForceReceiveLayers:
     serializedVersion: 2
-    m_Bits: 3831
+    m_Bits: 4023
   m_ContactCaptureLayers:
     serializedVersion: 2
     m_Bits: 4294967295
@@ -171,8 +171,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ProjectileCannon
   modifiers:
   - {fileID: 11400000, guid: 6fd5056cb2a24354dafc87af3aaddadf, type: 2}
-  - {fileID: 11400000, guid: fd3c187ca97f3e64d9b7e4294dccc7be, type: 2}
-  - {fileID: 11400000, guid: 361a6fb1604c2164e9dd1417c7a078ce, type: 2}
   - {fileID: 11400000, guid: f9482ae52f115544d9af47ae85d5a8cf, type: 2}
   minSqrVelocity: 0.1
   timeToGrounded: 0.15

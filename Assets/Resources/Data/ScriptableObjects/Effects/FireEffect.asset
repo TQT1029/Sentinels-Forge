@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a5e198ddd6d94c545b93339759149fb4, type: 3}
+  m_Name: FireEffect
+  m_EditorClassIdentifier: Assembly-CSharp::FireEffectData
+  effectName: New Effect
+  description: Effect Description
+  baseDuration: 3
+  maxStacks: 3
+  damagePerTick: 5
+  tickInterval: 1
+  addDurationOnStack: 0
+  resistanceData: {fileID: 0}
