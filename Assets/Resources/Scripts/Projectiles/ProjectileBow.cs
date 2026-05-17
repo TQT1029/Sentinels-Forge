@@ -83,12 +83,7 @@ public class ProjectileBow : Projectile
 
         if (hit.collider != null)
         {
-            if (hit.collider.gameObject.layer == GameConstants.INDEX_SPAWNER_ZONE_LAYER)
-            {
-                ReturnToPool();
-            }
-
-            if (hit.collider.gameObject.layer == GameConstants.INDEX_BORDER_LAYER)
+            if (hit.collider.gameObject.layer == GameConstants.INDEX_BORDER_LAYER && hit.collider.gameObject.CompareTag(GameConstants.GROUND_TAG))
             {
                 HitData hitData = new HitData(hit, null);
 
@@ -102,15 +97,13 @@ public class ProjectileBow : Projectile
             }
             else if (hit.collider.gameObject.layer == GameConstants.INDEX_ENEMY_LAYER)
             {
-                EnemyAI enemy = hit.transform.GetComponent<EnemyAI>();
+                EnemyAI enemy = hit.transform.GetComponentInParent<EnemyAI>();
 
                 if (enemy != null)
                 {
                     HitData hitData = new HitData(hit, enemy);
 
                     bool shouldKeepFlying = ProcessHit(hitData);
-
-
 
                     // Nếu không xuyên và không kẹt, thì mới dính vào quái vật
                     if (!shouldKeepFlying)
@@ -124,6 +117,10 @@ public class ProjectileBow : Projectile
                         if (!isStuck) StuckingArrow(hit);
                     }
                 }
+            }
+            else if (hit.collider.gameObject.layer == GameConstants.INDEX_SPAWNER_ZONE_LAYER)
+            {
+                ReturnToPool();
             }
         }
     }

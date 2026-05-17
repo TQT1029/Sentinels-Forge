@@ -6,6 +6,15 @@ public struct HitData
     public Collider2D Collider;
     public EnemyAI Enemy; // Có thể null nếu trúng tường
 
+    public HitData(Vector2 point, Vector2 normal, EnemyAI enemy = null)
+    {
+        Point = point;
+        Normal = normal;
+        Enemy = enemy;
+
+        Collider = null;
+    }
+
     // Helper Constructor cho Raycast
     public HitData(RaycastHit2D hit, EnemyAI enemy = null)
     {
@@ -23,4 +32,5 @@ public struct HitData
         Collider = col.collider;
         Enemy = enemy;
     }
+
 }

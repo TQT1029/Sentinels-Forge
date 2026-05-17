@@ -18,13 +18,16 @@ public class SplitModifier : ModifierBase
 
     public override void OnHit(Projectile projectile, ProjectileRuntimeState state, HitData hitData, HitActionContext hitContext)
     {
-        if (hitData.Enemy == null) return;
-        if (hitContext.HasSplit) return;
+        if (hitContext.IsHandled || hitData.Enemy == null || hitContext.HasSplit) return;
+
 
         int splitsLeft = state.GetStat(SPLIT_COUNT);
         if (splitsLeft > 0)
         {
+            hitContext.IsHandled = true;
             hitContext.HasSplit = true;
+            hitContext.TerminateProjectile = true; // Vỡ đạn gốc
+
             state.SetStat(SPLIT_COUNT, splitsLeft - 1);
 
             hitContext.PostHitActions += () =>
@@ -41,7 +44,7 @@ public class SplitModifier : ModifierBase
 
                     newProj.hitTargets = newProj.hitTargets = new HashSet<EnemyAI>(projectile.hitTargets); ; // Coppy danh sách đã trúng của viên đạn gốc
 
-                    newProj.transform.position = hitData.Point;
+                    newProj.transform.position = hitData.Point + newDirection * 0.5f;
                     newProj.rb.linearVelocity = newDirection * projectile.rb.linearVelocity.magnitude;
 
                     newProj.RuntimeState.SetStat(SPLIT_COUNT, splitsLeft - 1);
@@ -49,6 +52,9 @@ public class SplitModifier : ModifierBase
                     // Kế thừa các chỉ số khác để đạn con cũng được nhận modifier tương tự
                     newProj.RuntimeState.SetStat("PierceCount", state.GetStat("PierceCount"));
                     newProj.RuntimeState.SetStat("BounceCount", state.GetStat("BounceCount"));
+
+                    newProj.RuntimeState.Velocity = newProj.rb.linearVelocity;
+                    newProj.ProcessImediate();
                 }
 
                 //Debug.Log($"[SplitModifier] Projectile split into {splitNumber} new projectiles with angle offset of {splitAngle} degrees.");

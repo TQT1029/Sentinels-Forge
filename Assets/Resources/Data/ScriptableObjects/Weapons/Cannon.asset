@@ -17,7 +17,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: acfff19df7f2411409af8c55f9e8ee49, type: 2}
   leftAngle: -90
   rightAngle: 45
-  fireVelocity: 37
+  fireVelocity: 35
   fireCooldown: 0.5
   angleVibration: 5
   velocityVibration: 0.1

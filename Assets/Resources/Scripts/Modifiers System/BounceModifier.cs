@@ -15,12 +15,16 @@ public class BounceModifier : ModifierBase
 
     public override void OnHit(Projectile projectile, ProjectileRuntimeState state, HitData hitData, HitActionContext hitContext)
     {
-        if (hitData.Enemy != null) return;
+        if (hitContext.IsHandled || hitData.Enemy != null) return;
+        
         int bouncesLeft = state.GetStat(BOUNCE_COUNT);
 
         if (bouncesLeft > 0)
         {
             state.SetStat(BOUNCE_COUNT, bouncesLeft - 1);
+
+            hitContext.IsHandled = true;
+            hitContext.TerminateProjectile = false;
 
             // Logic phản xạ tia (Toán học)
             Vector2 currentVel = state.Velocity;

@@ -5,6 +5,8 @@ public class HitActionContext
     public bool TerminateProjectile = true; // Mặc định chạm là huỷ viên đạn
     public bool CancelDamage = false;       // Có gây dame không?
 
+    public bool IsHandled = false;  
+
     public Action PostHitActions; // Hành động bổ sung sau khi xử lý hit xong.
     public bool HasSplit = false;
     public bool HasHomed = false;

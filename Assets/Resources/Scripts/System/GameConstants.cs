@@ -24,6 +24,7 @@ public class GameConstants : PersistentSingleton<GameConstants>
     public const string LAYER_UI = "UI";
     public const string LAYER_ENEMY = "Enemy";
     public const string LAYER_PROJECTILE = "Projectile";
+    public const string LAYER_ENEMY_PHYSIC= "EnemyPhysic";
     public const string LAYER_SPAWNER_ZONE = "SpawnerZone";
     public const string LAYER_ENEMY_PROJECTILE = "EnemyProjectile";
     public const string LAYER_BORDER = "Border";
@@ -37,7 +38,7 @@ public class GameConstants : PersistentSingleton<GameConstants>
     public const int INDEX_UI_LAYER = 5;
     public const int INDEX_ENEMY_LAYER = 6;
     public const int INDEX_PROJECTILE_LAYER = 7;
-    public const int INDEX_GROUND_LAYER = 8;
+    public const int INDEX_ENEMY_PHYSIC_LAYER = 8;
     public const int INDEX_SPAWNER_ZONE_LAYER = 9;
     public const int INDEX_ENEMY_PROJECTILE_LAYER = 10;
     public const int INDEX_BORDER_LAYER = 11;
@@ -51,19 +52,21 @@ public class GameConstants : PersistentSingleton<GameConstants>
     public const int MASK_UI = 1 << INDEX_UI_LAYER;
     public const int MASK_ENEMY = 1 << INDEX_ENEMY_LAYER;
     public const int MASK_PROJECTILE = 1 << INDEX_PROJECTILE_LAYER;
-    public const int MASK_GROUND = 1 << INDEX_GROUND_LAYER;
+    public const int MASK_ENEMY_PHYSIC = 1 << INDEX_ENEMY_PHYSIC_LAYER;
     public const int MASK_SPAWNER_ZONE = 1 << INDEX_SPAWNER_ZONE_LAYER;
     public const int MASK_ENEMY_PROJECTILE = 1 << INDEX_ENEMY_PROJECTILE_LAYER;
     public const int MASK_BORDER = 1 << INDEX_BORDER_LAYER;
 
     // --- CÁC MASK KẾT HỢP (COMBINED MASKS) ---
 
-    // Dành cho Đạn của Player: Chỉ xét va chạm với Quái, Đất, Border và SpawnerZone
-    public const int MASK_PLAYER_PROJECTILE_TARGETS = MASK_ENEMY | MASK_GROUND | MASK_BORDER | MASK_SPAWNER_ZONE;
+    // Dành cho Đạn của Player: Chỉ xét va chạm với Quái, Border và SpawnerZone
+    public const int MASK_PLAYER_PROJECTILE_TARGETS = MASK_ENEMY | MASK_BORDER | MASK_SPAWNER_ZONE;
 
-    // Dành cho Đạn của Enemy: Chỉ xét va chạm với Tower (Base), Đất và Border
-    public const int MASK_ENEMY_PROJECTILE_TARGETS = MASK_TOWER | MASK_GROUND | MASK_BORDER;
+    // Dành cho Đạn của Enemy: Chỉ xét va chạm với Tower (Base), Border
+    public const int MASK_ENEMY_PROJECTILE_TARGETS = MASK_TOWER | MASK_BORDER;
 
     // Dành cho Homing Modifier: Tầm nhìn radar chỉ quét các đối tượng là Enemy
     public const int MASK_RADAR_TARGETS = MASK_ENEMY;
+
+    public const int MASK_PLAYER_PROJECTILE_COLLISION_IGNORE = MASK_ENEMY | MASK_BORDER | MASK_TOWER;
 }

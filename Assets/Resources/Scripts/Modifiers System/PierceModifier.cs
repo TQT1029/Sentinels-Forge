@@ -16,20 +16,22 @@ public class PierceModifier : ModifierBase
 
     public override void OnHit(Projectile projectile, ProjectileRuntimeState state, HitData hitData, HitActionContext hitContext)
     {
-        // Pierce chỉ hoạt động nếu đụng quái vật
-        if (hitData.Enemy == null) return;
-
+        // Chặn luồng nếu hit này đã bị Modifier khác (đứng trước) xử lý, hoặc trúng đất
+        if (hitContext.IsHandled || hitData.Enemy == null) return;
         int piercesLeft = state.GetStat(PIERCE_COUNT);
 
         if (piercesLeft > 0)
         {
             state.SetStat(PIERCE_COUNT, piercesLeft - 1); // Trừ số lượt xuyên
+
+            hitContext.IsHandled = true;
+            hitContext.TerminateProjectile = false; // Xuyên qua, không hủy đạn
+
             hitContext.PostHitActions += () =>
             {
                 state.DamageMultiplier *= damageReduction;
             };
-            // CỐT LÕI: Yêu cầu đạn KHÔNG tự hủy (Bay tiếp)
-            hitContext.TerminateProjectile = false;
+
         }
     }
 }

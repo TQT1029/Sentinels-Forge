@@ -23,7 +23,7 @@ TagManager:
   - UI
   - Enemy
   - Projectile
-  - 
+  - EnemyPhysic
   - SpawnerZone
   - EnemyProjectile
   - Border

@@ -8,7 +8,7 @@ public class Projectile : MonoBehaviour
 {
     protected IObjectPool<Projectile> managedPool;
     public Rigidbody2D rb { get; private set; }
-
+    public Collider2D projCollider { get; private set; }
     public ProjectileData projectileData { get; private set; }
     public ProjectileSpawner projectileSpawner { get; private set; }
     protected WeaponControl weaponControl;
@@ -24,6 +24,7 @@ public class Projectile : MonoBehaviour
     protected virtual void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
+        projCollider = GetComponent<Collider2D>();
     }
 
     public void SetProjectileData(ProjectileData data) => projectileData = data;
@@ -59,6 +60,7 @@ public class Projectile : MonoBehaviour
             foreach (var mod in modifiers) mod.OnFire(this, RuntimeState);
         }
 
+        //ProcessImediate();
         Invoke(nameof(ReturnToPool), lifeTime);
     }
 
@@ -110,8 +112,10 @@ public class Projectile : MonoBehaviour
 
         return !hitContext.TerminateProjectile;
     }
-
-
+    /// <summary>
+    /// Hàm này được gọi ngay sau khi Projectile được gọi ra từ Pool, dùng để xử lý các logic cần thiết ngay lập tức như tạo đạn con từ Split Modifier mà không cần phải chờ đến khi va chạm mới xử lý.
+    /// </summary>
+    public virtual void ProcessImediate() { }
     private void OnDisable()
     {
         CancelInvoke();
