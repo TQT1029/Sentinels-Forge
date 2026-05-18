@@ -99,7 +99,7 @@ public class HomingModifier : ModifierBase
         foreach (var col in hitColliders)
         {
             // Kiểm tra xem đây có phải con quái đạn vừa xuyên qua không? (Nếu có thì lờ nó đi)
-            EnemyAI enemy = col.GetComponent<EnemyAI>();
+            EnemyAI enemy = col.GetComponentInParent<EnemyAI>();
             if (enemy != null && projectile.hitTargets.Contains(enemy)) continue;
 
             Vector2 dirToEnemy = (col.transform.position - projectile.transform.position).normalized;

@@ -95,7 +95,7 @@ public class FlyingEnemyAI : EnemyAI
         else
         {
             // Cận chiến
-            // Tower.TakeDamage(finalDamage);
+            towerController.TakeDamage(finalDamage);
         }
         //Debug.Log($"[FlyingEnemyAI] Đã tấn công: {finalDamage}");
     }

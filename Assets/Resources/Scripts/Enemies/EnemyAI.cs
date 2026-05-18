@@ -7,8 +7,11 @@ public abstract class EnemyAI : MonoBehaviour
 {
     [field: SerializeField] public EnemyData enemyData { get; private set; }
     public Rigidbody2D rb { get; private set; }
+
     protected Transform towerTransform;
     private Bounds towerBounds;
+    protected TowerController towerController;
+
     [SerializeField, Tooltip("Vị trí lệch so với tâm của tower (%)")] protected Vector3 towerTargetOffset;
     protected Vector3 actualTargetPosition;
 
@@ -35,6 +38,8 @@ public abstract class EnemyAI : MonoBehaviour
     {
         towerTransform = WaveManager.Instance.TowerTransform;
         towerBounds = WaveManager.Instance.TowerBounds;
+        towerController = WaveManager.Instance.TowerController;
+
         rb = GetComponent<Rigidbody2D>();
 
         ResetStats();

@@ -93,11 +93,11 @@ public class ProjectileBow : Projectile
 
                 if (!shouldKeepFlying)
                 {
-                    if (!isStuck) StuckingArrow(hit);
+                    if (!isStuck) StuckingArrow(hit.transform);
                 }
 
             }
-            else if (hit.collider.gameObject.layer == GameConstants.INDEX_ENEMY_LAYER)
+            else if (hit.collider.gameObject.layer == GameConstants.INDEX_ENEMY_LAYER || hit.collider.gameObject.layer == GameConstants.INDEX_ENEMY_PHYSIC_LAYER)
             {
                 EnemyAI enemy = hit.transform.GetComponentInParent<EnemyAI>();
 
@@ -113,10 +113,10 @@ public class ProjectileBow : Projectile
                         if (enemy.IsDead)
                         {
                             ReturnToPool();
-                            ReleaseArrowsOnTarget(hit.transform);
+                            ReleaseArrowsOnTarget(enemy.transform);
                         }
 
-                        if (!isStuck) StuckingArrow(hit);
+                        if (!isStuck) StuckingArrow(enemy.transform);
                     }
                 }
             }
@@ -127,13 +127,13 @@ public class ProjectileBow : Projectile
         }
     }
 
-    private void StuckingArrow(RaycastHit2D hit)
+    private void StuckingArrow(Transform targetTrans)
     {
         rb.linearVelocity = Vector3.zero;
         rb.gravityScale = 0f;
         rb.simulated = false;
 
-        stuckTarget = hit.collider.transform;
+        stuckTarget = targetTrans;
 
         positionOffset = stuckTarget.InverseTransformPoint(transform.position);
         rotationOffset = Quaternion.Inverse(stuckTarget.rotation) * transform.rotation;

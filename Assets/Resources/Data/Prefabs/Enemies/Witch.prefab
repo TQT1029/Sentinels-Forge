@@ -53,9 +53,17 @@ PrefabInstance:
       value: Witch
       objectReference: {fileID: 0}
     - target: {fileID: 5765619462156187403, guid: 055a01a1773d2d1479c14320410e57e1, type: 3}
+      propertyPath: type
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5765619462156187403, guid: 055a01a1773d2d1479c14320410e57e1, type: 3}
       propertyPath: <enemyData>k__BackingField
       value: 
       objectReference: {fileID: 11400000, guid: c379b0506ad7a4043a74a7a34a5f89de, type: 2}
+    - target: {fileID: 5765619462156187403, guid: 055a01a1773d2d1479c14320410e57e1, type: 3}
+      propertyPath: enemyFilter.layerMask.m_Bits
+      value: 1344
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

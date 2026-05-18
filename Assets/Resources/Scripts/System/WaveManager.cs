@@ -7,6 +7,8 @@ public class WaveManager : Singleton<WaveManager>
 
     public Bounds TowerBounds {  get; private set; }
 
+    public TowerController TowerController { get; private set; }
+
     public int CurrentWave { get; private set; } = 0;
 
     public int EnemyAlive { get; private set; } = 0;
@@ -15,8 +17,9 @@ public class WaveManager : Singleton<WaveManager>
     {
         base.Awake();
         MainCamera = Camera.main;
-        TowerTransform = GameObject.FindGameObjectWithTag("Tower").transform;
+        TowerTransform = GameObject.FindGameObjectWithTag(GameConstants.TOWER_TAG).transform;
         TowerBounds = TowerTransform.GetComponent<Collider2D>().bounds;
+        TowerController = TowerTransform.GetComponent<TowerController>();
     }
 
     protected virtual void Start()
