@@ -97,7 +97,7 @@ public class ProjectileBow : Projectile
                 }
 
             }
-            else if (hit.collider.gameObject.layer == GameConstants.INDEX_ENEMY_LAYER || hit.collider.gameObject.layer == GameConstants.INDEX_ENEMY_PHYSIC_LAYER)
+            else if (hit.collider.gameObject.layer == GameConstants.INDEX_ENEMY_HITBOX_LAYER || hit.collider.gameObject.layer == GameConstants.INDEX_ENEMY_BODY_LAYER)
             {
                 EnemyAI enemy = hit.transform.GetComponentInParent<EnemyAI>();
 
@@ -129,6 +129,7 @@ public class ProjectileBow : Projectile
 
     private void StuckingArrow(Transform targetTrans)
     {
+        rb.bodyType = RigidbodyType2D.Kinematic;
         rb.linearVelocity = Vector3.zero;
         rb.gravityScale = 0f;
         rb.simulated = false;

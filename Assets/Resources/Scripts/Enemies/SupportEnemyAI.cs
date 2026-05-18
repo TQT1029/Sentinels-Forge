@@ -1,7 +1,5 @@
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
-using static UnityEditor.ShaderGraph.Internal.KeywordDependentCollection;
 
 enum SupportType
 {
@@ -30,12 +28,6 @@ public class SupportEnemyAI : EnemyAI
     private Collider2D[] overlapResults;
     private List<EnemyAI> cachedAlliesList = new List<EnemyAI>();
     [SerializeField] private ContactFilter2D enemyFilter;
-
-    protected override void Awake()
-    {
-        base.Awake();
-
-    }
 
     public override void ResetStats()
     {

@@ -76,8 +76,8 @@ public class EnemySpawner : Singleton<EnemySpawner>
     private void OnGetEnemy(EnemyAI enemy)
     {
         enemy.gameObject.SetActive(true);
-        // Bắt buộc reset HP và RuntimeState mỗi lần lấy từ Pool ra, nếu không quái sẽ giữ HP <= 0 của lần chết trước
-        enemy.ResetStats();
+        // Bắt buộc reset HP và RuntimeState mỗi lần lấy từ Pool ra
+        enemy.ResetStats(); 
     }
 
     private void OnReleaseEnemy(EnemyAI enemy)

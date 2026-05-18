@@ -27,6 +27,13 @@ public class PierceModifier : ModifierBase
             hitContext.IsHandled = true;
             hitContext.TerminateProjectile = false; // Xuyên qua, không hủy đạn
 
+            if (hitData.Collider!=null && projectile.projCollider != null)
+            {
+                Physics2D.IgnoreCollision(projectile.projCollider, hitData.Collider, true);
+
+                projectile.IgnoredColliders.Add(hitData.Collider);
+            }
+
             hitContext.PostHitActions += () =>
             {
                 state.DamageMultiplier *= damageReduction;

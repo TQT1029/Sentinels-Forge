@@ -19,14 +19,18 @@ public class TowerController : MonoBehaviour
             Debug.LogError("TowerData is not assigned on " + gameObject.name);
         }
     }
+
     public virtual void TakeDamage(float amount)
     {
-        currentHealth -= amount;
+        if (PercentHealth > 0)
+            currentHealth -= amount;
+
+        if (IsDestroyed) OnDestroyTower();
     }
     public virtual void Repair(float amount)
     {
         currentHealth = Mathf.Min(currentHealth + amount, towerData.maxHealth);
     }
 
-    public virtual void OnTowerDestroy() { }
+    public virtual void OnDestroyTower() { }
 }

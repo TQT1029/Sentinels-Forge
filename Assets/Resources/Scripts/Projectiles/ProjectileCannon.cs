@@ -5,7 +5,7 @@ public class ProjectileCannon : Projectile
 
     private float delayCollisionIgnore = 0.1f; // Thời gian delay trước khi tắt va chạm với quái
     private float torqueAmount = -25f; // Lực xoay khi va chạm với mặt đất
-    
+
     [Header("Grounded Detection")]
     [SerializeField] private float minSqrVelocity = 0.1f;
     [SerializeField] private float timeToGrounded = 0.15f;
@@ -33,7 +33,7 @@ public class ProjectileCannon : Projectile
         if (rb.linearVelocity.sqrMagnitude < minSqrVelocity)
         {
             lowVelocityTimer += Time.deltaTime;
-
+            Debug.Log($"[ProjectileCannon] {rb.linearVelocity.sqrMagnitude}");
             // Yêu cầu vận tốc thấp phải duy trì liên tục qua ngưỡng thời gian
             if (lowVelocityTimer >= timeToGrounded)
             {
@@ -62,7 +62,7 @@ public class ProjectileCannon : Projectile
     {
         if (isGrounded) return;
 
-        if (collider.gameObject.layer == GameConstants.INDEX_ENEMY_LAYER)
+        if (collider.gameObject.layer == GameConstants.INDEX_ENEMY_HITBOX_LAYER)
         {
             EnemyAI enemy = collider.GetComponentInParent<EnemyAI>();
             if (enemy == null) return;
@@ -92,8 +92,9 @@ public class ProjectileCannon : Projectile
         Vector2 hitPoint = collider.ClosestPoint(transform.position);
         Vector2 hitNormal = -rb.linearVelocity.normalized;
 
-        HitData hitData = new HitData(hitPoint, hitNormal, enemy);
-        hitData.Collider = collider; // Bơm thủ công Collider vào để Modifier dùng nếu cần
+        Collider2D solidCollider = enemy.GetComponent<Collider2D>();
+
+        HitData hitData = new HitData(hitPoint, hitNormal, solidCollider, enemy);
 
         // Gọi logic xào nấu đạn như bình thường
         ProcessHit(hitData);
@@ -132,10 +133,8 @@ public class ProjectileCannon : Projectile
 
         RuntimeState.DamageMultiplier = 0;
 
-        //Dùng toán tử |= để CỘNG THÊM Mask thay vì ghi đè (Tránh làm mất Mask Tower đã set ở trên)
-        projCollider.excludeLayers |= GameConstants.MASK_ENEMY;
-
-        //Debug.Log($"[ProjectileCannon] {gameObject.name} đã hàm chạm đất ở vị trí {transform.position}");
+        //Dùng toán tử |= để CỘNG THÊM Mask thay vì ghi đè
+        projCollider.excludeLayers = GameConstants.MASK_TOWER | GameConstants.MASK_PROJECTILE | GameConstants.MASK_ENEMY_BODY;
     }
 
     public override void ReturnToPool()

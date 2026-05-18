@@ -18,6 +18,7 @@ public class Projectile : MonoBehaviour
     public HashSet<EnemyAI> hitTargets = new HashSet<EnemyAI>(); // Danh sách quái đã gây damage
 
     public ProjectileRuntimeState RuntimeState { get; private set; } = new ProjectileRuntimeState();
+    public List<Collider2D> IgnoredColliders { get; } = new List<Collider2D>(10);
 
     protected float fireVelocity;
 
@@ -34,6 +35,7 @@ public class Projectile : MonoBehaviour
 
     protected virtual void ResetPhysic()
     {
+        rb.bodyType = RigidbodyType2D.Dynamic;
         rb.linearVelocity = Vector3.zero;
         rb.angularVelocity = 0f;
         rb.gravityScale = projectileData.gravityScale;
@@ -126,11 +128,27 @@ public class Projectile : MonoBehaviour
     /// </summary>
     public virtual void ReturnToPool()
     {
+        ResetIgnoredCollisions();
+
         // Kiểm tra xem object còn đang active không trước khi release (phòng ngừa lỗi)
         if (gameObject.activeInHierarchy)
         {
             managedPool.Release(this);
         }
+    }
+
+    private void ResetIgnoredCollisions()
+    {
+        int count = IgnoredColliders.Count;
+        for (int i = 0; i < count; i++)
+        {
+            if (IgnoredColliders[i] != null)
+            {
+                // Hoàn tác lệnh Ignore, kích hoạt lại va chạm bình thường cho lần sử dụng sau
+                Physics2D.IgnoreCollision(projCollider, IgnoredColliders[i], false);
+            }
+        }
+        IgnoredColliders.Clear();
     }
 
     /// <summary>

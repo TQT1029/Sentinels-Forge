@@ -7,6 +7,8 @@ public abstract class EnemyAI : MonoBehaviour
 {
     [field: SerializeField] public EnemyData enemyData { get; private set; }
     public Rigidbody2D rb { get; private set; }
+    public Collider2D solidBody { get; private set; }
+    public Collider2D triggerHitbox { get; private set; }
 
     protected Transform towerTransform;
     private Bounds towerBounds;
@@ -21,7 +23,6 @@ public abstract class EnemyAI : MonoBehaviour
     private List<EffectData> effectsToRemove = new List<EffectData>(); // Cache để tránh lỗi xóa trong vòng lặp
     protected float currentHealth;
     public float PercentHealth => currentHealth / enemyData.maxHealth;
-
 
     protected float checkingFrequency = 10f; // Số lần check trong 1 giây
     protected float checkingTime = 0f;
@@ -41,6 +42,8 @@ public abstract class EnemyAI : MonoBehaviour
         towerController = WaveManager.Instance.TowerController;
 
         rb = GetComponent<Rigidbody2D>();
+        solidBody = GetComponent<Collider2D>();
+        triggerHitbox = transform.Find("SoulEnemy")?.GetComponent<Collider2D>();
 
         ResetStats();
 
@@ -61,7 +64,22 @@ public abstract class EnemyAI : MonoBehaviour
         managedPool = pool;
     }
 
-    // THÊM: Quản lý thêm hiệu ứng
+    //Khi lấy quái ra từ pool thì tự đăng kí vào EnemyPhysicsRegistry để các hệ thống khác có thể dễ dàng dò tìm
+    protected virtual void OnEnable()
+    {
+        EnemyPhysicsRegistry.Register(triggerHitbox, this, solidBody);
+    }
+
+    //Khi quái chết hoặc vào Pool thì tự hủy đăng kí khỏi EnemyPhysicsRegistry để tránh rò rỉ bộ nhớ và lỗi dò tìm
+    protected virtual void OnDisable()
+    {
+        if (triggerHitbox != null)
+        {
+            EnemyPhysicsRegistry.Unregister(triggerHitbox);
+        }
+    }
+
+    // Quản lý thêm hiệu ứng
     public void AddEffect(EffectData effectData)
     {
         if (IsDead) return;
@@ -99,7 +117,6 @@ public abstract class EnemyAI : MonoBehaviour
         // Xóa sạch hiệu ứng cũ (Không gọi OnRemove để tránh logic chạy đè)
         activeEffects.Clear();
     }
-
     protected virtual void Update()
     {
         HandleEffects(); // Chạy bộ đếm thời gian của hiệu ứng
@@ -209,7 +226,6 @@ public abstract class EnemyAI : MonoBehaviour
         activeEffects.Clear();
 
         Debug.Log("[EnemyAI]" + gameObject.name + " has died.");
-        gameObject.SetActive(false); // Thay bằng lệnh Release của Object Pool nếu bạn đang dùng
 
         WaveManager.Instance.EnemyKilled();
 

@@ -90,7 +90,7 @@ public class HomingModifier : ModifierBase
     private Transform FindNearestTargetInCone(Projectile projectile)
     {
         // OverlapCircleAll tốn ít tài nguyên hơn Raycast, phù hợp tìm trong bán kính
-        Collider2D[] hitColliders = Physics2D.OverlapCircleAll(projectile.transform.position, homingRange, GameConstants.MASK_ENEMY);
+        Collider2D[] hitColliders = Physics2D.OverlapCircleAll(projectile.transform.position, homingRange, GameConstants.MASK_ENEMY_HITBOX);
 
         Transform bestTarget = null;
         float closestDistanceSqr = Mathf.Infinity; // Dùng SqrMagnitude để tối ưu toán học (bỏ qua hàm Căn Bậc 2)

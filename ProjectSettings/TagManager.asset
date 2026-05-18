@@ -21,9 +21,9 @@ TagManager:
   - Tower
   - Water
   - UI
-  - Enemy
+  - EnemyHitbox
   - Projectile
-  - EnemyPhysic
+  - EnemyBody
   - SpawnerZone
   - EnemyProjectile
   - Border

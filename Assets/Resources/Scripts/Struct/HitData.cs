@@ -6,6 +6,13 @@ public struct HitData
     public Collider2D Collider;
     public EnemyAI Enemy; // Có thể null nếu trúng tường
 
+    public HitData(Vector2 point, Vector2 normal, Collider2D collider, EnemyAI enemy = null)
+    {
+        Point = point;
+        Normal = normal;
+        Collider = collider;
+        Enemy = enemy;
+    }
     public HitData(Vector2 point, Vector2 normal, EnemyAI enemy = null)
     {
         Point = point;
