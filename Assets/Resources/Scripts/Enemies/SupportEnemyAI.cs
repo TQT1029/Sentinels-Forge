@@ -84,8 +84,9 @@ public class SupportEnemyAI : EnemyAI
                 EffectData choiceBuff = ChoiceRandomBuff();
                 if (isSingleTargeted)
                 {
-                    EnemyAI ally = primaryTarget.GetComponentInParent<EnemyAI>();
-                    if (ally.IsDead) return;
+                    EnemyAI ally = primaryTarget?.GetComponentInParent<EnemyAI>();
+                    if (ally != null && ally.IsDead) return;
+
                     ally.AddEffect(choiceBuff);
                     Debug.Log($"[SupportEnemyAI] Đang buff cho {ally.name}, vị trí {primaryTarget.position}");
                 }
@@ -107,8 +108,11 @@ public class SupportEnemyAI : EnemyAI
 
                 if (isSingleTargeted)
                 {
-                    EnemyAI ally = primaryTarget.GetComponentInParent<EnemyAI>();
-                    ally.Heal(healAmount);
+                    EnemyAI ally = primaryTarget?.GetComponentInParent<EnemyAI>();
+                    if (ally != null && !ally.IsDead)
+                    {
+                        ally.Heal(healAmount);
+                    }
                 }
                 else
                 {

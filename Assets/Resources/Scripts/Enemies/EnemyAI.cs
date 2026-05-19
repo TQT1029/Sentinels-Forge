@@ -5,6 +5,7 @@ using UnityEngine.Pool;
 
 public abstract class EnemyAI : MonoBehaviour
 {
+    [Header("Enemy Data")]
     [field: SerializeField] public EnemyData enemyData { get; private set; }
     public Rigidbody2D rb { get; private set; }
     public Collider2D solidBody { get; private set; }
@@ -19,10 +20,13 @@ public abstract class EnemyAI : MonoBehaviour
 
     private IObjectPool<EnemyAI> managedPool;
 
-    public LootTableSO lootTable; // Bảng xác suất rớt đồ, có thể gán riêng cho từng loại quái trong Inspector
 
     public Dictionary<EffectData, RuntimeEffect> activeEffects = new Dictionary<EffectData, RuntimeEffect>();
     private List<EffectData> effectsToRemove = new List<EffectData>(); // Cache để tránh lỗi xóa trong vòng lặp
+    [Header("Loot System")]
+    [SerializeField] private LootTableSO lootTable;// Bảng xác suất rớt đồ, có thể gán riêng cho từng loại quái trong Inspector
+
+    [Header("Utilities")]
     protected float currentHealth;
     public float PercentHealth => currentHealth / (enemyData.maxHealth * healthMultiplier);
 
@@ -186,7 +190,7 @@ public abstract class EnemyAI : MonoBehaviour
         currentHealth -= amount;
 
         OnHit();
-        Debug.Log($"[EnemyAI] {gameObject.name} took {amount} damage! Remaining HP: {currentHealth}");
+        //Debug.Log($"[EnemyAI] {gameObject.name} took {amount} damage! Remaining HP: {currentHealth}");
 
         if (currentHealth <= 0)
         {
@@ -233,9 +237,11 @@ public abstract class EnemyAI : MonoBehaviour
         }
         activeEffects.Clear();
 
-        Debug.Log("[EnemyAI]" + gameObject.name + " has died.");
+        //Debug.Log($"[EnemyAI] {gameObject.name} has died.");
 
         WaveManager.Instance.EnemyKilled();
+
+        DropLoot();
 
         // Xử lý thu hồi về Pool
         if (gameObject.activeInHierarchy && managedPool != null)
@@ -245,6 +251,18 @@ public abstract class EnemyAI : MonoBehaviour
         else
         {
             gameObject.SetActive(false);
+        }
+    }
+
+    private void DropLoot()
+    {
+        if (lootTable == null || ItemDropManager.Instance == null) return;
+
+        List<InventorySlot> drops = lootTable.GetRandomDrops();
+        foreach (var slot in drops)
+        {
+            // Yêu cầu Manager sinh ra item vật lý tại vị trí quái chết
+           ItemDropManager.Instance.SpawnWorldItem(transform.position, slot);
         }
     }
 }

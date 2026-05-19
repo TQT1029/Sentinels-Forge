@@ -28,6 +28,7 @@ public class GameConstants : PersistentSingleton<GameConstants>
     public const string LAYER_SPAWNER_ZONE = "SpawnerZone";
     public const string LAYER_ENEMY_PROJECTILE = "EnemyProjectile";
     public const string LAYER_BORDER = "Border";
+    public const string LAYER_ITEM = "Item";
 
     [Header("LAYER INDICES")]
     public const int INDEX_DEFAULT_LAYER = 0;
@@ -42,6 +43,7 @@ public class GameConstants : PersistentSingleton<GameConstants>
     public const int INDEX_SPAWNER_ZONE_LAYER = 9;
     public const int INDEX_ENEMY_PROJECTILE_LAYER = 10;
     public const int INDEX_BORDER_LAYER = 11;
+    public const int INDEX_ITEM_LAYER = 12;
 
     [Header("LAYER BITMASKS (Dùng trực tiếp cho Raycast/Physics)")]
     public const int MASK_DEFAULT = 1 << INDEX_DEFAULT_LAYER;
@@ -56,6 +58,7 @@ public class GameConstants : PersistentSingleton<GameConstants>
     public const int MASK_SPAWNER_ZONE = 1 << INDEX_SPAWNER_ZONE_LAYER;
     public const int MASK_ENEMY_PROJECTILE = 1 << INDEX_ENEMY_PROJECTILE_LAYER;
     public const int MASK_BORDER = 1 << INDEX_BORDER_LAYER;
+    public const int MASK_ITEM = 1 << INDEX_ITEM_LAYER;
 
     // --- CÁC MASK KẾT HỢP (COMBINED MASKS) ---
 

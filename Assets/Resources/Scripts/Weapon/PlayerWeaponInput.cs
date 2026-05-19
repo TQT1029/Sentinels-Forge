@@ -38,16 +38,20 @@ public class PlayerWeaponInput : MonoBehaviour
     {
         if (currentWeapon == null) return;
 
-
-
-        HandleWeaponSwitching();
+        HandleUtilities();
+        HandleProjectileSwitching();
         HandleAimingAndFiring();
+    }
+
+    private void HandleUtilities()
+    {
+        if (Input.GetKeyDown(KeyCode.I) || Input.GetKeyDown(KeyCode.B)) InventoryManager.Instance.ShowInventory();
     }
 
     /// <summary>
     /// Xử lý bấm phím 1,2,3,4 để đổi đạn
     /// </summary>
-    private void HandleWeaponSwitching()
+    private void HandleProjectileSwitching()
     {
         // Khuyến nghị: Trong tương lai nên gọi hàm đổi đạn thông qua UI thay vì phím cứng
         if (Input.GetKeyDown(KeyCode.Alpha1) || Input.GetKeyDown(KeyCode.Keypad1)) currentWeapon.ChangeProjectile(1);

@@ -5,7 +5,7 @@ using UnityEngine;
 public struct LootDropInfo
 {
     public BaseItemSO item;
-    public int weight; // Trọng số, giá trị càng cao tỷ lệ rớt càng lớn
+    [Range(0f, 100f)] public float dropChance; // Đổi sang tỷ lệ % cho dễ thiết kế (VD: 25.5%)
     public int minAmount;
     public int maxAmount;
 }
@@ -19,26 +19,18 @@ public class LootTableSO : ScriptableObject
     {
         List<InventorySlot> result = new List<InventorySlot>();
 
-        int totalWeight = 0;
-        foreach (var drop in drops)
-            totalWeight += drop.weight;
-
-        int randomValue = Random.Range(0, totalWeight);
-        int currentWeight = 0;
-
         foreach (var drop in drops)
         {
-            currentWeight += drop.weight;
-            if (randomValue < currentWeight)
+            // Mỗi item tự quay xổ số 1 lần
+            if (RandomUtils.ChancePercent(drop.dropChance))
             {
                 int amount = Random.Range(drop.minAmount, drop.maxAmount + 1);
                 if (amount > 0)
                 {
                     result.Add(new InventorySlot(drop.item, amount));
                 }
-                break;
             }
         }
-        return result;
+        return result; // Quái có thể rớt nhiều loại đồ cùng lúc!
     }
 }

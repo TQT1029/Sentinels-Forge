@@ -14,6 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LootTableSO
   drops:
   - item: {fileID: 11400000, guid: 736ba52940eb23a429bb87e127921eb4, type: 2}
-    weight: 10
-    minAmount: 0
-    maxAmount: 1
+    dropChance: 100
+    minAmount: 1
+    maxAmount: 2
