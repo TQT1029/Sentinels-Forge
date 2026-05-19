@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections.Generic;
 
 [CreateAssetMenu(fileName = "ApplyStatusModifier", menuName = "Game/Modifiers/ApplyStatusModifier")]
-public class ApplyStatusModifier : ModifierBase
+public class ApplyStatusModifier : BaseModifier
 {
     public List<EffectData> effectToApply = new List<EffectData>(); // Kéo file StunEffectData từ Unity Editor vào đây
 

@@ -19,10 +19,12 @@ public abstract class EnemyAI : MonoBehaviour
 
     private IObjectPool<EnemyAI> managedPool;
 
+    public LootTableSO lootTable; // Bảng xác suất rớt đồ, có thể gán riêng cho từng loại quái trong Inspector
+
     public Dictionary<EffectData, RuntimeEffect> activeEffects = new Dictionary<EffectData, RuntimeEffect>();
     private List<EffectData> effectsToRemove = new List<EffectData>(); // Cache để tránh lỗi xóa trong vòng lặp
     protected float currentHealth;
-    public float PercentHealth => currentHealth / enemyData.maxHealth;
+    public float PercentHealth => currentHealth / (enemyData.maxHealth * healthMultiplier);
 
     protected float checkingFrequency = 10f; // Số lần check trong 1 giây
     protected float checkingTime = 0f;
@@ -34,6 +36,9 @@ public abstract class EnemyAI : MonoBehaviour
 
     [HideInInspector] public bool isStunned = false;
     [HideInInspector] public float speedMultiplier = 1f; // Dùng cho hiệu ứng Slow (Làm chậm)
+    [HideInInspector] public float damageMultiplier = 1f; // Dùng cho cơ chế tăng damage theo wave hoặc buff
+    [HideInInspector] public float healthMultiplier = 1f; // Dùng cho cơ chế tăng damage theo wave hoặc buff
+
 
     protected virtual void Awake()
     {
@@ -106,13 +111,16 @@ public abstract class EnemyAI : MonoBehaviour
     }
     public virtual void ResetStats()
     {
-        currentHealth = enemyData.maxHealth;
+        currentHealth = enemyData.maxHealth * healthMultiplier;
         isInvincible = false;
         checkingTime = 0f;
 
         // Bắt buộc Reset tất cả trạng thái trước khi lấy khỏi Pool
         isStunned = false;
         speedMultiplier = 1f;
+        damageMultiplier = WaveManager.Instance.WaveMultiplier;
+        healthMultiplier = WaveManager.Instance.WaveMultiplier;
+
 
         // Xóa sạch hiệu ứng cũ (Không gọi OnRemove để tránh logic chạy đè)
         activeEffects.Clear();

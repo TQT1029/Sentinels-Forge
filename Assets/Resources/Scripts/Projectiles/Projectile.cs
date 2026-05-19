@@ -13,7 +13,7 @@ public class Projectile : MonoBehaviour
     public ProjectileSpawner projectileSpawner { get; private set; }
     protected WeaponControl weaponControl;
 
-    [SerializeField] public List<ModifierBase> modifiers; // Danh sách các modifier đang có hiệu lực 
+    [SerializeField] public List<BaseModifier> modifiers; // Danh sách các modifier đang có hiệu lực 
 
     public HashSet<EnemyAI> hitTargets = new HashSet<EnemyAI>(); // Danh sách quái đã gây damage
 

@@ -1,7 +1,7 @@
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "HomingMod", menuName = "Game/Modifiers/Homing")]
-public class HomingModifier : ModifierBase
+public class HomingModifier : BaseModifier
 {
     public int additionalHoming = 1; // Số lần homing có thể kích hoạt
     public float homingStrength = Mathf.PI; // Tốc độ bẻ lái (Turn rate - Radian/sec)

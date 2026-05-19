@@ -103,7 +103,7 @@ public class SupportEnemyAI : EnemyAI
                 break;
             case SupportType.Healer:
                 // Tận dụng chỉ số attackDamage làm lượng máu được hồi
-                float healAmount = enemyData.attackDamage;
+                float healAmount = enemyData.attackDamage * damageMultiplier;
 
                 if (isSingleTargeted)
                 {

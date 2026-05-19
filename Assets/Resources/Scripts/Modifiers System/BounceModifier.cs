@@ -1,7 +1,7 @@
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "BounceMod", menuName = "Game/Modifiers/Bounce")]
-public class BounceModifier : ModifierBase
+public class BounceModifier : BaseModifier
 {
     public int additionalBounces = 2;
     public float speedRetention = 0.7f; // Tỉ lệ giữ lại tốc độ sau mỗi lần nảy

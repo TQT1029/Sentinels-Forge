@@ -11,6 +11,8 @@ public class WaveManager : Singleton<WaveManager>
 
     public int CurrentWave { get; private set; } = 0;
 
+    public float WaveMultiplier => 1f + (CurrentWave - 1) * 0.1f;
+
     public int EnemyAlive { get; private set; } = 0;
 
     protected override void Awake()

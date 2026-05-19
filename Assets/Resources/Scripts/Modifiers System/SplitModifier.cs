@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "SplitMod", menuName = "Game/Modifiers/Split")]
-public class SplitModifier : ModifierBase
+public class SplitModifier : BaseModifier
 {
     public int additionalSplits = 1;
     public int splitNumber = 2; // Số viên đạn con được tạo ra mỗi lần split

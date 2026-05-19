@@ -38,7 +38,7 @@ public class EnemyProjectile : MonoBehaviour
     {
         if (collision.gameObject.CompareTag(GameConstants.TOWER_TAG))
         {
-            // Base/Tower.Instance.TakeDamage(damage); 
+             WaveManager.Instance.TowerController.TakeDamage(damage);
             //Debug.Log($"[EnemyProjectile] Hit the tower for {damage} damage!");
             ReturnToPool();
         }

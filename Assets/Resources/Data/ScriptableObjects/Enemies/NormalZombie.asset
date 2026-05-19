@@ -15,8 +15,11 @@ MonoBehaviour:
   enemyName: Normal Zombie
   enemyType: 0
   maxHealth: 50
-  moveSpeed: 2
+  moveSpeed: 2.5
   attackRange: 1.5
   attackDamage: 10
   damageVariation: 2
   attackCooldown: 1
+  listOfAvailableBuffs: []
+  buffRange: 1.5
+  buffCooldown: 1

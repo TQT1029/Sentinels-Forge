@@ -50,6 +50,8 @@ public class RangedEnemyAI : EnemyAI
     {
         float finalDamage = enemyData.attackDamage + RandomUtils.RandomWithSteps(-enemyData.damageVariation, enemyData.damageVariation, 0.25f);
 
+        finalDamage *= damageMultiplier;
+
         EnemyProjectileManager.Instance.SpawnProjectile(
             projectilePrefab,
             firePoint.position,

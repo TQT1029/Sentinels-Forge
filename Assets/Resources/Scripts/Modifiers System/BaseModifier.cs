@@ -11,7 +11,7 @@ public class HitActionContext
     public bool HasSplit = false;
     public bool HasHomed = false;
 }
-public abstract class ModifierBase : ScriptableObject
+public abstract class BaseModifier : ScriptableObject
 {
     [Header("Base Settings")]
     public string modifierName;

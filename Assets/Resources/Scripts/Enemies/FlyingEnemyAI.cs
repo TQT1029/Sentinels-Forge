@@ -83,6 +83,8 @@ public class FlyingEnemyAI : EnemyAI
     {
         float finalDamage = enemyData.attackDamage + RandomUtils.RandomWithSteps(-enemyData.damageVariation, enemyData.damageVariation, 0.25f);
 
+        finalDamage *= damageMultiplier;
+
         if (useRangedAttack)
         {
             EnemyProjectileManager.Instance.SpawnProjectile(

@@ -15,8 +15,11 @@ MonoBehaviour:
   enemyName: Giant Zombie
   enemyType: 0
   maxHealth: 100
-  moveSpeed: 1
+  moveSpeed: 1.5
   attackRange: 3
   attackDamage: 20
   damageVariation: 2
   attackCooldown: 1.5
+  listOfAvailableBuffs: []
+  buffRange: 1.5
+  buffCooldown: 1

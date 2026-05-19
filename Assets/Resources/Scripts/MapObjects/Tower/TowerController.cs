@@ -23,8 +23,10 @@ public class TowerController : MonoBehaviour
     public virtual void TakeDamage(float amount)
     {
         if (PercentHealth > 0)
+        {
             currentHealth -= amount;
-
+            Debug.Log($"[TowerController] Took {amount} damage. Remaining health: {currentHealth}");
+        }
         if (IsDestroyed) OnDestroyTower();
     }
     public virtual void Repair(float amount)
@@ -32,5 +34,10 @@ public class TowerController : MonoBehaviour
         currentHealth = Mathf.Min(currentHealth + amount, towerData.maxHealth);
     }
 
-    public virtual void OnDestroyTower() { }
+    public virtual void OnDestroyTower()
+    {
+        gameObject.SetActive(false);
+        Time.timeScale = 0f;
+        //UnityEditor.EditorApplication.isPaused = true;
+    }
 }

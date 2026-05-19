@@ -1,7 +1,7 @@
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "PierceMod", menuName = "Game/Modifiers/Pierce")]
-public class PierceModifier : ModifierBase
+public class PierceModifier : BaseModifier
 {
     public int additionalPierces = 1;
     public float damageReduction = 0.8f;

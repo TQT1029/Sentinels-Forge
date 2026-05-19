@@ -15,7 +15,7 @@ MonoBehaviour:
   enemyName: Witch
   enemyType: 3
   maxHealth: 100
-  moveSpeed: 3
+  moveSpeed: 3.5
   attackRange: 1.5
   attackDamage: 10
   damageVariation: 2

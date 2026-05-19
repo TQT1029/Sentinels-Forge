@@ -15,8 +15,11 @@ MonoBehaviour:
   enemyName: Skeleton
   enemyType: 1
   maxHealth: 30
-  moveSpeed: 3
+  moveSpeed: 3.5
   attackRange: 10
   attackDamage: 10
   damageVariation: 2
   attackCooldown: 1.5
+  listOfAvailableBuffs: []
+  buffRange: 1.5
+  buffCooldown: 1
