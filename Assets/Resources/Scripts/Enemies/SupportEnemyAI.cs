@@ -85,10 +85,10 @@ public class SupportEnemyAI : EnemyAI
                 if (isSingleTargeted)
                 {
                     EnemyAI ally = primaryTarget?.GetComponentInParent<EnemyAI>();
-                    if (ally != null && ally.IsDead) return;
+                    if (ally == null || ally.IsDead) return;
 
                     ally.AddEffect(choiceBuff);
-                    Debug.Log($"[SupportEnemyAI] Đang buff cho {ally.name}, vị trí {primaryTarget.position}");
+                    //Debug.Log($"[SupportEnemyAI] Đang buff cho {ally.name}, vị trí {primaryTarget.position}");
                 }
                 else
                 {
@@ -97,7 +97,7 @@ public class SupportEnemyAI : EnemyAI
                         ally.AddEffect(choiceBuff);
                     }
 
-                    Debug.Log($"[SupportEnemyAI] Đang buff cho tất cả {availableAllies.Count} xung quanh");
+                    //Debug.Log($"[SupportEnemyAI] Đang buff cho tất cả {availableAllies.Count} xung quanh");
 
                 }
 

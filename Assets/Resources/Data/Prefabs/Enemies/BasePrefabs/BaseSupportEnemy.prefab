@@ -172,8 +172,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SupportEnemyAI
   <enemyData>k__BackingField: {fileID: 0}
   towerTargetOffset: {x: 0, y: -0.35, z: 0}
+  lootTable: {fileID: 11400000, guid: 30d8c262920a7cc46ab27489bc0fa45a, type: 2}
   isStunned: 0
   speedMultiplier: 1
+  damageMultiplier: 1
+  healthMultiplier: 1
   type: 0
   isSingleTargeted: 1
   availableAllies: []

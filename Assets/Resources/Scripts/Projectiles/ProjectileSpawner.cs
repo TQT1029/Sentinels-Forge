@@ -9,7 +9,7 @@ public class ProjectileSpawner : MonoBehaviour
     // Dictionary lưu trữ Pool riêng cho từng loại đạn
     private Dictionary<ProjectileData, IObjectPool<Projectile>> poolsMap;
 
-    [field: SerializeField] public GameObject projectilesStoreObj { get; private set; }
+    public Transform projectilesStorageObj { get; private set; }
     [HideInInspector] public ProjectileData projectileData; // Loại đạn đang được chọn
 
     // Property này tự động trả về Pool của loại đạn đang chọn. 
@@ -32,7 +32,7 @@ public class ProjectileSpawner : MonoBehaviour
                     actionOnDestroy: OnDestroyPoolObject,
                     collectionCheck: false,
                     defaultCapacity: 10,
-                    maxSize: 300
+                    maxSize: 800
                 );
             }
             return poolsMap[projectileData];
@@ -43,12 +43,12 @@ public class ProjectileSpawner : MonoBehaviour
     {
         poolsMap = new Dictionary<ProjectileData, IObjectPool<Projectile>>();
 
-        if (projectilesStoreObj == null)
+        if (projectilesStorageObj == null)
         {
-            projectilesStoreObj = GameObject.Find("ProjectilesStoreObj");
-            if (projectilesStoreObj == null)
+            projectilesStorageObj = GameObject.Find("Projectiles  Storage Obj")?.transform;
+            if (projectilesStorageObj == null)
             {
-                projectilesStoreObj = new GameObject("ProjectilesStoreObj");
+                projectilesStorageObj = new GameObject("Projectiles Storage Obj").transform;
             }
         }
 
@@ -61,7 +61,7 @@ public class ProjectileSpawner : MonoBehaviour
     }
     private Projectile CreateProjectile(ProjectileData data)
     {
-        GameObject projectileObj = Instantiate(data.prefab, transform.position, Quaternion.Euler(0, 0, transform.rotation.eulerAngles.z + 90), projectilesStoreObj.transform);
+        GameObject projectileObj = Instantiate(data.prefab, transform.position, Quaternion.Euler(0, 0, transform.rotation.eulerAngles.z + 90), projectilesStorageObj);
         Projectile projectileComponent = projectileObj.GetComponent<Projectile>();
 
         projectileComponent.SetProjectileData(data);

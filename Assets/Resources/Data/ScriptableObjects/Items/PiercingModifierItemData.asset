@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c0bfa7301d78cbf4a809a6f4a46fb511, type: 3}
-  m_Name: PiercingModifier
+  m_Name: PiercingModifierItemData
   m_EditorClassIdentifier: Assembly-CSharp::ModifierItemSO
   itemID: PiercingModifierID
-  itemName: Piere Modifier
+  itemName: Pierce Modifier
   description: 
   icon: {fileID: 21300000, guid: d944dcf1fb9374f0787905a62c8c661f, type: 3}
   itemType: 2

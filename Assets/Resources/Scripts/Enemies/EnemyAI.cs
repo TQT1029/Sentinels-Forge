@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Pool;
 
-public abstract class EnemyAI : MonoBehaviour
+public abstract class 
+    EnemyAI : MonoBehaviour
 {
     [Header("Enemy Data")]
     [field: SerializeField] public EnemyData enemyData { get; private set; }

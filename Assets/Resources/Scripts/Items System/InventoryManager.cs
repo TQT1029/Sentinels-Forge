@@ -26,6 +26,7 @@ public class InventoryManager : PersistentSingleton<InventoryManager>
         base.Awake();
 
     }
+
     public void ShowInventory()
     {
         if (inventory != null && inventory.Count > 0)

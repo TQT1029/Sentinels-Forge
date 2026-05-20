@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: cc85c1aac9cc200449720f1efb3ecab1, type: 3}
-  m_Name: CannonBall
+  m_Name: NormalCannonBall
   m_EditorClassIdentifier: Assembly-CSharp::ProjectileData
   prefab: {fileID: 426274753539640166, guid: 1fe62cdfb14ad8643b15f20bfcce017e, type: 3}
   baseDamage: 10

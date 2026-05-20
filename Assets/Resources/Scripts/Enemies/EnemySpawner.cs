@@ -27,7 +27,7 @@ public class EnemySpawner : Singleton<EnemySpawner>
 
     private Dictionary<EnemyAI, IObjectPool<EnemyAI>> enemyPools;
 
-    [SerializeField] private GameObject enemiesStoreObj;
+    private Transform enemiesStorageObj;
 
     [field: SerializeField] public Transform startPoint { get; private set; }
     [field: SerializeField] public Transform endPoint { get; private set; }
@@ -54,12 +54,12 @@ public class EnemySpawner : Singleton<EnemySpawner>
             enemyPools.Add(config.prefab, pool);
         }
 
-        if (enemiesStoreObj == null)
+        if (enemiesStorageObj == null)
         {
-            enemiesStoreObj = GameObject.Find("EnemiesStore");
-            if (enemiesStoreObj == null)
+            enemiesStorageObj = GameObject.Find("Enemies Storage Obj")?.transform;
+            if (enemiesStorageObj == null)
             {
-                enemiesStoreObj = new GameObject("EnemiesStore");
+                enemiesStorageObj = new GameObject("Enemies Storage Obj").transform;
             }
         }
     }
@@ -68,7 +68,7 @@ public class EnemySpawner : Singleton<EnemySpawner>
     {
         Vector2 randomPosition = RandomUtils.RandomPosition(startPoint.position, endPoint.position);
 
-        EnemyAI enemy = Instantiate(prefab, randomPosition, Quaternion.identity, enemiesStoreObj.transform);
+        EnemyAI enemy = Instantiate(prefab, randomPosition, Quaternion.identity, enemiesStorageObj);
         enemy.SetPool(enemyPools[prefab]);
         return enemy;
     }

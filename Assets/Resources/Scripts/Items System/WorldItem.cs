@@ -1,3 +1,4 @@
+using DG.Tweening;
 using UnityEngine;
 using UnityEngine.Pool;
 
@@ -24,19 +25,19 @@ public class WorldItem : MonoBehaviour
 
         // Hiệu ứng văng ngẫu nhiên (Juice)
         Vector2 randomDir = Random.insideUnitCircle.normalized;
-        float popForce = Random.Range(3f, 6f);
+        float popForce = Random.Range(2f, 4f);
         rb.AddForce(randomDir * popForce, ForceMode2D.Impulse);
 
         Debug.Log($"[WorldItem] {gameObject.name} initialized with {slot.amount} {slot.itemData.name}");
     }
 
-    // Cơ chế Nhặt bằng va chạm (Player đi qua)
+    // Cơ chế tự nhặt
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        // Kiểm tra xem ai chạm vào (Căn cứ, Player hoặc Vùng thu thập)
-        if (collision.collider.gameObject.layer == GameConstants.INDEX_BORDER_LAYER)
+        // Kiểm tra va chạm
+        if (collision.collider.gameObject.layer == GameConstants.INDEX_BORDER_LAYER && collision.collider.CompareTag(GameConstants.GROUND_TAG))
         {
-            Pickup();
+            Invoke(nameof(Pickup), 1f);
         }
     }
 
@@ -46,10 +47,32 @@ public class WorldItem : MonoBehaviour
         if (InventoryManager.Instance != null)
         {
             InventoryManager.Instance.AddItem(CurrentSlot.itemData, CurrentSlot.amount);
-            // TODO: Play âm thanh "Ting!" nhặt đồ ở đây
+            OnPickup();
         }
 
-        // Trả về Pool thay vì Destroy
+
+    }
+
+    // TODO: Play âm thanh "Ting!" nhặt đồ và animation biến mất
+    private void OnPickup()
+    {
+        // Hiệu ứng 1: Nảy nhẹ lên trên 0.5 đơn vị
+        transform.DOMoveY(transform.position.y + 0.5f, 0.3f)
+            .SetEase(Ease.OutQuad);
+
+        // Hiệu ứng 2: Thu nhỏ về 0, khi hoàn thành (OnComplete) thì thu hồi object
+        transform.DOScale(Vector3.zero, 0.3f)
+            .SetEase(Ease.InBack)
+            .OnComplete(() =>
+            {
+                transform.localScale = Vector3.one; // Reset scale để lần sau dùng lại không bị lỗi
+                // Trả về Pool thay vì Destroy
+                ReturnToPool();
+            });
+    }
+
+    private void ReturnToPool()
+    {
         if (gameObject.activeInHierarchy)
         {
             managedPool.Release(this);

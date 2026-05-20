@@ -6,8 +6,8 @@ public struct LootDropInfo
 {
     public BaseItemSO item;
     [Range(0f, 100f)] public float dropChance; // Đổi sang tỷ lệ % cho dễ thiết kế (VD: 25.5%)
-    public int minAmount;
-    public int maxAmount;
+    [Min(1)] public int minAmount;
+    [Min(1)] public int maxAmount;
 }
 
 [CreateAssetMenu(fileName = "New Loot Table", menuName = "Game/System/Loot Table")]

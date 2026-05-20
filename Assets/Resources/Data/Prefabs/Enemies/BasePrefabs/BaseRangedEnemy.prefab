@@ -172,8 +172,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RangedEnemyAI
   <enemyData>k__BackingField: {fileID: 0}
   towerTargetOffset: {x: 0, y: 0.2, z: 0}
+  lootTable: {fileID: 11400000, guid: 30d8c262920a7cc46ab27489bc0fa45a, type: 2}
   isStunned: 0
   speedMultiplier: 1
+  damageMultiplier: 1
+  healthMultiplier: 1
   projectilePrefab: {fileID: 0}
   firePoint: {fileID: 4839086721429279754}
 --- !u!1 &7947777415076255777

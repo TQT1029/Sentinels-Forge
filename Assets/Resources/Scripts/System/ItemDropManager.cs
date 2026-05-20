@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.Pool;
 
@@ -6,15 +7,21 @@ public class ItemDropManager : Singleton<ItemDropManager>
     [SerializeField] private WorldItem worldItemPrefab;
 
     private IObjectPool<WorldItem> itemPool;
-
+    private Transform itemStorageObj;
     protected override void Awake()
     {
         base.Awake();
 
+        itemStorageObj = GameObject.Find("Item Storage Obj")?.transform;
+        if (itemStorageObj == null)
+        {
+            itemStorageObj = new GameObject("Item Storage Obj").transform;
+        }
+
         itemPool = new ObjectPool<WorldItem>(
             createFunc: () =>
             {
-                WorldItem item = Instantiate(worldItemPrefab, transform);
+                WorldItem item = Instantiate(worldItemPrefab, itemStorageObj);
                 item.SetPool(itemPool);
                 return item;
             },
