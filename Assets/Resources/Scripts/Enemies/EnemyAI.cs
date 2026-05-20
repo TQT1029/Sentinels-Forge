@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Pool;
 
-public abstract class 
+public abstract class
     EnemyAI : MonoBehaviour
 {
     [Header("Enemy Data")]
@@ -68,7 +68,6 @@ public abstract class
         actualTargetPosition.y = center.y + (size.y * towerTargetOffset.y);
         actualTargetPosition.z = 0f;
     }
-
     public void SetPool(IObjectPool<EnemyAI> pool)
     {
         managedPool = pool;
@@ -139,6 +138,8 @@ public abstract class
         checkingTime += Time.deltaTime;
 
         ProcessAI();
+
+        if (transform.position.y <= -50) managedPool.Release(this);
     }
     protected abstract void ProcessAI();
 
@@ -263,7 +264,7 @@ public abstract class
         foreach (var slot in drops)
         {
             // Yêu cầu Manager sinh ra item vật lý tại vị trí quái chết
-           ItemDropManager.Instance.SpawnWorldItem(transform.position, slot);
+            ItemDropManager.Instance.SpawnWorldItem(transform.position, slot);
         }
     }
 }

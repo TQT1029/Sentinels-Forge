@@ -105,7 +105,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ProjectileSpawner
   weaponControl: {fileID: 5766098083704279027}
-  <projectilesStoreObj>k__BackingField: {fileID: 0}
   projectileData: {fileID: 11400000, guid: d4169740d76ea294bbfbded2e22be33c, type: 2}
 --- !u!1 &3280262960397909715
 GameObject:
@@ -213,5 +212,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WeaponControl
   firePoint: {fileID: 1625014123585175198}
-  projectileSpawner: {fileID: 122052861875309350}
+  <projectileSpawner>k__BackingField: {fileID: 122052861875309350}
   <weaponData>k__BackingField: {fileID: 0}

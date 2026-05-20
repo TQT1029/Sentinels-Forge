@@ -194,6 +194,7 @@ GameObject:
   m_Component:
   - component: {fileID: 96784084}
   - component: {fileID: 96784085}
+  - component: {fileID: 96784086}
   m_Layer: 0
   m_Name: GlobalSystem
   m_TagString: Untagged
@@ -228,6 +229,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fbf305d826e337242a1badaf0554a0f3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InventoryManager
+--- !u!114 &96784086
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 96784083}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ebb0c57ca9f02364c85d59d17ec06f2e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ModifierCrafter
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -919,6 +932,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 8452954803986919073, guid: fdaf2fbc41644bb40a9bc2a2fc728eb0, type: 3}
   m_PrefabInstance: {fileID: 1247537090}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1371739926 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2988204445364622834, guid: 87f08a91f63d1a742ad90bd51f51dfd7, type: 3}
+  m_PrefabInstance: {fileID: 1448406054}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0e6518800e53e224892ba188bf66f8c8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ProjectileSpawner
 --- !u!1 &1437337307
 GameObject:
   m_ObjectHideFlags: 0
@@ -1141,6 +1165,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8704589303161245991, guid: 87f08a91f63d1a742ad90bd51f51dfd7, type: 3}
+      propertyPath: <projectileSpawner>k__BackingField
+      value: 
+      objectReference: {fileID: 1371739926}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

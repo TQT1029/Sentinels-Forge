@@ -24,7 +24,6 @@ public class InventoryManager : PersistentSingleton<InventoryManager>
     protected override void Awake()
     {
         base.Awake();
-
     }
 
     public void ShowInventory()

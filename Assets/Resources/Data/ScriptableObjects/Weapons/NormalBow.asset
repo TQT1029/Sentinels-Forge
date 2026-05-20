@@ -23,7 +23,7 @@ MonoBehaviour:
   fireCooldown: 0.5
   angleVibration: 3
   velocityVibration: 0.1
-  projectilesPerShot: 1
+  projectilesPerShot: 3
   spreadAngle: 30
   burstCount: 3
   burstInterval: 0.1

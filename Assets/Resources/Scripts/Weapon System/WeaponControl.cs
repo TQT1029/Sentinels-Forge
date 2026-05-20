@@ -2,12 +2,12 @@ using UnityEngine;
 public class WeaponControl : MonoBehaviour
 {
     public GameObject firePoint;
-    [SerializeField] protected ProjectileSpawner projectileSpawner;
+    [field: SerializeField] public ProjectileSpawner projectileSpawner { get; private set; }
     [field: SerializeField] public WeaponData weaponData { get; private set; }
     public ProjectileData CurrentProjectileData => projectileSpawner != null ? projectileSpawner.projectileData : weaponData.listOfAvailableProjectiles[0];
- 
+
     private IFireBehavior fireBehavior;
-    private float lastFireTime = 0;    
+    private float lastFireTime = 0;
 
     protected virtual void Awake()
     {
@@ -32,19 +32,27 @@ public class WeaponControl : MonoBehaviour
 
     private void InitializeFireBehavior()
     {
+
         switch (weaponData.weaponType)
         {
             case WeaponType.Single:
+                fireBehavior = new StandardFireBehavior();
+                break;
             case WeaponType.Shotgun:
                 fireBehavior = new StandardFireBehavior();
                 break;
             case WeaponType.Burst:
                 fireBehavior = new BurstFireBehavior();
                 break;
-                // case WeaponType.Auto: 
-                // case WeaponType.Laser: (Thêm class tương ứng vào đây)
+            case WeaponType.Auto:
+                fireBehavior = new AutoFireBehavior();
+                break;
+            case WeaponType.Laser:
+                fireBehavior = new LaserFireBehavior();
+                break;
         }
     }
+
 
     protected virtual void Update()
     {

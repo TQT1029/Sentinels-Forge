@@ -46,6 +46,8 @@ public class PlayerWeaponInput : MonoBehaviour
     private void HandleUtilities()
     {
         if (Input.GetKeyDown(KeyCode.I) || Input.GetKeyDown(KeyCode.B)) InventoryManager.Instance.ShowInventory();
+
+        if (Input.GetKeyDown(KeyCode.C)) CraftingManager.Instance.CraftItem("Piercing Modifier");
     }
 
     /// <summary>
@@ -97,6 +99,31 @@ public class PlayerWeaponInput : MonoBehaviour
 
             // Vẽ quỹ đạo dự kiến
             DrawTrajectory(aimDirection, chargePower, weaponPos);
+
+            // TÁCH LOGIC BÓP CÒ TÙY THEO LOẠI SÚNG
+            WeaponType type = currentWeapon.weaponData.weaponType;
+
+            // 1. Súng Auto và Laser: Bắn liên tục ngay trong lúc đang GIỮ chuột
+            if (type == WeaponType.Auto || type == WeaponType.Laser)
+            {
+                // Hàm TryFire trong WeaponControl đã có sẵn cơ chế cooldown (lastFireTime)
+                // Nên gọi liên tục ở đây rất an toàn, đạn sẽ tự xả theo đúng tốc độ fireCooldown
+                currentWeapon.TryFire(aimDirection, chargePower);
+            }
+            // 2. Súng Single, Burst, Shotgun: Chờ đến khi THẢ chuột mới bắn
+            else if (Input.GetMouseButtonUp(0))
+            {
+                isDragging = false;
+                HideTrajectory();
+                currentWeapon.TryFire(aimDirection, chargePower);
+            }
+
+            // Xử lý giấu quỹ đạo khi nhả chuột cho súng Auto/Laser
+            if (Input.GetMouseButtonUp(0))
+            {
+                isDragging = false;
+                HideTrajectory();
+            }
 
             // Thả chuột -> BẮN
             if (Input.GetMouseButtonUp(0))

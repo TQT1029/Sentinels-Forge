@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 646d84ae61e89a94585bbff28990bc2a, type: 3}
+  m_Name: PiercingModifierRecipe
+  m_EditorClassIdentifier: Assembly-CSharp::RecipePatternSO
+  recipeName: Piercing Modifier
+  sourceDescription: 
+  isUnlockedByDefault: 1
+  requiredItems:
+  - itemData: {fileID: 11400000, guid: 03bc017fed3ead1458906b36fb5ae033, type: 2}
+    amount: 20
+  - itemData: {fileID: 11400000, guid: 03bc017fed3ead1458906b36fb5ae033, type: 2}
+    amount: 10
+  resultItem:
+    itemData: {fileID: 11400000, guid: 736ba52940eb23a429bb87e127921eb4, type: 2}
+    amount: 1
