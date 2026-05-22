@@ -1,12 +1,16 @@
+using System;
 using UnityEngine;
 
-public class TowerController : MonoBehaviour
+public class TowerController : MonoBehaviour, IHealth
 {
     [SerializeField] protected TowerData towerData;
     protected float currentHealth;
 
     public float PercentHealth => currentHealth / towerData.maxHealth;
     public bool IsDestroyed => currentHealth <= 0f;
+
+    public event Action<float> OnHealthChanged;
+    public event Action OnTowerDestroyed;
 
     protected virtual void Awake()
     {
@@ -20,23 +24,29 @@ public class TowerController : MonoBehaviour
         }
     }
 
-    public virtual void TakeDamage(float amount)
+    public virtual void TakeDamage(DamageInfo info)
     {
         if (PercentHealth > 0)
         {
-            currentHealth -= amount;
-            Debug.Log($"[TowerController] Took {amount} damage. Remaining health: {currentHealth}");
+            currentHealth -= info.damage;
+
+            OnHealthChanged?.Invoke(PercentHealth);
+
+            //Debug.Log($"[TowerController] Took {info.damage} damage. Remaining health: {currentHealth}");
         }
+
         if (IsDestroyed) OnDestroyTower();
     }
-    public virtual void Repair(float amount)
+    public virtual void Heal(float amount)
     {
         currentHealth = Mathf.Min(currentHealth + amount, towerData.maxHealth);
+        OnHealthChanged?.Invoke(PercentHealth);
     }
 
     public virtual void OnDestroyTower()
     {
         gameObject.SetActive(false);
+        OnTowerDestroyed?.Invoke();
         Time.timeScale = 0f;
         //UnityEditor.EditorApplication.isPaused = true;
     }

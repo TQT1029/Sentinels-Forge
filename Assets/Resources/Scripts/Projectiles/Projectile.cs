@@ -22,6 +22,8 @@ public class Projectile : MonoBehaviour
 
     protected float fireVelocity;
 
+    protected bool isCriticalHit = false;
+
     protected virtual void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -107,7 +109,7 @@ public class Projectile : MonoBehaviour
         if (hitData.Enemy != null && !hitContext.CancelDamage)
         {
             CalculateDamage(rb.linearVelocity.magnitude);
-            hitData.Enemy.TakeDamage(RuntimeState.CurrentDamage);
+            hitData.Enemy.TakeDamage(new DamageInfo { damage = RuntimeState.CurrentDamage, isCritical = isCriticalHit });
         }
 
         hitContext.PostHitActions?.Invoke();
@@ -160,7 +162,17 @@ public class Projectile : MonoBehaviour
         float speedRatio = impactVelocity / fireVelocity;
         if (speedRatio < 0.15f) speedRatio = 0;
 
-        RuntimeState.CurrentDamage = (float)Math.Round(projectileData.baseDamage * speedRatio * RuntimeState.DamageMultiplier, 2);
+        // Nhân dồn chí mạng vào luôn speedRatio cho tiện
+        if (RandomUtils.ChancePercent(projectileData.criticalChance * 100))
+        {
+            speedRatio *= projectileData.criticalMultiplier;
+            isCriticalHit = true;
+            //Debug.Log($"Critical Hit! Speed Ratio: {speedRatio}");
+        }
+
+        float rawDamage = projectileData.baseDamage * speedRatio * RuntimeState.DamageMultiplier;
+
+        RuntimeState.CurrentDamage = (float)Math.Round(rawDamage, 2);
     }
 
 

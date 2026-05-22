@@ -20,7 +20,7 @@ public class BorderSafety : MonoBehaviour
         if (collision.gameObject.layer == GameConstants.INDEX_ENEMY_HITBOX_LAYER)
         {
             EnemyAI enemy = collision.gameObject.GetComponentInParent<EnemyAI>();
-            enemy.TakeDamage(Mathf.Infinity);
+            enemy.TakeDamage(new DamageInfo{ damage = Mathf.Infinity, isCritical = false });
         }
     }
 }

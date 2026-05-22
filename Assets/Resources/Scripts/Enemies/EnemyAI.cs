@@ -1,10 +1,13 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Pool;
 
+
+
 public abstract class
-    EnemyAI : MonoBehaviour
+    EnemyAI : MonoBehaviour, IHealth
 {
     [Header("Enemy Data")]
     [field: SerializeField] public EnemyData enemyData { get; private set; }
@@ -44,12 +47,13 @@ public abstract class
     [HideInInspector] public float damageMultiplier = 1f; // Dùng cho cơ chế tăng damage theo wave hoặc buff
     [HideInInspector] public float healthMultiplier = 1f; // Dùng cho cơ chế tăng damage theo wave hoặc buff
 
+    public event Action<float> OnHealthChanged;
 
     protected virtual void Awake()
     {
-        towerTransform = WaveManager.Instance.TowerTransform;
-        towerBounds = WaveManager.Instance.TowerBounds;
-        towerController = WaveManager.Instance.TowerController;
+        towerTransform = ReferenceManager.Instance.TowerTransform;
+        towerBounds = ReferenceManager.Instance.TowerBounds;
+        towerController = ReferenceManager.Instance.TowerController;
 
         rb = GetComponent<Rigidbody2D>();
         solidBody = GetComponent<Collider2D>();
@@ -125,7 +129,7 @@ public abstract class
         damageMultiplier = WaveManager.Instance.WaveMultiplier;
         healthMultiplier = WaveManager.Instance.WaveMultiplier;
 
-
+        OnHealthChanged?.Invoke(1f);
         // Xóa sạch hiệu ứng cũ (Không gọi OnRemove để tránh logic chạy đè)
         activeEffects.Clear();
     }
@@ -176,20 +180,31 @@ public abstract class
     {
         if (IsDead) return;
         currentHealth = Mathf.Min(currentHealth + amount, enemyData.maxHealth);
-        Debug.Log($"[EnemyAI] {gameObject.name} healed {amount} HP! Current HP: {currentHealth}");
+        OnHealthChanged?.Invoke(PercentHealth);
+
+        //Debug.Log($"[EnemyAI] {gameObject.name} healed {amount} HP! Current HP: {currentHealth}");
     }
 
     /// <summary>
     /// Hàm chính để gọi từ bên ngoài
     /// </summary>
-    /// <param name="amount">Số lượng sát thương nhận vào</param>
-    /// <param name="invincibilityTime">Thời gian bất tử sau khi bị hit</param>
-    public virtual void TakeDamage(float amount, float invincibilityTime = 0f)
+    /// <param name="info">Thông tin sát thương nhận vào</param>
+    public virtual void TakeDamage(DamageInfo info)
     {
         if (isInvincible || currentHealth <= 0)
             return;
 
-        currentHealth -= amount;
+        //Thời gian bất tử sau khi bị hit
+        float invincibilityTime = 0.2f;
+
+        currentHealth -= info.damage;
+
+        OnHealthChanged?.Invoke(PercentHealth);
+
+        if (VFXManager.Instance != null)
+        {
+            VFXManager.Instance.CreateDamagePopup(info.damage, transform.position, isCrit: info.isCritical);
+        }
 
         OnHit();
         //Debug.Log($"[EnemyAI] {gameObject.name} took {amount} damage! Remaining HP: {currentHealth}");

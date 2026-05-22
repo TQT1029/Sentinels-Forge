@@ -27,7 +27,7 @@ public class PlayerWeaponInput : MonoBehaviour
 
     private void Awake()
     {
-        mainCam = WaveManager.Instance.MainCamera;
+        mainCam = ReferenceManager.Instance.MainCamera;
         if (currentWeapon == null) currentWeapon = gameObject.GetComponentInChildren<WeaponControl>(false);
 
         trajectoryLine = GetComponent<LineRenderer>();

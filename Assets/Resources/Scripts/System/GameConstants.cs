@@ -14,8 +14,9 @@ public class GameConstants : PersistentSingleton<GameConstants>
     public const string FLYING_ENEMY_TAG = "FlyingEnemy";
     public const string SUPPORT_ENEMY_TAG = "SupportEnemy";
     public const string BOSS_ENEMY_TAG = "BossEnemy";
+    public const string UI_ROOT_TAG = "UIRoot";
 
-    [Header("LAYER NAMES (Dùng cho so sánh gameObject.layer)")]
+    [Header("LAYER NAMES")]
     public const string LAYER_DEFAULT = "Default";
     public const string LAYER_TRANSPARENT_FX = "TransparentFX";
     public const string LAYER_IGNORE_RAYCAST = "Ignore Raycast";
@@ -45,7 +46,7 @@ public class GameConstants : PersistentSingleton<GameConstants>
     public const int INDEX_BORDER_LAYER = 11;
     public const int INDEX_ITEM_LAYER = 12;
 
-    [Header("LAYER BITMASKS (Dùng trực tiếp cho Raycast/Physics)")]
+    [Header("LAYER BITMASKS")]
     public const int MASK_DEFAULT = 1 << INDEX_DEFAULT_LAYER;
     public const int MASK_TRANSPARENT_FX = 1 << INDEX_TRANSPARENT_FX_LAYER;
     public const int MASK_IGNORE_RAYCAST = 1 << INDEX_IGNORE_RAYCAST_LAYER;

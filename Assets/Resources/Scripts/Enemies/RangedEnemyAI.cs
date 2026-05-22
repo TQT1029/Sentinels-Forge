@@ -13,11 +13,13 @@ public class RangedEnemyAI : EnemyAI
 
     private float actualAttackRange;
     private float velocityXRef;
+    private float noiseOffset;
 
     protected override void Awake()
     {
         base.Awake();
         if (firePoint == null) firePoint = transform;
+
     }
 
     public override void ResetStats()
@@ -28,6 +30,8 @@ public class RangedEnemyAI : EnemyAI
         actualAttackRange = Mathf.Max(3f, actualAttackRange);
 
         bufferRange = actualAttackRange * 0.8f;
+        noiseOffset = Random.Range(-1000f, 1000f); // Tạo một offset ngẫu nhiên cho Perlin Noise để mỗi kẻ địch có chuyển động khác nhau
+
     }
 
     protected override void ProcessAI()
@@ -75,6 +79,8 @@ public class RangedEnemyAI : EnemyAI
             // Quá gần (Bị áp sát) -> Tốc độ mong muốn là đi lùi lại
             targetVelocityX = enemyData.moveSpeed * speedMultiplier;
         }
+
+        targetVelocityX += RandomUtils.GetPerlinHeight(noiseOffset, transform.position.x, transform.position.x, 0.1f, -1f, 1f, 0);
 
         float smoothX = Mathf.SmoothDamp(rb.linearVelocity.x, targetVelocityX, ref velocityXRef, 0.2f);
 

@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ProjectileData
   prefab: {fileID: 9056048759155004448, guid: 49f115d2512799a4bb7cba7e0a8fbd7c, type: 3}
   baseDamage: 5
-  damageVariation: 0.5
+  criticalChance: 0.1
+  criticalMultiplier: 1.5
   gravityScale: 1
-  stunDuration: 0
   lifeTime: 10

@@ -66,7 +66,7 @@ public class RuntimeFire : RuntimeEffect
 
         if (finalDamage > 0)
         {
-            Target.TakeDamage(finalDamage);
+            Target.TakeDamage(new DamageInfo { damage = finalDamage, isCritical = false });
             //Debug.Log($"Applied {finalDamage} fire damage to {Target.name} (Stacks: {CurrentStacks})");
         }
     }

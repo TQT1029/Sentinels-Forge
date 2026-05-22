@@ -21,6 +21,8 @@ public class SupportEnemyAI : EnemyAI
     private float actualBuffRange;
     private float distanceToNearesAlly = Mathf.Infinity;
     private float velocityXRef;
+    private float noiseOffset;
+
     [SerializeField] private Transform primaryTarget;
 
     [Header("Optimize")]
@@ -45,6 +47,8 @@ public class SupportEnemyAI : EnemyAI
 
         primaryTarget = FindPrimaryTarget();
         availableAllies.Clear();
+
+        noiseOffset = Random.Range(-1000f, 1000f);
     }
 
     protected override void ProcessAI()
@@ -187,6 +191,9 @@ public class SupportEnemyAI : EnemyAI
             targetVelocityX = directionX * enemyData.moveSpeed;
         }
 
+        targetVelocityX += RandomUtils.GetPerlinHeight(noiseOffset, transform.position.x, -0.5f, 0.5f, 0f); // Thêm một chút biến động ngẫu nhiên để tránh chuyển động quá cứng nhắc
+
+
         float smoothX = Mathf.SmoothDamp(rb.linearVelocity.x, targetVelocityX, ref velocityXRef, 0.2f);
         rb.linearVelocity = new Vector2(smoothX, rb.linearVelocity.y);
     }
@@ -207,6 +214,8 @@ public class SupportEnemyAI : EnemyAI
         {
             targetVelocityX = enemyData.moveSpeed;
         }
+
+        targetVelocityX += RandomUtils.GetPerlinHeight(noiseOffset, transform.position.x, -0.5f, 0.5f, 0f); // Thêm một chút biến động ngẫu nhiên để tránh chuyển động quá cứng nhắc
 
         float smoothX = Mathf.SmoothDamp(rb.linearVelocity.x, targetVelocityX, ref velocityXRef, 0.2f);
 

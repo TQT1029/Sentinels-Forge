@@ -55,8 +55,7 @@ public class FlyingEnemyAI : EnemyAI
 
         bufferRange = actualAttackRange * 0.8f;
 
-        randomNoiseOffset = Random.Range(0f, 1000f);
-
+        randomNoiseOffset = Random.Range(-1000f, 1000f);
     }
 
     protected override void ProcessAI()
@@ -97,7 +96,7 @@ public class FlyingEnemyAI : EnemyAI
         else
         {
             // Cận chiến
-            towerController.TakeDamage(finalDamage);
+            towerController.TakeDamage(new DamageInfo { damage = finalDamage, isCritical = false });
         }
         //Debug.Log($"[FlyingEnemyAI] Đã tấn công: {finalDamage}");
     }
@@ -110,6 +109,7 @@ public class FlyingEnemyAI : EnemyAI
     {
         Vector2 targetVelocity = Vector2.zero;
 
+        // Xử lý di chuyển trục X
         if (!isInRangeAttack)
         {
             if (distanceToTower > actualAttackRange)
@@ -132,7 +132,9 @@ public class FlyingEnemyAI : EnemyAI
             targetVelocity = Vector2.right * (enemyData.moveSpeed * speedMultiplier);
         }
 
-        // THÊM DAO ĐỘNG TRỤC Y
+        targetVelocity.x = RandomUtils.GetPerlinHeight(0, Time.time * perlinFrequency + randomNoiseOffset, transform.position.x, 0.1f, -1f, 1f, 0);
+
+        // Xử lý di chuyển trục Y
         float driftVelocityY = 0f;
 
 

@@ -1,28 +1,15 @@
+using System;
 using UnityEngine;
 
 public class WaveManager : Singleton<WaveManager>
 {
-    public Camera MainCamera { get; private set; }
-    public Transform TowerTransform { get; private set; }
-
-    public Bounds TowerBounds {  get; private set; }
-
-    public TowerController TowerController { get; private set; }
-
     public int CurrentWave { get; private set; } = 0;
 
     public float WaveMultiplier => 1f + (CurrentWave - 1) * 0.1f;
 
     public int EnemyAlive { get; private set; } = 0;
 
-    protected override void Awake()
-    {
-        base.Awake();
-        MainCamera = Camera.main;
-        TowerTransform = GameObject.FindGameObjectWithTag(GameConstants.TOWER_TAG).transform;
-        TowerBounds = TowerTransform.GetComponent<Collider2D>().bounds;
-        TowerController = TowerTransform.GetComponent<TowerController>();
-    }
+    public static event Action<int> OnWaveStarted;
 
     protected virtual void Start()
     {
@@ -48,5 +35,7 @@ public class WaveManager : Singleton<WaveManager>
         CurrentWave++;
         EnemyAlive = 0;
         EnemySpawner.Instance.StartingWave(CurrentWave);
+
+        OnWaveStarted?.Invoke(CurrentWave);
     }
 }

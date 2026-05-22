@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 
+[DefaultExecutionOrder(-100)]
 public abstract class PersistentSingleton<T> : MonoBehaviour where T : Component
 {
     public static T Instance { get; private set; }

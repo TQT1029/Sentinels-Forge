@@ -62,17 +62,16 @@ public static class RandomUtils
 
     /// <summary>
     /// Tính xác suất xảy ra một sự kiện dựa trên phần trăm (0-100%).
-    /// <para><b>Công dụng:</b> Dùng cho các quyết định Có/Không. 
-    /// Ví dụ: "Có spawn hố hay không?" (pitChance), "Có spawn quái hay không?".</para>
     /// </summary>
     /// <param name="percentage">Tỉ lệ phần trăm thành công (0 đến 100).</param>
+    /// <returns>Nếu random ra bé hơn percentage thì trả về true, ngược lại false</returns>
     public static bool ChancePercent(float percentage)
     {
         if (percentage <= 0f) return false;
         if (percentage >= 100f) return true;
 
-        // Random từ 0 đến 100, nếu nhỏ hơn mức phần trăm thì trúng
-        return Random.Range(0f, 100f) < percentage;
+        // Random từ 0 đến 100, nếu nhỏ hơn hoặc bằng mức phần trăm thì trúng
+        return Random.Range(0f, 100f) <= percentage;
     }
 
     /// <summary>
@@ -119,15 +118,15 @@ public static class RandomUtils
     /// <summary>
     /// Lấy ngẫu nhiên độ cao của PerlinNoise 
     /// </summary>
-    /// <param name="xPosition">Vị trí trục X hiện tại (làm mốc lấy mẫu).</param>
+    /// <param name="x">Vị trí trục X hiện tại (làm mốc lấy mẫu).</param>
     /// <param name="scale">Độ "gắt" của địa hình. (0.1 = đồi thoai thoải, 0.5 = núi dốc).</param>
     /// <param name="minHeight">Độ cao thấp nhất.</param>
     /// <param name="maxHeight">Độ cao cao nhất.</param>
     /// <param name="step">Làm tròn kết quả theo bước (để khớp với grid game).</param>
-    public static float GetPerlinHeight(float xPosition, float scale, float minHeight, float maxHeight, float step = 0.5f)
+    public static float GetPerlinHeight( float phaseOffset, float x, float scale, float minHeight, float maxHeight, float step = 0.5f, int seed = 0)
     {
         // Lấy giá trị từ bản đồ nhiễu (0.0 đến 1.0)
-        float noiseValue = Mathf.PerlinNoise(xPosition * scale, 0f);
+        float noiseValue = Mathf.PerlinNoise(x * scale + phaseOffset, seed);
 
         // Chuyển đổi từ khoảng 0..1 sang khoảng minHeight..maxHeight
         float rawHeight = Mathf.Lerp(minHeight, maxHeight, noiseValue);
@@ -437,5 +436,10 @@ public static class RandomUtils
 
         // Fallback an toàn (tránh lỗi float precision ở góc làm tròn cuối cùng)
         return list[list.Count - 1];
+    }
+
+    internal static float GetPerlinHeight(object noiseOffset, object value, float x, float v1, float v2, float v3, int v4)
+    {
+        throw new System.NotImplementedException();
     }
 }
