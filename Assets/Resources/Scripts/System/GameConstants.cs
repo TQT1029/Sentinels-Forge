@@ -2,6 +2,14 @@ using UnityEngine;
 
 public class GameConstants : PersistentSingleton<GameConstants>
 {
+    [Header("SCENE NAMES")]
+    public const string SCENE_MAIN_MENU = "MainMenu";
+    public const string SCENE_GAMEPLAY = "Playing-Wave";
+
+    [Header("SCENES INDEX")]
+    public const int INDEX_MAIN_MENU = 0;
+    public const int INDEX_GAMEPLAY = 1;
+
     [Header("TAGS")]
     public const string PLAYER_TAG = "Player";
     public const string GROUND_TAG = "Ground";

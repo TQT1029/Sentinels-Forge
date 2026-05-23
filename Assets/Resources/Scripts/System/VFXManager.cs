@@ -3,6 +3,8 @@ using UnityEngine.Pool;
 
 public class VFXManager : Singleton<VFXManager>
 {
+    private bool isVFXOn = true;
+
     [Header("Prefabs")]
     [SerializeField] private DamagePopup popupPrefab;
     //[SerializeField] private GameObject hitSparkPrefab;
