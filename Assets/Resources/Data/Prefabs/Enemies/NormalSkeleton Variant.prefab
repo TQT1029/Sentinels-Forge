@@ -65,6 +65,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 5976340004694589711, guid: e293eae94f97d5b4ca748a72e5e8bdcb, type: 3}
     - target: {fileID: 8133160834690447305, guid: 30c0ae7f43ac7dd46af7b14694832b94, type: 3}
+      propertyPath: towerTargetOffset.y
+      value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8133160834690447305, guid: 30c0ae7f43ac7dd46af7b14694832b94, type: 3}
       propertyPath: <enemyData>k__BackingField
       value: 
       objectReference: {fileID: 11400000, guid: 568cf7473dce51c419f4c5c1e1bdc800, type: 2}

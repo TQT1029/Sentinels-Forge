@@ -61,6 +61,10 @@ PrefabInstance:
       value: NormalZombie Variant
       objectReference: {fileID: 0}
     - target: {fileID: 6282887723765348769, guid: 18ce2971da1eb3d4fb94c890a7d17037, type: 3}
+      propertyPath: towerTargetOffset.y
+      value: -0.4
+      objectReference: {fileID: 0}
+    - target: {fileID: 6282887723765348769, guid: 18ce2971da1eb3d4fb94c890a7d17037, type: 3}
       propertyPath: <enemyData>k__BackingField
       value: 
       objectReference: {fileID: 11400000, guid: 35520acba81b427429c7dd7f2a6b3c79, type: 2}

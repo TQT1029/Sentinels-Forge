@@ -14,6 +14,7 @@ public class SettingsPanelUI : MonoBehaviour
     [SerializeField] private Slider musicVolumeSlider;
     [SerializeField] private Slider sfxVolumeSlider;
     [SerializeField] private Toggle fullscreenToggle;
+    [SerializeField] private Toggle vsyncToggle;
     [SerializeField] private Toggle vfxToggle;
     [SerializeField] private Button mainMenuButton;
     private void Awake()
@@ -40,6 +41,9 @@ public class SettingsPanelUI : MonoBehaviour
 
         if (fullscreenToggle != null)
             fullscreenToggle.onValueChanged.AddListener(OnFullscreenToggled);
+
+        if (vsyncToggle != null)
+            vsyncToggle.onValueChanged.AddListener(OnVSyncToggled);
 
         if (vfxToggle != null)
             vfxToggle.onValueChanged.AddListener(OnVFXToggled);
@@ -133,18 +137,28 @@ public class SettingsPanelUI : MonoBehaviour
     private void OnFullscreenToggled(bool isFullscreen)
     {
         // Giao việc thay đổi màn hình cho Engine/GraphicsManager
-        Screen.fullScreen = isFullscreen;
+        GraphicManager.Instance.SetFullscreen(isFullscreen);
+    }
+
+    private void OnVSyncToggled(bool isVsyncOn)
+    {
+        GraphicManager.Instance.SetVSyncEnabled(isVsyncOn);
     }
 
     private void OnVFXToggled(bool isVFXOn)
     {
-        // GraphicsManager.Instance.SetVFXEnabled(isVFXOn);
+        // VFXManager.Instance.SetVFXEnabled(isVFXOn);
     }
 
     private void OnMainMenuButtonClicked()
     {
         // Yêu cầu GameManager chuyển về MainMenu
+        return;
+
+        // Tạm khoá
         GameManager.Instance.ChangeState(GameState.MainMenu);
+        SceneController.Instance.LoadScene(GameConstants.SCENE_MAIN_MENU);
+
     }
 
     private void LoadCurrentSettingsToUI()
@@ -154,8 +168,9 @@ public class SettingsPanelUI : MonoBehaviour
         // masterVolumeSlider.value = AudioManager.Instance.GetMasterVolume();
         // musicVolumeSlider.value = AudioManager.Instance.GetMusicVolume();
         // sfxVolumeSlider.value = AudioManager.Instance.GetSFXVolume();
-        // fullscreenToggle.isOn = Screen.fullScreen;
-        // vfxToggle.isOn = GraphicsManager.Instance.IsVFXEnabled();
+        // fullscreenToggle.isOn = GraphicManager.Instance.IsFullscreenEnabled;
+        // vSyncToggle.isOn = GraphicManager.Instance.IsVSyncEnabled;
+        // vfxToggle.isOn = GraphicManager.Instance.IsVFXEnabled;
 
     }
 }

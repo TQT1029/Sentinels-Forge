@@ -10,11 +10,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 524364727794465074, guid: 3196843fdd7229444a881588163f6dd5, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -16.4267
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 524364727794465074, guid: 3196843fdd7229444a881588163f6dd5, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -4.01061
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 524364727794465074, guid: 3196843fdd7229444a881588163f6dd5, type: 3}
       propertyPath: m_LocalPosition.z
@@ -48,14 +48,38 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1713133615558439999, guid: 3196843fdd7229444a881588163f6dd5, type: 3}
+      propertyPath: m_Color.b
+      value: 0.6754716
+      objectReference: {fileID: 0}
+    - target: {fileID: 1713133615558439999, guid: 3196843fdd7229444a881588163f6dd5, type: 3}
+      propertyPath: m_Color.g
+      value: 0.6754716
+      objectReference: {fileID: 0}
+    - target: {fileID: 1713133615558439999, guid: 3196843fdd7229444a881588163f6dd5, type: 3}
+      propertyPath: m_Color.r
+      value: 0.6754716
+      objectReference: {fileID: 0}
     - target: {fileID: 3280262960397909715, guid: 3196843fdd7229444a881588163f6dd5, type: 3}
       propertyPath: m_Name
-      value: BaseWeaponPrefab (1) Variant
+      value: Cannon
       objectReference: {fileID: 0}
     - target: {fileID: 5766098083704279027, guid: 3196843fdd7229444a881588163f6dd5, type: 3}
       propertyPath: <weaponData>k__BackingField
       value: 
       objectReference: {fileID: 11400000, guid: bb410a37b42a8a949ba90be3297e70ef, type: 2}
+    - target: {fileID: 7579976783824437903, guid: 3196843fdd7229444a881588163f6dd5, type: 3}
+      propertyPath: m_Color.b
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7579976783824437903, guid: 3196843fdd7229444a881588163f6dd5, type: 3}
+      propertyPath: m_Color.g
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7579976783824437903, guid: 3196843fdd7229444a881588163f6dd5, type: 3}
+      propertyPath: m_Color.r
+      value: 0.8037735
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

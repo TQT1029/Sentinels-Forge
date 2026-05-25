@@ -93,6 +93,8 @@ public class ProjectileBow : Projectile
 
                 if (!shouldKeepFlying)
                 {
+                    //TODO: Chỉnh lại vị trí stuck arrow là Body chứ không phải hitbox, vì hitbox có thể không chính xác
+
                     if (!isStuck) StuckingArrow(hit.transform);
                 }
 

@@ -16,7 +16,7 @@ MonoBehaviour:
   enemyType: 0
   maxHealth: 50
   moveSpeed: 2.5
-  attackRange: 1.5
+  attackRange: 2
   attackDamage: 10
   damageVariation: 2
   attackCooldown: 1

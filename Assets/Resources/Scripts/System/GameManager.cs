@@ -46,7 +46,7 @@ public class GameManager : PersistentSingleton<GameManager>
         switch (newState)
         {
             case GameState.MainMenu:
-                Time.timeScale = 0f; // Dừng thời gian khi ở menu chính
+                Time.timeScale = 1f; // Thời gian bình thường khi ở menu chính
                 break;
             case GameState.Playing:
                 Time.timeScale = 1f; // Tiếp tục thời gian khi chơi

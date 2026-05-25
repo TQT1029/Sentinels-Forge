@@ -8,6 +8,7 @@ public class PlayerWeaponInput : MonoBehaviour
     [Header("Target Weapon")]
     [Tooltip("Vũ khí mà người chơi đang cầm trên tay")]
     public WeaponControl currentWeapon;
+    private int activeWeaponIndex = 0; // Tương tác với PlayerLoadoutManager
 
     [Header("Input Settings")]
     [Tooltip("Khoảng cách rê chuột tối đa để đạt 100% lực bắn")]
@@ -34,11 +35,43 @@ public class PlayerWeaponInput : MonoBehaviour
         trajectoryLine.positionCount = 0;
     }
 
-    private void Update()
+    private void Start()
     {
         if (currentWeapon == null) return;
 
+        // BẮT BUỘC NẠP DỮ LIỆU TỪ KHI BẮT ĐẦU
+        if (PlayerLoadoutManager.Instance != null && PlayerLoadoutManager.Instance.ActiveLoadouts.Count > 0)
+        {
+            var firstLoadout = PlayerLoadoutManager.Instance.ActiveLoadouts[0];
+
+            // Ép WeaponControl khởi tạo toàn bộ logic dựa trên Data này
+            if (firstLoadout.selectedProjectiles.Count > 0)
+            {
+                currentWeapon.EquipWeapon(firstLoadout.weaponData, firstLoadout.selectedProjectiles[0]);
+            }
+        }
+        else
+        {
+            Debug.LogWarning("[PlayerWeaponInput] Không có dữ liệu Loadout từ MainMenu!");
+        }
+    }
+
+    private void OnEnable()
+    {
+        EquipmentEvents.OnEquipmentChanged += HandleEquipmentSwitching;
+    }
+
+    private void OnDisable()
+    {
+        EquipmentEvents.OnEquipmentChanged -= HandleEquipmentSwitching;
+    }
+
+    private void Update()
+    {
+        if (currentWeapon == null || currentWeapon.weaponData == null) return;
+
         HandleUtilities();
+        HandleWeaponSwitching();
         HandleProjectileSwitching();
         HandleAimingAndFiring();
     }
@@ -50,6 +83,30 @@ public class PlayerWeaponInput : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.C)) CraftingManager.Instance.CraftItem("Piercing Modifier");
     }
 
+    private void HandleEquipmentSwitching(WeaponData weaponData, ProjectileData projectileData)
+    {
+        if (currentWeapon != null)
+        {
+            // Cập nhật súng và đạn mới vào WeaponControl
+            currentWeapon.EquipWeapon(weaponData, projectileData);
+        }
+    }
+
+    private void HandleWeaponSwitching()
+    {
+        // Khuyến nghị: Trong tương lai nên gọi hàm đổi súng thông qua UI thay vì phím cứng
+        if (Input.GetKeyDown(KeyCode.Q))
+        {
+            switch (activeWeaponIndex)
+            {
+                case 0: activeWeaponIndex = 1; break;
+                case 1: activeWeaponIndex = 0; break;
+            }
+
+            currentWeapon.EquipWeapon(PlayerLoadoutManager.Instance.ActiveLoadouts[activeWeaponIndex].weaponData, PlayerLoadoutManager.Instance.ActiveLoadouts[activeWeaponIndex].selectedProjectiles[0]);
+        }
+    }
+
     /// <summary>
     /// Xử lý bấm phím 1,2,3,4 để đổi đạn
     /// </summary>
@@ -59,7 +116,6 @@ public class PlayerWeaponInput : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Alpha1) || Input.GetKeyDown(KeyCode.Keypad1)) currentWeapon.ChangeProjectile(1);
         if (Input.GetKeyDown(KeyCode.Alpha2) || Input.GetKeyDown(KeyCode.Keypad2)) currentWeapon.ChangeProjectile(2);
         if (Input.GetKeyDown(KeyCode.Alpha3) || Input.GetKeyDown(KeyCode.Keypad3)) currentWeapon.ChangeProjectile(3);
-        if (Input.GetKeyDown(KeyCode.Alpha4) || Input.GetKeyDown(KeyCode.Keypad4)) currentWeapon.ChangeProjectile(4);
     }
 
     /// <summary>
@@ -103,36 +159,23 @@ public class PlayerWeaponInput : MonoBehaviour
             // TÁCH LOGIC BÓP CÒ TÙY THEO LOẠI SÚNG
             WeaponType type = currentWeapon.weaponData.weaponType;
 
-            // 1. Súng Auto và Laser: Bắn liên tục ngay trong lúc đang GIỮ chuột
+            // Xả đạn Auto/Laser khi đang GIỮ chuột
             if (type == WeaponType.Auto || type == WeaponType.Laser)
             {
-                // Hàm TryFire trong WeaponControl đã có sẵn cơ chế cooldown (lastFireTime)
-                // Nên gọi liên tục ở đây rất an toàn, đạn sẽ tự xả theo đúng tốc độ fireCooldown
-                currentWeapon.TryFire(aimDirection, chargePower);
-            }
-            // 2. Súng Single, Burst, Shotgun: Chờ đến khi THẢ chuột mới bắn
-            else if (Input.GetMouseButtonUp(0))
-            {
-                isDragging = false;
-                HideTrajectory();
                 currentWeapon.TryFire(aimDirection, chargePower);
             }
 
-            // Xử lý giấu quỹ đạo khi nhả chuột cho súng Auto/Laser
-            if (Input.GetMouseButtonUp(0))
-            {
-                isDragging = false;
-                HideTrajectory();
-            }
-
-            // Thả chuột -> BẮN
+            // Xả đạn Single/Burst/Shotgun và tắt line khi THẢ chuột
             if (Input.GetMouseButtonUp(0))
             {
                 isDragging = false;
                 HideTrajectory();
 
-                // TRUYỀN LỆNH CHO WEAPON CONTROL THỰC THI CHIẾN THUẬT BẮN (Strategy Pattern)
-                currentWeapon.TryFire(aimDirection, chargePower);
+                // Chỉ TryFire khi THẢ chuột đối với các súng không phải Auto/Laser
+                if (type != WeaponType.Auto && type != WeaponType.Laser)
+                {
+                    currentWeapon.TryFire(aimDirection, chargePower);
+                }
             }
         }
     }
@@ -195,4 +238,5 @@ public class PlayerWeaponInput : MonoBehaviour
         mousePos.z = 10f; // Đẩy ra xa camera để tránh lỗi tọa độ Z
         return mainCam.ScreenToWorldPoint(mousePos);
     }
+
 }

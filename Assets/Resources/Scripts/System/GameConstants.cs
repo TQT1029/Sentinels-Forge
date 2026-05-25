@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class GameConstants : PersistentSingleton<GameConstants>
+public static class GameConstants
 {
     [Header("SCENE NAMES")]
     public const string SCENE_MAIN_MENU = "MainMenu";

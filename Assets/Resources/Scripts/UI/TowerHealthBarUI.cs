@@ -24,11 +24,12 @@ public class TowerHealthBarUI : MonoBehaviour
     }
 
     // Hàm này CHỈ CHẠY khi quái vật thực sự nhận sát thương
-    private void UpdateHealthBar(float percentHealth)
+    private void UpdateHealthBar(float percentHealth,int currentHealth)
     {
-        if (UIManager.Instance != null && UIManager.Instance.globalTowerHealthBar != null)
+        if (UIManager.Instance != null && UIManager.Instance.globalTowerHealthBar != null && UIManager.Instance.globalTowerHealthText != null)
         {
             UIManager.Instance.globalTowerHealthBar.fillAmount = percentHealth;
+            UIManager.Instance.globalTowerHealthText.text = $"HP: {currentHealth}";
         }
     }
 }

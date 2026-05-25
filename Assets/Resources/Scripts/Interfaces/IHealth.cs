@@ -8,7 +8,6 @@ public struct DamageInfo
 }
 public interface IHealth
 {
-    event Action<float> OnHealthChanged;
     public void TakeDamage(DamageInfo info);
     public void Heal(float amount);
 }

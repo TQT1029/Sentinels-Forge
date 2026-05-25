@@ -195,7 +195,7 @@ public abstract class
             return;
 
         //Thời gian bất tử sau khi bị hit
-        float invincibilityTime = 0.2f;
+        float invincibilityTime = 0.15f;
 
         currentHealth -= info.damage;
 

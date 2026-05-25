@@ -3,18 +3,17 @@ public class WeaponControl : MonoBehaviour
 {
     public GameObject firePoint;
     [field: SerializeField] public ProjectileSpawner projectileSpawner { get; private set; }
-    [field: SerializeField] public WeaponData weaponData { get; private set; }
+    [field: SerializeField] public WeaponData weaponData;
     public ProjectileData CurrentProjectileData => projectileSpawner != null ? projectileSpawner.projectileData : weaponData.listOfAvailableProjectiles[0];
 
     private IFireBehavior fireBehavior;
     private float lastFireTime = 0;
 
-    protected virtual void Awake()
+    protected void Awake()
     {
         if (firePoint == null)
         {
-            Transform foundPoint = transform.Find("FirePoint");
-            if (foundPoint != null) firePoint = foundPoint.gameObject;
+            firePoint= transform.Find("FirePoint")?.gameObject;
         }
 
         if (projectileSpawner == null && firePoint != null)
@@ -22,12 +21,24 @@ public class WeaponControl : MonoBehaviour
             projectileSpawner = firePoint.GetComponent<ProjectileSpawner>();
         }
 
-        if (projectileSpawner != null && weaponData != null)
+    }
+    public void EquipWeapon(WeaponData newWeaponData, ProjectileData newProjectileData)
+    {
+        if (newWeaponData == null || newProjectileData == null)
         {
-            projectileSpawner.SetupData(weaponData.listOfAvailableProjectiles[0]);
+            Debug.LogError("[WeaponControl] Data truyền vào bị Null!");
+            return;
         }
 
+        weaponData = newWeaponData;
+
+        // 1. Cập nhật lại Chiến thuật bắn (Strategy Pattern)
         InitializeFireBehavior();
+
+        // 2. Cập nhật Đạn cho Spawner
+        ChangeProjectileData(newProjectileData);
+
+        Debug.Log($"[WeaponControl] Đã trang bị thành công: {weaponData.name} với đạn {newProjectileData.name}");
     }
 
     private void InitializeFireBehavior()
@@ -51,17 +62,6 @@ public class WeaponControl : MonoBehaviour
                 fireBehavior = new LaserFireBehavior();
                 break;
         }
-    }
-
-
-    protected virtual void Update()
-    {
-        // Kiểm tra an toàn thay vì dùng try-catch để tối ưu FPS
-        if (Input.GetKeyDown(KeyCode.Keypad1)) ChangeProjectile(1);
-        else if (Input.GetKeyDown(KeyCode.Keypad2)) ChangeProjectile(2);
-        else if (Input.GetKeyDown(KeyCode.Keypad3)) ChangeProjectile(3);
-        else if (Input.GetKeyDown(KeyCode.Keypad4)) ChangeProjectile(4);
-
     }
 
     /// <summary>
@@ -95,9 +95,8 @@ public class WeaponControl : MonoBehaviour
     }
 
 
-    public virtual void ChangeProjectile(int index)
+    public void ChangeProjectile(int index)
     {
-        // Trừ 1 vì list trong C# bắt đầu từ 0 (Keypad 1 = index 0)
         int listIndex = index - 1;
 
         if (weaponData.listOfAvailableProjectiles != null && listIndex >= 0 && listIndex < weaponData.listOfAvailableProjectiles.Count)
@@ -114,7 +113,7 @@ public class WeaponControl : MonoBehaviour
     {
         if (projectileSpawner != null)
         {
-            projectileSpawner.projectileData = newData;
+            projectileSpawner.SetupData(newData);
             Debug.Log($"[WeaponControl] Projectile data changed to: {projectileSpawner.projectileData}");
         }
     }

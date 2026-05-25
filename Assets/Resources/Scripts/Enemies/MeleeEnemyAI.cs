@@ -4,7 +4,7 @@ public class MeleeEnemyAI : EnemyAI
 {
     [Header("Melee Settings")]
     private float nextAttackTime = 0f;
-    [SerializeField] private float bufferDistance = 0f;
+    private float bufferDistance = 0f;
     private float velocityXRef; // Biến tham chiếu nội bộ dùng cho hàm SmoothDamp
     private float noiseOffset;
 
@@ -13,12 +13,12 @@ public class MeleeEnemyAI : EnemyAI
         base.ResetStats();
 
         noiseOffset = Random.Range(-1000f, 1000f); // Tạo một offset ngẫu nhiên cho Perlin Noise để mỗi kẻ địch có chuyển động khác nhau
+        bufferDistance = enemyData.attackRange * 0.8f; // Khoảng cách để bắt đầu đi lùi lại khi bị áp sát
     }
     protected override void ProcessAI()
     {
         // Kiểm tra khoảng cách
-        float distanceToTower = Vector2.Distance(transform.position, towerTransform.position);
-
+        float distanceToTower = Vector2.Distance(transform.position, actualTargetPosition);
         ApproachingTower(distanceToTower);
 
         if (distanceToTower <= enemyData.attackRange)
