@@ -1,7 +1,16 @@
 using DG.Tweening;
+using System;
 using UnityEngine;
 using UnityEngine.Pool;
 
+public static class RewardEvents
+{
+    // Bắn ra khi nhặt được 1 item trên map
+    public static Action<BaseItemSO, int> OnRewardCollected;
+
+    // Bắn ra khi Boss chết hoặc hết giờ (kích hoạt mở bảng Result)
+    public static Action OnLevelEnding;
+}
 [RequireComponent(typeof(SpriteRenderer), typeof(Collider2D), typeof(Rigidbody2D))]
 public class WorldItem : MonoBehaviour
 {
@@ -24,11 +33,9 @@ public class WorldItem : MonoBehaviour
         sr.sprite = slot.itemData.icon;
 
         // Hiệu ứng văng ngẫu nhiên (Juice)
-        Vector2 randomDir = Random.insideUnitCircle.normalized;
-        float popForce = Random.Range(2f, 4f);
+        Vector2 randomDir = UnityEngine.Random.insideUnitCircle.normalized;
+        float popForce = UnityEngine.Random.Range(2f, 4f);
         rb.AddForce(randomDir * popForce, ForceMode2D.Impulse);
-
-        Debug.Log($"[WorldItem] {gameObject.name} initialized with {slot.amount} {slot.itemData.name}");
     }
 
     // Cơ chế tự nhặt
@@ -46,7 +53,11 @@ public class WorldItem : MonoBehaviour
     {
         if (InventoryManager.Instance != null)
         {
-            InventoryManager.Instance.AddItem(CurrentSlot.itemData, CurrentSlot.amount);
+            if (CurrentSlot.itemData != null)
+            {
+                RewardEvents.OnRewardCollected?.Invoke(CurrentSlot.itemData, CurrentSlot.amount);
+            }
+
             OnPickup();
         }
 

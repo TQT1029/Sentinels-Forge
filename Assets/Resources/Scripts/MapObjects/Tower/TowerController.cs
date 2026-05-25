@@ -48,7 +48,6 @@ public class TowerController : MonoBehaviour, IHealth
     {
         gameObject.transform.parent?.gameObject.SetActive(false);
         OnTowerDestroyed?.Invoke();
-        Time.timeScale = 0f;
-        //UnityEditor.EditorApplication.isPaused = true;
+        RewardEvents.OnLevelEnding?.Invoke();
     }
 }
