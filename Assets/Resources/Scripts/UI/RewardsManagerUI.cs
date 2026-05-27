@@ -73,7 +73,7 @@ public class RewardsManagerUI : MonoBehaviour
         canvasGroup.DOFade(1f, fadeDuration).SetUpdate(true).SetEase(Ease.OutQuad);
 
         // Dừng thời gian game (Tùy thuộc vào thiết kế Game Over của bạn)
-         GameManager.Instance.ChangeState(GameState.Paused);
+        GameManager.Instance.ChangeState(GameState.Paused);
     }
 
     private void ProcessAndDisplayRewards()
@@ -87,16 +87,10 @@ public class RewardsManagerUI : MonoBehaviour
 
             displayList.Add(new RewardData(item.icon, item.itemName, totalAmount));
 
-            if (InventoryManager.Instance != null)
-            {
-                InventoryManager.Instance.AddItem(item, totalAmount);
-            }
         }
 
-        if (rewardsListUI != null)
-        {
-            rewardsListUI.SetRewards(displayList);
-        }
+        rewardsListUI?.SetRewards(displayList);
+
     }
 
     // Gắn vào nút "Continue" / "Back to Menu" trên Result Panel

@@ -15,15 +15,15 @@ PrefabInstance:
     - target: {fileID: -3370339058134026268, guid: 49f115d2512799a4bb7cba7e0a8fbd7c, type: 3}
       propertyPath: 'modifiers.Array.data[0]'
       value: 
-      objectReference: {fileID: 11400000, guid: 67c3baa5f8c02c74e817047a4eb74dda, type: 2}
+      objectReference: {fileID: 11400000, guid: 6fd5056cb2a24354dafc87af3aaddadf, type: 2}
     - target: {fileID: -3370339058134026268, guid: 49f115d2512799a4bb7cba7e0a8fbd7c, type: 3}
       propertyPath: 'modifiers.Array.data[1]'
       value: 
-      objectReference: {fileID: 11400000, guid: 798c7a30ad16821498ea3235f0fced5a, type: 2}
+      objectReference: {fileID: 11400000, guid: f9482ae52f115544d9af47ae85d5a8cf, type: 2}
     - target: {fileID: -3370339058134026268, guid: 49f115d2512799a4bb7cba7e0a8fbd7c, type: 3}
       propertyPath: 'modifiers.Array.data[2]'
       value: 
-      objectReference: {fileID: 11400000, guid: f9482ae52f115544d9af47ae85d5a8cf, type: 2}
+      objectReference: {fileID: 11400000, guid: 798c7a30ad16821498ea3235f0fced5a, type: 2}
     - target: {fileID: -3370339058134026268, guid: 49f115d2512799a4bb7cba7e0a8fbd7c, type: 3}
       propertyPath: 'modifiers.Array.data[3]'
       value: 

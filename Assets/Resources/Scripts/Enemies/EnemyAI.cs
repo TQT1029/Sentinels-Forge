@@ -119,6 +119,9 @@ public abstract class
     }
     public virtual void ResetStats()
     {
+        damageMultiplier = WaveManager.Instance.WaveMultiplier;
+        healthMultiplier = WaveManager.Instance.WaveMultiplier;
+
         currentHealth = enemyData.maxHealth * healthMultiplier;
         isInvincible = false;
         checkingTime = 0f;
@@ -126,8 +129,6 @@ public abstract class
         // Bắt buộc Reset tất cả trạng thái trước khi lấy khỏi Pool
         isStunned = false;
         speedMultiplier = 1f;
-        damageMultiplier = WaveManager.Instance.WaveMultiplier;
-        healthMultiplier = WaveManager.Instance.WaveMultiplier;
 
         OnHealthChanged?.Invoke(1f);
         // Xóa sạch hiệu ứng cũ (Không gọi OnRemove để tránh logic chạy đè)

@@ -23,7 +23,7 @@ public class WaveManager : Singleton<WaveManager>
 
     public void EnemyKilled()
     {
-        EnemyAlive--;
+        EnemyAlive = Mathf.Max(0, EnemyAlive - 1);
         if (EnemyAlive <= 0)
         {
             StartNextWave();

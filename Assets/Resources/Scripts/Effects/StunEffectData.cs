@@ -9,20 +9,24 @@ public class StunEffectData : EffectData
     }
 }
 
-public class RuntimeStun : RuntimeEffect
+public class RuntimeStun : RuntimeEffect, IStunEffect
 {
     public RuntimeStun(EffectData data, EnemyAI target) : base(data, target) { }
 
     public override void OnApply()
     {
-        Target.isStunned = true; 
-        Target.rb.linearVelocity = Vector2.zero; 
-        //Debug.Log($"[Effect] {Target.name} bị choáng!");
+        Target.isStunned = true;
+        Target.rb.linearVelocity = Vector2.zero;
     }
 
     public override void OnRemove()
     {
-        Target.isStunned = false; // Tắt cờ choáng trả lại tự do
-        //Debug.Log($"[Effect] {Target.name} hết choáng.");
+        // Chỉ tắt stun nếu không còn source nào khác đang giữ cờ
+        foreach (var effect in Target.activeEffects.Values)
+        {
+            if (effect != this && effect is IStunEffect)
+                return;
+        }
+        Target.isStunned = false;
     }
 }

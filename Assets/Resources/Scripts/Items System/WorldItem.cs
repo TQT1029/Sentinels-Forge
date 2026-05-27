@@ -44,6 +44,7 @@ public class WorldItem : MonoBehaviour
         // Kiểm tra va chạm
         if (collision.collider.gameObject.layer == GameConstants.INDEX_BORDER_LAYER && collision.collider.CompareTag(GameConstants.GROUND_TAG))
         {
+            CancelInvoke(nameof(Pickup)); // Tránh một 1 item gọi nhiều lần
             Invoke(nameof(Pickup), 1f);
         }
     }
@@ -55,6 +56,7 @@ public class WorldItem : MonoBehaviour
         {
             if (CurrentSlot.itemData != null)
             {
+                InventoryManager.Instance?.AddItem(CurrentSlot.itemData, CurrentSlot.amount);
                 RewardEvents.OnRewardCollected?.Invoke(CurrentSlot.itemData, CurrentSlot.amount);
             }
 

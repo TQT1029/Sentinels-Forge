@@ -132,4 +132,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d142153cfdc7b1e4b83ba20e6bbb4d91, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ProjectileArrow
-  modifiers: []
+  modifiers:
+  - {fileID: 11400000, guid: 361a6fb1604c2164e9dd1417c7a078ce, type: 2}
+  - {fileID: 11400000, guid: fd3c187ca97f3e64d9b7e4294dccc7be, type: 2}

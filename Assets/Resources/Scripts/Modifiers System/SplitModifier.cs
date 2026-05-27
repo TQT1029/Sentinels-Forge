@@ -5,14 +5,13 @@ using UnityEngine;
 public class SplitModifier : BaseModifier
 {
     public int additionalSplits = 1;
-    public int splitNumber = 2; // Số viên đạn con được tạo ra mỗi lần split
-    public float splitAngle = 30f; // Góc lệch giữa các viên đạn con
+    public int splitNumber = 2;
+    public float splitAngle = 30f;
 
-    private const string SPLIT_COUNT = "SplitCount";
+    public const string SPLIT_COUNT = "SplitCount";
 
     public override void OnFire(Projectile projectile, ProjectileRuntimeState state)
     {
-        projectileSpawner = projectile.projectileSpawner;
         state.AddStat(SPLIT_COUNT, additionalSplits);
     }
 
@@ -20,47 +19,54 @@ public class SplitModifier : BaseModifier
     {
         if (hitContext.IsHandled || hitData.Enemy == null || hitContext.HasSplit) return;
 
-
         int splitsLeft = state.GetStat(SPLIT_COUNT);
-        if (splitsLeft > 0)
+        if (splitsLeft <= 0) return;
+
+        hitContext.IsHandled = true;
+        hitContext.HasSplit = true;
+        hitContext.TerminateProjectile = true;
+        state.SetStat(SPLIT_COUNT, splitsLeft - 1);
+
+        // Capture trước khi vào closure để tránh capture biến ngoài scope
+        ProjectileSpawner spawner = projectile.projectileSpawner;
+        Vector2 fireVelocity = projectile.rb.linearVelocity;
+        Vector2 hitPoint = hitData.Point;
+        int remainingSplits = splitsLeft - 1;
+        HashSet<EnemyAI> inheritedHitTargets = new HashSet<EnemyAI>(projectile.hitTargets);
+        List<BaseModifier> inheritedModifiers = projectile.modifiers;
+        ProjectileRuntimeState sourceState = state;
+
+        hitContext.PostHitActions += () =>
         {
-            hitContext.IsHandled = true;
-            hitContext.HasSplit = true;
-            hitContext.TerminateProjectile = true; // Vỡ đạn gốc
-
-            state.SetStat(SPLIT_COUNT, splitsLeft - 1);
-
-            hitContext.PostHitActions += () =>
+            for (int i = 0; i < splitNumber; i++)
             {
-                // Tạo các viên đạn con
-                for (int i = 0; i < splitNumber; i++)
+                float angleOffset = splitAngle * (i - (splitNumber - 1) / 2f);
+                Vector2 newDirection = (Quaternion.Euler(0, 0, angleOffset) * fireVelocity.normalized);
+
+                Projectile newProj = spawner.CurrentPool.Get();
+
+                newProj.hitTargets = new HashSet<EnemyAI>(inheritedHitTargets);
+                newProj.transform.position = hitPoint + newDirection * 0.5f;
+                newProj.rb.linearVelocity = newDirection * fireVelocity.magnitude;
+
+                // Mỗi modifier tự copy phần state của nó — không hardcode tên stat của modifier khác
+                if (inheritedModifiers != null)
                 {
-                    float angleOffset = splitAngle * (i - (splitNumber - 1) / 2f); // Tính góc lệch
-                    Quaternion rotation = Quaternion.Euler(0, 0, angleOffset);
-                    Vector2 newDirection = rotation * projectile.rb.linearVelocity.normalized;
-
-                    // Lấy một viên đạn mới từ pool
-                    Projectile newProj = projectileSpawner.CurrentPool.Get();
-
-                    newProj.hitTargets = newProj.hitTargets = new HashSet<EnemyAI>(projectile.hitTargets); ; // Coppy danh sách đã trúng của viên đạn gốc
-
-                    newProj.transform.position = hitData.Point + newDirection * 0.5f;
-                    newProj.rb.linearVelocity = newDirection * projectile.rb.linearVelocity.magnitude;
-
-                    newProj.RuntimeState.SetStat(SPLIT_COUNT, splitsLeft - 1);
-
-                    // Kế thừa các chỉ số khác để đạn con cũng được nhận modifier tương tự
-                    newProj.RuntimeState.SetStat("PierceCount", state.GetStat("PierceCount"));
-                    newProj.RuntimeState.SetStat("BounceCount", state.GetStat("BounceCount"));
-
-                    newProj.RuntimeState.Velocity = newProj.rb.linearVelocity;
-                    newProj.ProcessImediate();
+                    foreach (var mod in inheritedModifiers)
+                        mod.InheritState(sourceState, newProj.RuntimeState);
                 }
 
-                //Debug.Log($"[SplitModifier] Projectile split into {splitNumber} new projectiles with angle offset of {splitAngle} degrees.");
-            };
-            // Yêu cầu đạn tự hủy (Để nó không bay tiếp)
-            hitContext.TerminateProjectile = true;
-        }
+                // Override split count cho đạn con sau khi InheritState chạy xong
+                newProj.RuntimeState.SetStat(SPLIT_COUNT, remainingSplits);
+                newProj.RuntimeState.Velocity = newProj.rb.linearVelocity;
+
+                newProj.ProcessImediate();
+            }
+        };
+    }
+
+    public override void InheritState(ProjectileRuntimeState source, ProjectileRuntimeState destination)
+    {
+        destination.SetStat(SPLIT_COUNT, source.GetStat(SPLIT_COUNT));
     }
 }

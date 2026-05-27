@@ -13,6 +13,6 @@ public class AutoFireBehavior : IFireBehavior
         float finalVelocity = data.fireVelocity * chargePower;
         finalVelocity += data.GetVelocityVibration(finalVelocity);
 
-        weapon.SpawnAndFireProjectile(finalDirection, finalVelocity);
+        weapon.SpawnAndFireProjectileFromSpawner(finalDirection, finalVelocity);
     }
 }

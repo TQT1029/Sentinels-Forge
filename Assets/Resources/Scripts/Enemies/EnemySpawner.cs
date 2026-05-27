@@ -28,6 +28,8 @@ public class EnemySpawner : Singleton<EnemySpawner>
     private Dictionary<EnemyAI, IObjectPool<EnemyAI>> enemyPools;
 
     private Transform enemiesStorageObj;
+    private Coroutine _spawnCoroutine;
+
 
     [field: SerializeField] public Transform startPoint { get; private set; }
     [field: SerializeField] public Transform endPoint { get; private set; }
@@ -108,8 +110,8 @@ public class EnemySpawner : Singleton<EnemySpawner>
 
     public void StartingWave(int currentWave)
     {
-        Debug.Log($"[EnemySpawner] Starting Wave {currentWave}");
-        StartCoroutine(ProcessWaveSpawning(currentWave));
+        if (_spawnCoroutine != null) StopCoroutine(_spawnCoroutine);
+        _spawnCoroutine = StartCoroutine(ProcessWaveSpawning(currentWave));
     }
 
     private IEnumerator ProcessWaveSpawning(int waveIndex)
@@ -159,15 +161,5 @@ public class EnemySpawner : Singleton<EnemySpawner>
     {
         // Thay đổi vị trí kẻ địch trước khi triệu hồi
         return RandomUtils.RandomPosition(startPoint.position, endPoint.position);
-    }
-
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-        if (collision.gameObject.layer == GameConstants.INDEX_PROJECTILE_LAYER)
-        {
-            Projectile projectile = collision.gameObject.GetComponent<Projectile>();
-
-            projectile.ReturnToPool();
-        }
     }
 }

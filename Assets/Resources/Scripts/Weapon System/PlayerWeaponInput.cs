@@ -103,7 +103,11 @@ public class PlayerWeaponInput : MonoBehaviour
                 case 1: activeWeaponIndex = 0; break;
             }
 
-            currentWeapon.EquipWeapon(PlayerLoadoutManager.Instance.ActiveLoadouts[activeWeaponIndex].weaponData, PlayerLoadoutManager.Instance.ActiveLoadouts[activeWeaponIndex].selectedProjectiles[0]);
+            var loadout = PlayerLoadoutManager.Instance.ActiveLoadouts[activeWeaponIndex];
+
+            if (loadout.selectedProjectiles == null || loadout.selectedProjectiles.Count == 0) return;
+
+            currentWeapon.EquipWeapon(loadout.weaponData, loadout.selectedProjectiles[0]);
         }
     }
 

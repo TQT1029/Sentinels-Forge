@@ -4,9 +4,9 @@ using UnityEngine;
 public class BounceModifier : BaseModifier
 {
     public int additionalBounces = 2;
-    public float speedRetention = 0.7f; // Tỉ lệ giữ lại tốc độ sau mỗi lần nảy
-    private const string BOUNCE_COUNT = "BounceCount";
+    public float speedRetention = 0.7f;
 
+    public const string BOUNCE_COUNT = "BounceCount";
 
     public override void OnFire(Projectile projectile, ProjectileRuntimeState state)
     {
@@ -15,30 +15,28 @@ public class BounceModifier : BaseModifier
 
     public override void OnHit(Projectile projectile, ProjectileRuntimeState state, HitData hitData, HitActionContext hitContext)
     {
-        if (hitContext.IsHandled || hitData.Enemy != null) return;
-        
+        if (hitData.Enemy != null) return;
+        if (hitContext.IsHandled) return;
+
         int bouncesLeft = state.GetStat(BOUNCE_COUNT);
+        if (bouncesLeft <= 0) return;
 
-        if (bouncesLeft > 0)
-        {
-            state.SetStat(BOUNCE_COUNT, bouncesLeft - 1);
+        state.SetStat(BOUNCE_COUNT, bouncesLeft - 1);
+        hitContext.IsHandled = true;
+        hitContext.TerminateProjectile = false;
 
-            hitContext.IsHandled = true;
-            hitContext.TerminateProjectile = false;
+        Vector2 currentVel = state.Velocity;
+        Vector2 reflected = Vector2.Reflect(currentVel.normalized, hitData.Normal);
+        projectile.rb.linearVelocity = reflected * currentVel.magnitude * speedRetention;
 
-            // Logic phản xạ tia (Toán học)
-            Vector2 currentVel = state.Velocity;
-            Vector2 reflected = Vector2.Reflect(currentVel.normalized, hitData.Normal);
-            projectile.rb.linearVelocity = reflected * currentVel.magnitude * speedRetention;
+        // Đẩy đạn ra khỏi bề mặt để tránh double-hit vật lý ngay frame tiếp theo
+        projectile.transform.position = hitData.Point + hitData.Normal * 0.05f;
 
-            // Đẩy nhẹ đạn ra khỏi tường để chống kẹt (chống Double-hit vật lý)
-            projectile.transform.position = hitData.Point + hitData.Normal * 0.05f;
+        projectile.ClearHitTargets();
+    }
 
-            // Yêu cầu đạn KHÔNG tự hủy (Để nó bay tiếp theo hướng mới)
-            hitContext.TerminateProjectile = false;
-
-            // Xoá danh sách quái đã trúng để đạn nảy lại có thể đánh trúng con cũ
-            projectile.ClearHitTargets();
-        }
+    public override void InheritState(ProjectileRuntimeState source, ProjectileRuntimeState destination)
+    {
+        destination.SetStat(BOUNCE_COUNT, source.GetStat(BOUNCE_COUNT));
     }
 }

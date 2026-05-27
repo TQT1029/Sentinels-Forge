@@ -28,7 +28,7 @@ public class StandardFireBehavior : IFireBehavior
             finalVelocity += data.GetVelocityVibration(finalVelocity);
 
             // Bắn đạn
-            weapon.SpawnAndFireProjectile(finalDirection, finalVelocity);
+            weapon.SpawnAndFireProjectileFromSpawner(finalDirection, finalVelocity);
         }
     }
 }

@@ -437,9 +437,4 @@ public static class RandomUtils
         // Fallback an toàn (tránh lỗi float precision ở góc làm tròn cuối cùng)
         return list[list.Count - 1];
     }
-
-    internal static float GetPerlinHeight(object noiseOffset, object value, float x, float v1, float v2, float v3, int v4)
-    {
-        throw new System.NotImplementedException();
-    }
 }

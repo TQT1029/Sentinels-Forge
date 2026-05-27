@@ -3,14 +3,14 @@ using UnityEngine;
 
 public class ProjectileRuntimeState
 {
-    // Dữ liệu cơ bản
     public float CurrentDamage;
     public float DamageMultiplier = 1f;
-    public Vector2 Velocity; // Vận tốc hiện tại trước khi va chạm. (Được cập nhật liên tục qua Update)
+    public Vector2 Velocity;
     public Transform HomingTarget;
 
-    // BLACKBOARD: Lưu trữ mọi state của các Modifier (Không GC sau warmup)
-    private Dictionary<string, int> customIntStats = new Dictionary<string, int>();
+    private readonly Dictionary<string, int> _stats = new Dictionary<string, int>();
+
+    private static readonly Stack<HitActionContext> _contextPool = new Stack<HitActionContext>(32);
 
     public void Reset(float baseDamage)
     {
@@ -18,14 +18,34 @@ public class ProjectileRuntimeState
         DamageMultiplier = 1f;
         Velocity = Vector2.zero;
         HomingTarget = null;
-        customIntStats.Clear(); // Tránh GC, chỉ clear data cũ
+        _stats.Clear();
     }
 
-    // Modifier dùng hàm này để tương tác với RuntimeState
-    public void SetStat(string key, int value) => customIntStats[key] = value;
-    public int GetStat(string key, int defaultValue = 0)
-    {
-        return customIntStats.TryGetValue(key, out int val) ? val : defaultValue;
-    }
+    public void SetStat(string key, int value) => _stats[key] = value;
+
+    public int GetStat(string key, int defaultValue = 0) =>
+        _stats.TryGetValue(key, out int val) ? val : defaultValue;
+
     public void AddStat(string key, int amount) => SetStat(key, GetStat(key) + amount);
+
+    public bool HasStat(string key) => _stats.ContainsKey(key);
+
+    // --- HitActionContext pooling ---
+
+    public static HitActionContext RentContext()
+    {
+        if (_contextPool.Count > 0)
+        {
+            HitActionContext ctx = _contextPool.Pop();
+            ctx.Reset();
+            return ctx;
+        }
+        return new HitActionContext();
+    }
+
+    public static void ReturnContext(HitActionContext ctx)
+    {
+        ctx.PostHitActions = null;
+        _contextPool.Push(ctx);
+    }
 }

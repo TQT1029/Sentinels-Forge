@@ -6,7 +6,7 @@ public class RecipePatternSO : ScriptableObject
 {
     [Header("Recipe Info")]
     public string recipeName;
-    [TextArea] public string sourceDescription; // Mô tả nguồn gốc của công thức (ví dụ: "Tìm thấy trong rương kho báu" hoặc "Rớt ra từ Boss X")
+    [TextArea] public string sourceDescription;
     [Tooltip("Nếu True: Luôn hiện trong lò rèn. Nếu False: Phải dùng Blueprint để unlock")]
     public bool isUnlockedByDefault = true;
 

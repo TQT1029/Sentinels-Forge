@@ -4,19 +4,18 @@ using UnityEngine;
 
 public class CraftingManager : PersistentSingleton<CraftingManager>
 {
-    // Kho chứa TẤT CẢ công thức trong game
-    private Dictionary<string, RecipePatternSO> allRecipes = new Dictionary<string, RecipePatternSO>();
+    // SO reference làm key — không còn phụ thuộc vào string khớp
+    private Dictionary<RecipePatternSO, bool> _unlockedRecipes = new Dictionary<RecipePatternSO, bool>();
 
-    // Kho chứa các công thức ĐÃ ĐƯỢC MỞ KHÓA (nhờ nhặt Blueprint)
-    private HashSet<string> unlockedRecipes = new HashSet<string>();
+    // Giữ string lookup để tương thích với code gọi CraftItem(string) và UnlockRecipe(string)
+    private Dictionary<string, RecipePatternSO> _recipesByName = new Dictionary<string, RecipePatternSO>();
 
-    // Events để UI Canvas lắng nghe và hiển thị thông báo
-    public event Action<RecipePatternSO> OnCraftSuccess; 
-    public event Action<string> OnCraftFailed; 
-    protected override void Awake() 
+    public event Action<RecipePatternSO> OnCraftSuccess;
+    public event Action<string> OnCraftFailed;
+
+    protected override void Awake()
     {
         base.Awake();
-
         LoadAllRecipes(Resources.LoadAll<RecipePatternSO>("Data/ScriptableObjects/Recipes"));
     }
 
@@ -24,77 +23,83 @@ public class CraftingManager : PersistentSingleton<CraftingManager>
     {
         foreach (var recipe in recipes)
         {
-            if (!allRecipes.ContainsKey(recipe.recipeName))
+            if (recipe == null) continue;
+
+            if (_recipesByName.ContainsKey(recipe.recipeName))
             {
-                allRecipes.Add(recipe.recipeName, recipe);
-
-                // Nếu công thức có sẵn, cho luôn vào danh sách đã Unlock
-                if (recipe.isUnlockedByDefault)
-                {
-                    unlockedRecipes.Add(recipe.recipeName);
-                }
+                Debug.LogWarning($"[CraftingManager] Trùng tên recipe: '{recipe.recipeName}'. Bỏ qua.");
+                continue;
             }
-        }
-    }
-    // Dùng khi người chơi nhặt/sử dụng Blueprint
-    public void UnlockRecipe(string recipeName)
-    {
-        if (allRecipes.ContainsKey(recipeName) && !unlockedRecipes.Contains(recipeName))
-        {
-            unlockedRecipes.Add(recipeName);
-            Debug.Log($"[Crafting] Mở khóa công thức mới: {recipeName}");
+
+            _recipesByName[recipe.recipeName] = recipe;
+            _unlockedRecipes[recipe] = recipe.isUnlockedByDefault;
         }
     }
 
-    // Tách riêng hàm Check để UI có thể gọi (VD: Làm mờ nút Craft nếu thiếu đồ)
+    // --- Public API dùng SO reference (ưu tiên dùng cái này) ---
+
+    public void UnlockRecipe(RecipePatternSO recipe)
+    {
+        if (recipe == null || !_unlockedRecipes.ContainsKey(recipe)) return;
+        if (_unlockedRecipes[recipe]) return;
+
+        _unlockedRecipes[recipe] = true;
+        Debug.Log($"[Crafting] Mở khóa công thức mới: {recipe.recipeName}");
+    }
+
     public bool CanCraft(RecipePatternSO recipe)
     {
         if (recipe == null) return false;
+        if (!_unlockedRecipes.TryGetValue(recipe, out bool unlocked) || !unlocked) return false;
 
-        // 1. Kiểm tra xem đã mở khóa công thức chưa
-        if (!unlockedRecipes.Contains(recipe.recipeName)) return false;
-
-        // 2. Kiểm tra đủ nguyên liệu không (Tối ưu vòng lặp, Early Exit)
         foreach (var req in recipe.requiredItems)
         {
             if (!InventoryManager.Instance.HasItem(req.itemData.itemID, req.amount))
-            {
                 return false;
-            }
         }
         return true;
     }
 
-    // Hàm gọi khi bấm nút "Chế Tạo" trên UI
-    public void CraftItem(string recipeName)
+    public void CraftItem(RecipePatternSO recipe)
     {
-        if (!allRecipes.TryGetValue(recipeName, out RecipePatternSO recipe))
-        {
-            OnCraftFailed?.Invoke("Không tìm thấy công thức này!");
-            return;
-        }
-
         if (!CanCraft(recipe))
         {
             OnCraftFailed?.Invoke("Chưa mở khóa hoặc không đủ nguyên liệu!");
             return;
         }
 
-        // ==========================================
-        // THỰC THI CHẾ TẠO (CONSUME & REWARD)
-        // ==========================================
-
-        // 1. Trừ nguyên liệu
         foreach (var req in recipe.requiredItems)
-        {
             InventoryManager.Instance.RemoveItem(req.itemData.itemID, req.amount);
-        }
 
-        // 2. Thêm đồ mới vào túi
         InventoryManager.Instance.AddItem(recipe.resultItem.itemData, recipe.resultItem.amount);
 
-        // 3. Thông báo thành công
         OnCraftSuccess?.Invoke(recipe);
         Debug.Log($"[Crafting] Chế tạo thành công: {recipe.resultItem.itemData.itemName} x{recipe.resultItem.amount}");
     }
+
+    // --- String overloads giữ lại để không breaking change ---
+
+    public void UnlockRecipe(string recipeName)
+    {
+        if (_recipesByName.TryGetValue(recipeName, out RecipePatternSO recipe))
+            UnlockRecipe(recipe);
+        else
+            Debug.LogWarning($"[CraftingManager] Không tìm thấy recipe: '{recipeName}'");
+    }
+
+    public void CraftItem(string recipeName)
+    {
+        if (!_recipesByName.TryGetValue(recipeName, out RecipePatternSO recipe))
+        {
+            OnCraftFailed?.Invoke($"Không tìm thấy công thức: '{recipeName}'");
+            Debug.LogWarning($"[CraftingManager] Không tìm thấy recipe: '{recipeName}'. Kiểm tra lại tên trong Inspector.");
+            return;
+        }
+        CraftItem(recipe);
+    }
+
+    public bool IsUnlocked(RecipePatternSO recipe) =>
+        recipe != null && _unlockedRecipes.TryGetValue(recipe, out bool unlocked) && unlocked;
+
+    public IReadOnlyDictionary<RecipePatternSO, bool> GetAllRecipes() => _unlockedRecipes;
 }

@@ -82,7 +82,7 @@ public class WeaponControl : MonoBehaviour
     /// <summary>
     /// Hàm API để các FireBehavior gọi ra sinh đạn. Tương thích hoàn hảo với ProjectileSystem hiện tại.
     /// </summary>
-    public void SpawnAndFireProjectile(Vector2 direction, float velocity)
+    public void SpawnAndFireProjectileFromSpawner(Vector2 direction, float velocity)
     {
         if (projectileSpawner == null) return;
 
@@ -92,6 +92,16 @@ public class WeaponControl : MonoBehaviour
         {
             projectile.rb.linearVelocity = direction.normalized * velocity;
         }
+    }
+
+    // Overload cho BurstFire dùng spawner đã capture — tránh dùng this.projectileSpawner live
+    public void SpawnAndFireProjectileFromSpawner(ProjectileSpawner spawner, Vector2 direction, float velocity)
+    {
+        if (spawner == null) return;
+
+        Projectile projectile = spawner.CurrentPool.Get();
+        if (projectile.rb != null)
+            projectile.rb.linearVelocity = direction.normalized * velocity;
     }
 
 

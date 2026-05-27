@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9dab8683adca7c048b071c54f11dfb53, type: 3}
   m_Name: ApplyStatusMod
   m_EditorClassIdentifier: Assembly-CSharp::ApplyStatusModifier
-  modifierName: Effects
+  modifierName: Fire
   description: Apply effects  for enemy
-  effectToApply:
-  - {fileID: 11400000, guid: ebc3fc92b17dc7d46921a2f8bfd3bc14, type: 2}
+  effectsToApply:
+  - {fileID: 11400000, guid: 91d64c96343648348865eddb19287703, type: 2}

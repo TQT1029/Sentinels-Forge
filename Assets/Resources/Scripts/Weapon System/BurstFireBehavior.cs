@@ -5,14 +5,21 @@ public class BurstFireBehavior : IFireBehavior
 {
     public void ExecuteFire(WeaponControl weapon, Vector2 aimDirection, float chargePower)
     {
-        // Vì hành vi này cần thời gian trễ (Interval), ta mượn Coroutine của WeaponControl
-        weapon.StartCoroutine(FireBurstRoutine(weapon, aimDirection, chargePower));
+        // Snapshot spawner và data ngay tại thời điểm bóp cò
+        // Coroutine sẽ dùng các giá trị này xuyên suốt burst, bất kể player đổi súng giữa chừng
+        ProjectileSpawner capturedSpawner = weapon.projectileSpawner;
+        WeaponData capturedData = weapon.weaponData;
+
+        weapon.StartCoroutine(FireBurstRoutine(weapon, capturedSpawner, capturedData, aimDirection, chargePower));
     }
 
-    private IEnumerator FireBurstRoutine(WeaponControl weapon, Vector2 aimDirection, float chargePower)
+    private IEnumerator FireBurstRoutine(
+        WeaponControl weapon,
+        ProjectileSpawner spawner,
+        WeaponData data,
+        Vector2 aimDirection,
+        float chargePower)
     {
-        WeaponData data = weapon.weaponData;
-
         for (int i = 0; i < data.burstCount; i++)
         {
             float angleOffset = data.GetAngleVibration();
@@ -21,7 +28,7 @@ public class BurstFireBehavior : IFireBehavior
             float finalVelocity = data.fireVelocity * chargePower;
             finalVelocity += data.GetVelocityVibration(finalVelocity);
 
-            weapon.SpawnAndFireProjectile(finalDirection, finalVelocity);
+            weapon.SpawnAndFireProjectileFromSpawner(spawner, finalDirection, finalVelocity);
 
             yield return new WaitForSeconds(data.burstInterval);
         }

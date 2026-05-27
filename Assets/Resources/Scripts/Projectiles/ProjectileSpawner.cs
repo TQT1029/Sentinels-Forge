@@ -20,6 +20,12 @@ public class ProjectileSpawner : MonoBehaviour
         {
             if (poolsMap == null) poolsMap = new Dictionary<ProjectileData, IObjectPool<Projectile>>();
 
+            if (projectileData == null)
+            {
+                Debug.LogError("[ProjectileSpawner] projectileData chưa được setup!");
+                return null;
+            }
+
             if (!poolsMap.ContainsKey(projectileData))
             {
                 // Capture data hiện tại vào biến local để các hàm delegate không bị nhầm lẫn khi đổi đạn

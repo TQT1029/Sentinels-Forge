@@ -80,7 +80,7 @@ public class RangedEnemyAI : EnemyAI
             targetVelocityX = enemyData.moveSpeed * speedMultiplier;
         }
 
-        targetVelocityX += RandomUtils.GetPerlinHeight(noiseOffset, transform.position.x, transform.position.x, 0.1f, -1f, 1f, 0);
+        targetVelocityX += RandomUtils.GetPerlinHeight(noiseOffset, transform.position.x, 0.1f, -1f, 1f, 0);
 
         float smoothX = Mathf.SmoothDamp(rb.linearVelocity.x, targetVelocityX, ref velocityXRef, 0.2f);
 

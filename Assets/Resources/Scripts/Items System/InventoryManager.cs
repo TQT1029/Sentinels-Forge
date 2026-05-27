@@ -88,8 +88,5 @@ public class InventoryManager : PersistentSingleton<InventoryManager>
     }
 
     // Tiện ích dành cho UI lấy toàn bộ danh sách vật phẩm để vẽ lên màn hình
-    public Dictionary<string, InventorySlot> GetAllItems()
-    {
-        return inventory;
-    }
+    public IReadOnlyDictionary<string, InventorySlot> GetAllItems() => inventory;
 }
