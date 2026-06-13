@@ -79,7 +79,7 @@ public class SettingsPanelUI : MonoBehaviour
     }
 
     // Tự động bật/tắt UI dựa vào trạng thái của Game
-    private void HandleGameStateChanged(GameState state)
+    public void HandleGameStateChanged(GameState state)
     {
         if (state == GameState.Paused)
         {

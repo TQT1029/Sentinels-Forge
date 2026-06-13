@@ -13,7 +13,6 @@ public class ProjectileBow : Projectile
 
     private Vector3 positionOffset;
     private Quaternion rotationOffset;
-    private Vector2 currentVelocity;
 
     protected override void Update()
     {
@@ -21,7 +20,6 @@ public class ProjectileBow : Projectile
 
         if (!isStuck)
         {
-            currentVelocity = rb.linearVelocity;
             RotateTowardsVelocity();
             CheckCollision();
         }
@@ -122,7 +120,7 @@ public class ProjectileBow : Projectile
                     }
                 }
             }
-            else if (hit.collider.gameObject.layer == GameConstants.INDEX_SPAWNER_ZONE_LAYER)
+            else if (hit.collider.gameObject.layer == GameConstants.INDEX_BORDER_LAYER && hit.collider.gameObject.CompareTag(GameConstants.WALL_TAG))
             {
                 ReturnToPool();
             }
