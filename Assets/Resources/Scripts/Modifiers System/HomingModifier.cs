@@ -81,7 +81,7 @@ public class HomingModifier : BaseModifier
     private Transform FindNearestTargetInCone(Projectile projectile)
     {
         Collider2D[] hitColliders = Physics2D.OverlapCircleAll(
-            projectile.transform.position, homingRange, GameConstants.MASK_ENEMY_HITBOX);
+            projectile.transform.position, homingRange, GameConstants.LayerMasks.ENEMY_HITBOX);
 
         Transform bestTarget = null;
         float closestDistanceSqr = Mathf.Infinity;

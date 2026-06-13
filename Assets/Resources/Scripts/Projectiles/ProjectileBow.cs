@@ -83,7 +83,7 @@ public class ProjectileBow : Projectile
         {
             bool shouldKeepFlying = false;
 
-            if (hit.collider.gameObject.layer == GameConstants.INDEX_BORDER_LAYER && hit.collider.gameObject.CompareTag(GameConstants.GROUND_TAG))
+            if (hit.collider.gameObject.layer == GameConstants.LayerIndices.BORDER && hit.collider.gameObject.CompareTag(GameConstants.Tags.GROUND))
             {
                 HitData hitData = new HitData(hit, null);
 
@@ -91,13 +91,15 @@ public class ProjectileBow : Projectile
 
                 if (!shouldKeepFlying)
                 {
-                    //TODO: Chỉnh lại vị trí stuck arrow là Body chứ không phải hitbox, vì hitbox có thể không chính xác
-
-                    if (!isStuck) StuckingArrow(hit.transform);
+                    if (!isStuck)
+                    {
+                        transform.position = hit.point;
+                        StuckingArrow(hit.transform);
+                    }
                 }
 
             }
-            else if (hit.collider.gameObject.layer == GameConstants.INDEX_ENEMY_HITBOX_LAYER || hit.collider.gameObject.layer == GameConstants.INDEX_ENEMY_BODY_LAYER)
+            else if (hit.collider.gameObject.layer == GameConstants.LayerIndices.ENEMY_HITBOX || hit.collider.gameObject.layer == GameConstants.LayerIndices.ENEMY_BODY)
             {
                 EnemyAI enemy = hit.transform.GetComponentInParent<EnemyAI>();
 
@@ -116,11 +118,24 @@ public class ProjectileBow : Projectile
                             ReleaseArrowsOnTarget(enemy.transform);
                         }
 
-                        if (!isStuck) StuckingArrow(enemy.transform);
+                        if (!isStuck)
+                        {
+                            // Dời vị trí mũi tên vào sát Body thay vì lơ lửng ở Hitbox
+                            if (EnemyPhysicsRegistry.TryGet(hit.collider, out var cache) && cache.SolidCollider != null)
+                            {
+                                transform.position = cache.SolidCollider.ClosestPoint(hit.point);
+                            }
+                            else
+                            {
+                                transform.position = hit.point;
+                            }
+                            
+                            StuckingArrow(enemy.transform);
+                        }
                     }
                 }
             }
-            else if (hit.collider.gameObject.layer == GameConstants.INDEX_BORDER_LAYER && hit.collider.gameObject.CompareTag(GameConstants.WALL_TAG))
+            else if (hit.collider.gameObject.layer == GameConstants.LayerIndices.BORDER && hit.collider.gameObject.CompareTag(GameConstants.Tags.WALL))
             {
                 ReturnToPool();
             }

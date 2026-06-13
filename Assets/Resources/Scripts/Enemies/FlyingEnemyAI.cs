@@ -171,10 +171,10 @@ public class FlyingEnemyAI : EnemyAI
 
     private float ApplyAltitudeSafety(float currentTargetVelocityY)
     {
-        RaycastHit2D groundHit = Physics2D.Raycast(transform.position, Vector2.down, minAltitude, GameConstants.MASK_BORDER);
+        RaycastHit2D groundHit = Physics2D.Raycast(transform.position, Vector2.down, minAltitude, GameConstants.LayerMasks.BORDER);
         //Debug.DrawRay(transform.position, Vector2.down * minAltitude, Color.aquamarine);
 
-        if (groundHit.collider != null && groundHit.collider.gameObject.CompareTag(GameConstants.GROUND_TAG))
+        if (groundHit.collider != null && groundHit.collider.gameObject.CompareTag(GameConstants.Tags.GROUND))
         {
             float proximityFactor = 1f - (groundHit.distance / minAltitude);
 

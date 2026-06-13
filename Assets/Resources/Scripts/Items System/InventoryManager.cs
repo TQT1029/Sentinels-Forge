@@ -17,10 +17,10 @@ public class InventorySlot
 
 public class InventoryManager : PersistentSingleton<InventoryManager>
 {
-    // Quản lý inventory theo Dictionary để lookup O(1) khi craft/check item
-    // Key là itemID
-    private Dictionary<string, InventorySlot> inventory = new Dictionary<string, InventorySlot>();
+    // Quản lý inventory theo List để hỗ trợ nhiều slot của cùng 1 loại item (stack giới hạn)
+    private List<InventorySlot> inventory = new List<InventorySlot>();
     public event Action OnInventoryChanged; // Sự kiện thông báo cho UI cập nhật mỗi khi kho đồ thay đổi
+    
     protected override void Awake()
     {
         base.Awake();
@@ -31,7 +31,7 @@ public class InventoryManager : PersistentSingleton<InventoryManager>
         if (inventory != null && inventory.Count > 0)
         {
             Debug.Log("=== INVENTORY CONTENT ===");
-            foreach (var slot in inventory.Values)
+            foreach (var slot in inventory)
             {
                 Debug.Log($"Item: {slot.itemData.itemName}, Amount: {slot.amount}");
             }
@@ -42,26 +42,37 @@ public class InventoryManager : PersistentSingleton<InventoryManager>
             Debug.Log("Inventory is empty or null!");
         }
     }
+
     public void AddItem(BaseItemSO item, int amount)
     {
         if (item == null || amount <= 0) return;
 
-        if (inventory.TryGetValue(item.itemID, out InventorySlot slot))
+        // Điền vào các slot đang có sẵn mà chưa đầy
+        foreach(var slot in inventory)
         {
-            // Xử lý giới hạn Stack tối đa của Item
-            if (slot.amount + amount > item.maxStackSize)
+            if (slot.itemData.itemID == item.itemID && slot.amount < item.maxStackSize)
             {
-                // Nếu vượt quá, có thể xử lý tràn slot (tùy thuộc vào thiết kế UI sau này)
-                slot.amount = item.maxStackSize;
-            }
-            else
-            {
-                slot.amount += amount;
+                int space = item.maxStackSize - slot.amount;
+                if (amount <= space)
+                {
+                    slot.amount += amount;
+                    amount = 0;
+                    break;
+                }
+                else
+                {
+                    slot.amount = item.maxStackSize;
+                    amount -= space;
+                }
             }
         }
-        else
+
+        // Nếu vẫn còn dư amount, tạo slot mới
+        while (amount > 0)
         {
-            inventory.Add(item.itemID, new InventorySlot(item, amount));
+            int toAdd = Mathf.Min(amount, item.maxStackSize);
+            inventory.Add(new InventorySlot(item, toAdd));
+            amount -= toAdd;
         }
 
         // Bắn sự kiện thông báo cho UI và hệ thống Crafting cập nhật
@@ -70,23 +81,41 @@ public class InventoryManager : PersistentSingleton<InventoryManager>
 
     public bool HasItem(string itemID, int requiredAmount)
     {
-        return inventory.TryGetValue(itemID, out InventorySlot slot) && slot.amount >= requiredAmount;
+        int total = 0;
+        foreach(var slot in inventory)
+        {
+            if (slot.itemData.itemID == itemID) total += slot.amount;
+        }
+        return total >= requiredAmount;
     }
 
     public void RemoveItem(string itemID, int amount)
     {
-        if (HasItem(itemID, amount))
-        {
-            inventory[itemID].amount -= amount;
-            if (inventory[itemID].amount <= 0)
-            {
-                inventory.Remove(itemID);
-            }
+        if (!HasItem(itemID, amount)) return;
 
-            OnInventoryChanged?.Invoke();
+        for (int i = inventory.Count - 1; i >= 0; i--)
+        {
+            var slot = inventory[i];
+            if (slot.itemData.itemID == itemID)
+            {
+                if (slot.amount >= amount)
+                {
+                    slot.amount -= amount;
+                    amount = 0;
+                    if (slot.amount <= 0) inventory.RemoveAt(i);
+                    break;
+                }
+                else
+                {
+                    amount -= slot.amount;
+                    inventory.RemoveAt(i);
+                }
+            }
         }
+
+        OnInventoryChanged?.Invoke();
     }
 
-    // Tiện ích dành cho UI lấy toàn bộ danh sách vật phẩm để vẽ lên màn hình
-    public IReadOnlyDictionary<string, InventorySlot> GetAllItems() => inventory;
+    // Trả về danh sách để UI hiển thị
+    public IReadOnlyList<InventorySlot> GetAllItems() => inventory;
 }

@@ -20,7 +20,7 @@ public class ProjectileCannon : Projectile
         lowVelocityTimer = 0f;
         isGrounded = false;
 
-        projCollider.excludeLayers = GameConstants.MASK_TOWER | GameConstants.MASK_PROJECTILE;
+        projCollider.excludeLayers = GameConstants.LayerMasks.TOWER | GameConstants.LayerMasks.PROJECTILE;
         rb.AddTorque(torqueAmount, ForceMode2D.Impulse);
     }
 
@@ -51,7 +51,7 @@ public class ProjectileCannon : Projectile
     {
         if (isGrounded) return;
 
-        if (collision.gameObject.layer == GameConstants.INDEX_BORDER_LAYER && collision.gameObject.CompareTag(GameConstants.GROUND_TAG))
+        if (collision.gameObject.layer == GameConstants.LayerIndices.BORDER && collision.gameObject.CompareTag(GameConstants.Tags.GROUND))
         {
             HandleGroundCollision(collision);
             //Debug.Log($"[ProjectileCannon] {gameObject.name} đã va chạm với mặt đất ở vị trí {transform.position}");
@@ -62,7 +62,7 @@ public class ProjectileCannon : Projectile
     {
         if (isGrounded) return;
 
-        if (collider.gameObject.layer == GameConstants.INDEX_ENEMY_HITBOX_LAYER)
+        if (collider.gameObject.layer == GameConstants.LayerIndices.ENEMY_HITBOX)
         {
             EnemyAI enemy = collider.GetComponentInParent<EnemyAI>();
             if (enemy == null) return;
@@ -70,7 +70,7 @@ public class ProjectileCannon : Projectile
             HandleEnemyCollision(collider, enemy);
             //Debug.Log($"[ProjectileCannon] {gameObject.name} đã va chạm với quái {enemy.gameObject.name} ở vị trí {transform.position}");
         }
-        else if (collider.gameObject.layer == GameConstants.INDEX_SPAWNER_ZONE_LAYER)
+        else if (collider.gameObject.layer == GameConstants.LayerIndices.SPAWNER_ZONE)
         {
             ReturnToPool();
         }
@@ -102,9 +102,9 @@ public class ProjectileCannon : Projectile
     public override void ProcessImediate()
     {
         // TỐI ƯU: Chỉ dò đúng layer của mặt đất (Border), dùng bán kính siêu nhỏ
-        Collider2D groundOverlap = Physics2D.OverlapCircle(transform.position, 0.1f, GameConstants.MASK_BORDER);
+        Collider2D groundOverlap = Physics2D.OverlapCircle(transform.position, 0.1f, GameConstants.LayerMasks.BORDER);
 
-        if (groundOverlap != null && groundOverlap.CompareTag(GameConstants.GROUND_TAG))
+        if (groundOverlap != null && groundOverlap.CompareTag(GameConstants.Tags.GROUND))
         {
             ProcessImmediateGroundOverlap(groundOverlap);
         }
@@ -134,7 +134,7 @@ public class ProjectileCannon : Projectile
         RuntimeState.DamageMultiplier = 0;
 
         //Dùng toán tử |= để CỘNG THÊM Mask thay vì ghi đè
-        projCollider.excludeLayers = GameConstants.MASK_TOWER | GameConstants.MASK_PROJECTILE | GameConstants.MASK_ENEMY_BODY;
+        projCollider.excludeLayers = GameConstants.LayerMasks.TOWER | GameConstants.LayerMasks.PROJECTILE | GameConstants.LayerMasks.ENEMY_BODY;
     }
 
     public override void ReturnToPool()

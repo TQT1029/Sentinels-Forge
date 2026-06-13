@@ -12,6 +12,7 @@ public class GameManager : PersistentSingleton<GameManager>
 {
     public static event Action<GameState> OnGameStateChanged;
     public GameState CurrentState { get; private set; }
+    private float previousTimeScale = 1f;
 
     private void Start()
     {
@@ -49,9 +50,10 @@ public class GameManager : PersistentSingleton<GameManager>
                 Time.timeScale = 1f; // Thời gian bình thường khi ở menu chính
                 break;
             case GameState.Playing:
-                Time.timeScale = 1f; // Tiếp tục thời gian khi chơi
+                Time.timeScale = previousTimeScale; // Tiếp tục thời gian khi chơi
                 break;
             case GameState.Paused:
+                previousTimeScale = Time.timeScale;
                 Time.timeScale = 0f; // Dừng thời gian khi tạm dừng
                 break;
             case GameState.GameOver:

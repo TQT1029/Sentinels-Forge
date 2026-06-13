@@ -29,6 +29,7 @@ public class EnemySpawner : Singleton<EnemySpawner>
 
     private Transform enemiesStorageObj;
     private Coroutine _spawnCoroutine;
+    private List<EnemyPoolConfig> affordableTypesBuffer = new List<EnemyPoolConfig>();
 
 
     [field: SerializeField] public Transform startPoint { get; private set; }
@@ -58,10 +59,10 @@ public class EnemySpawner : Singleton<EnemySpawner>
 
         if (enemiesStorageObj == null)
         {
-            enemiesStorageObj = GameObject.Find("Enemies Storage Obj")?.transform;
+            enemiesStorageObj = GameObject.Find(GameConstants.Config.ENEMIES_STORAGE_NAME)?.transform;
             if (enemiesStorageObj == null)
             {
-                enemiesStorageObj = new GameObject("Enemies Storage Obj").transform;
+                enemiesStorageObj = new GameObject(GameConstants.Config.ENEMIES_STORAGE_NAME).transform;
             }
         }
     }
@@ -141,15 +142,28 @@ public class EnemySpawner : Singleton<EnemySpawner>
     {
         List<EnemyAI> queue = new List<EnemyAI>();
 
-        List<EnemyPoolConfig> availableTypes = poolConfigs.FindAll(c => c.unlockAtWave <= currentWave && currentWave <= c.LockAtWave || c.unlockAtWave <= currentWave && c.unlockAtWave == c.LockAtWave);
-
-        while (budget > 0)
+        affordableTypesBuffer.Clear();
+        foreach(var c in poolConfigs)
         {
-            List<EnemyPoolConfig> affordableTypes = availableTypes.FindAll(c => c.cost <= budget);
+            if (c.unlockAtWave <= currentWave && currentWave <= c.LockAtWave || c.unlockAtWave <= currentWave && c.unlockAtWave == c.LockAtWave)
+            {
+                affordableTypesBuffer.Add(c);
+            }
+        }
 
-            if (affordableTypes.Count == 0) break;
+        while (budget > 0 && affordableTypesBuffer.Count > 0)
+        {
+            for (int i = affordableTypesBuffer.Count - 1; i >= 0; i--)
+            {
+                if (affordableTypesBuffer[i].cost > budget)
+                {
+                    affordableTypesBuffer.RemoveAt(i);
+                }
+            }
 
-            EnemyPoolConfig selectedType = affordableTypes[Random.Range(0, affordableTypes.Count)];
+            if (affordableTypesBuffer.Count == 0) break;
+
+            EnemyPoolConfig selectedType = affordableTypesBuffer[Random.Range(0, affordableTypesBuffer.Count)];
             queue.Add(selectedType.prefab);
             budget -= selectedType.cost;
         }

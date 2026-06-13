@@ -12,10 +12,10 @@ public class ItemDropManager : Singleton<ItemDropManager>
     {
         base.Awake();
 
-        itemStorageObj = GameObject.Find("Item Storage Obj")?.transform;
+        itemStorageObj = GameObject.Find(GameConstants.Config.ITEM_STORAGE_NAME)?.transform;
         if (itemStorageObj == null)
         {
-            itemStorageObj = new GameObject("Item Storage Obj").transform;
+            itemStorageObj = new GameObject(GameConstants.Config.ITEM_STORAGE_NAME).transform;
         }
 
         itemPool = new ObjectPool<WorldItem>(

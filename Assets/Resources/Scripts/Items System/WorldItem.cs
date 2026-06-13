@@ -19,6 +19,7 @@ public class WorldItem : MonoBehaviour
     private SpriteRenderer sr;
     private Rigidbody2D rb;
     private IObjectPool<WorldItem> managedPool;
+    private bool isPickingUp = false;
 
     private void Awake()
     {
@@ -41,10 +42,12 @@ public class WorldItem : MonoBehaviour
     // Cơ chế tự nhặt
     private void OnCollisionEnter2D(Collision2D collision)
     {
+        if (isPickingUp) return;
+
         // Kiểm tra va chạm
-        if (collision.collider.gameObject.layer == GameConstants.INDEX_BORDER_LAYER && collision.collider.CompareTag(GameConstants.GROUND_TAG))
+        if (collision.collider.gameObject.layer == GameConstants.LayerIndices.BORDER && collision.collider.CompareTag(GameConstants.Tags.GROUND))
         {
-            CancelInvoke(nameof(Pickup)); // Tránh một 1 item gọi nhiều lần
+            isPickingUp = true;
             Invoke(nameof(Pickup), 1f);
         }
     }
@@ -71,13 +74,16 @@ public class WorldItem : MonoBehaviour
     {
         // Hiệu ứng 1: Nảy nhẹ lên trên 0.5 đơn vị
         transform.DOMoveY(transform.position.y + 0.5f, 0.3f)
-            .SetEase(Ease.OutQuad);
+            .SetEase(Ease.OutQuad)
+            .SetLink(gameObject);
 
         // Hiệu ứng 2: Thu nhỏ về 0, khi hoàn thành (OnComplete) thì thu hồi object
         transform.DOScale(Vector3.zero, 0.3f)
             .SetEase(Ease.InBack)
+            .SetLink(gameObject)
             .OnComplete(() =>
             {
+                isPickingUp = false;
                 transform.localScale = Vector3.one; // Reset scale để lần sau dùng lại không bị lỗi
                 // Trả về Pool thay vì Destroy
                 ReturnToPool();

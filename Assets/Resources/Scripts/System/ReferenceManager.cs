@@ -20,11 +20,11 @@ public class ReferenceManager : Singleton<ReferenceManager>
 
         MainCamera = Camera.main;
         
-        TowerTransform = GameObject.FindGameObjectWithTag(GameConstants.TOWER_TAG).transform;
+        TowerTransform = GameObject.FindGameObjectWithTag(GameConstants.Tags.TOWER).transform;
         TowerBounds = TowerTransform.GetComponent<Collider2D>().bounds;
         TowerController = TowerTransform.GetComponent<TowerController>();
 
-        UIRoot = GameObject.FindGameObjectWithTag(GameConstants.UI_ROOT_TAG).GetComponent<Canvas>();
+        UIRoot = GameObject.FindGameObjectWithTag(GameConstants.Tags.UI_ROOT).GetComponent<Canvas>();
 
     }
 }

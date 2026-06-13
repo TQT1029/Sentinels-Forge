@@ -280,7 +280,7 @@ public class SupportEnemyAI : EnemyAI
         {
             Collider2D allyCol = overlapResults[i];
 
-            if (!allyCol.gameObject.CompareTag(GameConstants.SUPPORT_ENEMY_TAG) && allyCol.gameObject != this.gameObject)
+            if (!allyCol.gameObject.CompareTag(GameConstants.Tags.SUPPORT_ENEMY) && allyCol.gameObject != this.gameObject)
             {
                 EnemyAI allyAI = allyCol.GetComponentInParent<EnemyAI>();
                 if (allyAI != null && !allyAI.IsDead)

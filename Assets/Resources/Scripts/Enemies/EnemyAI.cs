@@ -4,8 +4,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Pool;
 
-
-
 public abstract class
     EnemyAI : MonoBehaviour, IHealth
 {
@@ -144,7 +142,11 @@ public abstract class
 
         ProcessAI();
 
-        if (transform.position.y <= -50) managedPool.Release(this);
+        if (transform.position.y <= GameConstants.Config.DEATH_PLANE_Y)
+        {
+            WaveManager.Instance.EnemyKilled();
+            managedPool.Release(this);
+        }
     }
     protected abstract void ProcessAI();
 
@@ -196,7 +198,7 @@ public abstract class
             return;
 
         //Thời gian bất tử sau khi bị hit
-        float invincibilityTime = 0.15f;
+        float invincibilityTime = GameConstants.Config.ENEMY_INVINCIBILITY_TIME;
 
         currentHealth -= info.damage;
 

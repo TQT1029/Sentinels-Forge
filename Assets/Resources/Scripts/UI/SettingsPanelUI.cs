@@ -157,7 +157,7 @@ public class SettingsPanelUI : MonoBehaviour
 
         // Tạm khoá
         GameManager.Instance.ChangeState(GameState.MainMenu);
-        SceneController.Instance.LoadScene(GameConstants.SCENE_MAIN_MENU);
+        SceneController.Instance.LoadScene(GameConstants.Scenes.MAIN_MENU);
 
     }
 

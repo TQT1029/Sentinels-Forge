@@ -5,7 +5,7 @@ public class BorderSafety : MonoBehaviour
     [SerializeField] private bool InstantKillEnemies = true;
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.layer == GameConstants.INDEX_PROJECTILE_LAYER)
+        if (collision.gameObject.layer == GameConstants.LayerIndices.PROJECTILE)
         {
             Projectile projectile = collision.gameObject.GetComponent<Projectile>();
 
@@ -17,7 +17,7 @@ public class BorderSafety : MonoBehaviour
     {
         if (!InstantKillEnemies) return;
 
-        if (collision.gameObject.layer == GameConstants.INDEX_ENEMY_HITBOX_LAYER)
+        if (collision.gameObject.layer == GameConstants.LayerIndices.ENEMY_HITBOX)
         {
             EnemyAI enemy = collision.gameObject.GetComponentInParent<EnemyAI>();
             enemy.TakeDamage(new DamageInfo{ damage = Mathf.Infinity, isCritical = false });

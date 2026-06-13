@@ -2,83 +2,93 @@ using UnityEngine;
 
 public static class GameConstants
 {
-    [Header("SCENE NAMES")]
-    public const string SCENE_MAIN_MENU = "MainMenu";
-    public const string SCENE_GAMEPLAY = "Playing-Wave";
+    public static class Scenes
+    {
+        public const string MAIN_MENU = "MainMenu";
+        public const string GAMEPLAY = "Playing-Wave";
+        public const int INDEX_MAIN_MENU = 0;
+        public const int INDEX_GAMEPLAY = 1;
+    }
 
-    [Header("SCENES INDEX")]
-    public const int INDEX_MAIN_MENU = 0;
-    public const int INDEX_GAMEPLAY = 1;
+    public static class Tags
+    {
+        public const string PLAYER = "Player";
+        public const string GROUND = "Ground";
+        public const string WALL = "Wall";
+        public const string TOWER = "Tower";
+        public const string WEAPON = "Weapon";
+        public const string FIRE_POINT = "FirePoint";
+        public const string RANGED_ENEMY = "RangedEnemy";
+        public const string MELEE_ENEMY = "MeleeEnemy";
+        public const string FLYING_ENEMY = "FlyingEnemy";
+        public const string SUPPORT_ENEMY = "SupportEnemy";
+        public const string BOSS_ENEMY = "BossEnemy";
+        public const string UI_ROOT = "UIRoot";
+    }
 
-    [Header("TAGS")]
-    public const string PLAYER_TAG = "Player";
-    public const string GROUND_TAG = "Ground";
-    public const string WALL_TAG = "Wall";
-    public const string TOWER_TAG = "Tower";
-    public const string WEAPON_TAG = "Weapon";
-    public const string FIRE_POINT_TAG = "FirePoint";
-    public const string RANGED_ENEMY_TAG = "RangedEnemy";
-    public const string MELEE_ENEMY_TAG = "MeleeEnemy";
-    public const string FLYING_ENEMY_TAG = "FlyingEnemy";
-    public const string SUPPORT_ENEMY_TAG = "SupportEnemy";
-    public const string BOSS_ENEMY_TAG = "BossEnemy";
-    public const string UI_ROOT_TAG = "UIRoot";
+    public static class LayerNames
+    {
+        public const string DEFAULT = "Default";
+        public const string TRANSPARENT_FX = "TransparentFX";
+        public const string IGNORE_RAYCAST = "Ignore Raycast";
+        public const string TOWER = "Tower";
+        public const string WATER = "Water";
+        public const string UI = "UI";
+        public const string ENEMY_HITBOX = "EnemyHitbox";
+        public const string PROJECTILE = "Projectile";
+        public const string ENEMY_BODY = "EnemyBody";
+        public const string SPAWNER_ZONE = "SpawnerZone";
+        public const string ENEMY_PROJECTILE = "EnemyProjectile";
+        public const string BORDER = "Border";
+        public const string ITEM = "Item";
+    }
 
-    [Header("LAYER NAMES")]
-    public const string LAYER_DEFAULT = "Default";
-    public const string LAYER_TRANSPARENT_FX = "TransparentFX";
-    public const string LAYER_IGNORE_RAYCAST = "Ignore Raycast";
-    public const string LAYER_TOWER = "Tower";
-    public const string LAYER_WATER = "Water";
-    public const string LAYER_UI = "UI";
-    public const string LAYER_ENEMY_HITBOX = "EnemyHitbox";
-    public const string LAYER_PROJECTILE = "Projectile";
-    public const string LAYER_ENEMY_BODY= "EnemyBody";
-    public const string LAYER_SPAWNER_ZONE = "SpawnerZone";
-    public const string LAYER_ENEMY_PROJECTILE = "EnemyProjectile";
-    public const string LAYER_BORDER = "Border";
-    public const string LAYER_ITEM = "Item";
+    public static class LayerIndices
+    {
+        public const int DEFAULT = 0;
+        public const int TRANSPARENT_FX = 1;
+        public const int IGNORE_RAYCAST = 2;
+        public const int TOWER = 3;
+        public const int WATER = 4;
+        public const int UI = 5;
+        public const int ENEMY_HITBOX = 6;
+        public const int PROJECTILE = 7;
+        public const int ENEMY_BODY = 8;
+        public const int SPAWNER_ZONE = 9;
+        public const int ENEMY_PROJECTILE = 10;
+        public const int BORDER = 11;
+        public const int ITEM = 12;
+    }
 
-    [Header("LAYER INDICES")]
-    public const int INDEX_DEFAULT_LAYER = 0;
-    public const int INDEX_TRANSPARENT_FX_LAYER = 1;
-    public const int INDEX_IGNORE_RAYCAST_LAYER = 2;
-    public const int INDEX_TOWER_LAYER = 3;
-    public const int INDEX_WATER_LAYER = 4;
-    public const int INDEX_UI_LAYER = 5;
-    public const int INDEX_ENEMY_HITBOX_LAYER = 6;
-    public const int INDEX_PROJECTILE_LAYER = 7;
-    public const int INDEX_ENEMY_BODY_LAYER = 8;
-    public const int INDEX_SPAWNER_ZONE_LAYER = 9;
-    public const int INDEX_ENEMY_PROJECTILE_LAYER = 10;
-    public const int INDEX_BORDER_LAYER = 11;
-    public const int INDEX_ITEM_LAYER = 12;
+    public static class LayerMasks
+    {
+        public const int DEFAULT = 1 << LayerIndices.DEFAULT;
+        public const int TRANSPARENT_FX = 1 << LayerIndices.TRANSPARENT_FX;
+        public const int IGNORE_RAYCAST = 1 << LayerIndices.IGNORE_RAYCAST;
+        public const int TOWER = 1 << LayerIndices.TOWER;
+        public const int WATER = 1 << LayerIndices.WATER;
+        public const int UI = 1 << LayerIndices.UI;
+        public const int ENEMY_HITBOX = 1 << LayerIndices.ENEMY_HITBOX;
+        public const int PROJECTILE = 1 << LayerIndices.PROJECTILE;
+        public const int ENEMY_BODY = 1 << LayerIndices.ENEMY_BODY;
+        public const int SPAWNER_ZONE = 1 << LayerIndices.SPAWNER_ZONE;
+        public const int ENEMY_PROJECTILE = 1 << LayerIndices.ENEMY_PROJECTILE;
+        public const int BORDER = 1 << LayerIndices.BORDER;
+        public const int ITEM = 1 << LayerIndices.ITEM;
 
-    [Header("LAYER BITMASKS")]
-    public const int MASK_DEFAULT = 1 << INDEX_DEFAULT_LAYER;
-    public const int MASK_TRANSPARENT_FX = 1 << INDEX_TRANSPARENT_FX_LAYER;
-    public const int MASK_IGNORE_RAYCAST = 1 << INDEX_IGNORE_RAYCAST_LAYER;
-    public const int MASK_TOWER = 1 << INDEX_TOWER_LAYER;
-    public const int MASK_WATER = 1 << INDEX_WATER_LAYER;
-    public const int MASK_UI = 1 << INDEX_UI_LAYER;
-    public const int MASK_ENEMY_HITBOX = 1 << INDEX_ENEMY_HITBOX_LAYER;
-    public const int MASK_PROJECTILE = 1 << INDEX_PROJECTILE_LAYER;
-    public const int MASK_ENEMY_BODY = 1 << INDEX_ENEMY_BODY_LAYER;
-    public const int MASK_SPAWNER_ZONE = 1 << INDEX_SPAWNER_ZONE_LAYER;
-    public const int MASK_ENEMY_PROJECTILE = 1 << INDEX_ENEMY_PROJECTILE_LAYER;
-    public const int MASK_BORDER = 1 << INDEX_BORDER_LAYER;
-    public const int MASK_ITEM = 1 << INDEX_ITEM_LAYER;
+        // COMBINED MASKS
+        public const int PLAYER_PROJECTILE_TARGETS = ENEMY_HITBOX | BORDER | SPAWNER_ZONE;
+        public const int ENEMY_PROJECTILE_TARGETS = TOWER | BORDER;
+        public const int RADAR_TARGETS = ENEMY_HITBOX;
+        public const int PLAYER_PROJECTILE_COLLISION_IGNORE = ENEMY_HITBOX | BORDER | TOWER;
+    }
 
-    // --- CÁC MASK KẾT HỢP (COMBINED MASKS) ---
-
-    // Dành cho Đạn của Player: Chỉ xét va chạm với Quái, Border và SpawnerZone
-    public const int MASK_PLAYER_PROJECTILE_TARGETS = MASK_ENEMY_HITBOX | MASK_BORDER | MASK_SPAWNER_ZONE;
-
-    // Dành cho Đạn của Enemy: Chỉ xét va chạm với Tower (Base), Border
-    public const int MASK_ENEMY_PROJECTILE_TARGETS = MASK_TOWER | MASK_BORDER;
-
-    // Dành cho Homing Modifier: Tầm nhìn radar chỉ quét các đối tượng là Enemy
-    public const int MASK_RADAR_TARGETS = MASK_ENEMY_HITBOX;
-
-    public const int MASK_PLAYER_PROJECTILE_COLLISION_IGNORE = MASK_ENEMY_HITBOX | MASK_BORDER | MASK_TOWER;
+    public static class Config
+    {
+        public const float DEATH_PLANE_Y = -50f;
+        public const float ENEMY_INVINCIBILITY_TIME = 0.15f;
+        public const string PROJECTILE_STORAGE_NAME = "Projectiles Storage Obj";
+        public const string ITEM_STORAGE_NAME = "Item Storage Obj";
+        public const string ENEMIES_STORAGE_NAME = "Enemies Storage Obj";
+    }
 }

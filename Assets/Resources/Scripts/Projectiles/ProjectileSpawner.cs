@@ -51,10 +51,10 @@ public class ProjectileSpawner : MonoBehaviour
 
         if (projectilesStorageObj == null)
         {
-            projectilesStorageObj = GameObject.Find("Projectiles  Storage Obj")?.transform;
+            projectilesStorageObj = GameObject.Find(GameConstants.Config.PROJECTILE_STORAGE_NAME)?.transform;
             if (projectilesStorageObj == null)
             {
-                projectilesStorageObj = new GameObject("Projectiles Storage Obj").transform;
+                projectilesStorageObj = new GameObject(GameConstants.Config.PROJECTILE_STORAGE_NAME).transform;
             }
         }
 
