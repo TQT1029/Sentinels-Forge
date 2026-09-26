@@ -78,17 +78,26 @@ public class HomingModifier : BaseModifier
         // FRAME_TIMER không kế thừa — đạn con tự tìm mục tiêu ngay từ đầu
     }
 
+    private static readonly Collider2D[] _cachedOverlapColliders = new Collider2D[32];
+
     private Transform FindNearestTargetInCone(Projectile projectile)
     {
-        Collider2D[] hitColliders = Physics2D.OverlapCircleAll(
-            projectile.transform.position, homingRange, GameConstants.LayerMasks.ENEMY_HITBOX);
+        int hitCount = Physics2D.OverlapCircleNonAlloc(
+            projectile.transform.position,
+            homingRange,
+            _cachedOverlapColliders,
+            GameConstants.LayerMasks.ENEMY_HITBOX
+        );
 
         Transform bestTarget = null;
         float closestDistanceSqr = Mathf.Infinity;
         Vector2 currentDir = projectile.rb.linearVelocity.normalized;
 
-        foreach (var col in hitColliders)
+        for (int i = 0; i < hitCount; i++)
         {
+            Collider2D col = _cachedOverlapColliders[i];
+            if (col == null) continue;
+
             EnemyAI enemy = col.GetComponentInParent<EnemyAI>();
             if (enemy != null && projectile.hitTargets.Contains(enemy)) continue;
 

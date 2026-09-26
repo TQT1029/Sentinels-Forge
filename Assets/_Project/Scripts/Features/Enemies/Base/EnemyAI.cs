@@ -95,6 +95,9 @@ public abstract class
     {
         if (IsDead) return;
 
+        // Quyết định D-013: Kiểm tra phản ứng nguyên tố trước khi áp dụng effect mới
+        SentinelForge.Features.Effects.Reactions.ReactionProcessor.CheckAndTriggerReaction(this, effectData);
+
         if (activeEffects.ContainsKey(effectData))
         {
             // Giao quyền định đoạt logic stack cho chính RuntimeEffect

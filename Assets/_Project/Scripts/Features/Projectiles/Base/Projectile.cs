@@ -2,9 +2,10 @@ using UnityEngine;
 using UnityEngine.Pool;
 using System.Collections.Generic;
 using System;
+using SentinelForge.Core.Interfaces;
 
 [RequireComponent(typeof(Rigidbody2D))]
-public class Projectile : MonoBehaviour
+public class Projectile : MonoBehaviour, IPoolable
 {
     protected IObjectPool<Projectile> managedPool;
     public Rigidbody2D rb { get; private set; }
@@ -34,19 +35,36 @@ public class Projectile : MonoBehaviour
     public void SetWeaponControl(WeaponControl control) => weaponControl = control;
     public void SetPool(IObjectPool<Projectile> pool) => managedPool = pool;
 
+    #region IPoolable Implementation
+
+    public virtual void OnGetFromPool()
+    {
+        // Chuẩn bị trạng thái sẵn sàng khi lấy ra từ Pool
+    }
+
+    public virtual void OnReturnToPool()
+    {
+        ResetIgnoredCollisions();
+        ClearHitTargets();
+        CancelInvoke();
+    }
+
+    #endregion
+
     protected virtual void ResetPhysic()
     {
-        rb.bodyType = RigidbodyType2D.Dynamic;
-        rb.linearVelocity = Vector3.zero;
+        // Quyết định D-006: Sử dụng Kinematic RB2D thay cho Dynamic để triệt tiêu tải trọng solver khi có 500+ đạn
+        rb.bodyType = RigidbodyType2D.Kinematic;
+        rb.linearVelocity = Vector2.zero;
         rb.angularVelocity = 0f;
-        rb.gravityScale = projectileData.gravityScale;
+        rb.gravityScale = 0f; // Tự tính toán trọng lực mô phỏng trong FixedUpdate
         rb.simulated = true;
     }
 
     public virtual void Init(float lifeTime)
     {
-        fireVelocity = weaponControl.weaponData.fireVelocity;
-        RuntimeState.Reset(projectileData.baseDamage);
+        fireVelocity = weaponControl != null && weaponControl.weaponData != null ? weaponControl.weaponData.fireVelocity : 10f;
+        RuntimeState.Reset(projectileData != null ? projectileData.baseDamage : 10f);
         ClearHitTargets();
         ResetPhysic();
 
@@ -65,6 +83,15 @@ public class Projectile : MonoBehaviour
         if (modifiers != null)
         {
             foreach (var mod in modifiers) mod.OnUpdate(this, RuntimeState);
+        }
+    }
+
+    protected virtual void FixedUpdate()
+    {
+        // Áp dụng gia tốc trọng lực mô phỏng cho đạn Kinematic nếu có gravityScale > 0
+        if (projectileData != null && projectileData.gravityScale > 0f && rb.simulated)
+        {
+            rb.linearVelocity += Physics2D.gravity * projectileData.gravityScale * Time.fixedDeltaTime;
         }
     }
 
@@ -112,10 +139,19 @@ public class Projectile : MonoBehaviour
 
     public virtual void ReturnToPool()
     {
-        ResetIgnoredCollisions();
+        OnReturnToPool();
 
         if (gameObject.activeInHierarchy)
-            managedPool.Release(this);
+        {
+            if (managedPool != null)
+            {
+                managedPool.Release(this);
+            }
+            else
+            {
+                gameObject.SetActive(false);
+            }
+        }
     }
 
     private void ResetIgnoredCollisions()
