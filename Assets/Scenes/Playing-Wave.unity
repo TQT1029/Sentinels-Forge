@@ -4131,8 +4131,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 857000870}
-  - component: {fileID: 857000869}
-  - component: {fileID: 857000868}
+  - component: {fileID: 857000871}
   m_Layer: 0
   m_Name: '[GameScope]'
   m_TagString: Untagged
@@ -4140,40 +4139,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &857000868
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 857000867}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bfa8562bb85366b4386016fac63e6290, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SentinelsForge.Core.GameScope
-  parentReference:
-    TypeName: 
-  autoRun: 1
-  autoInjectGameObjects: []
-  scopeName: 
-  <Parent>k__BackingField: {fileID: 0}
-  onWaveStarted: {fileID: 0}
-  onWaveEnded: {fileID: 0}
-  poolManager: {fileID: 857000869}
---- !u!114 &857000869
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 857000867}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 46705aa6e53980d4491d72f3d2bae6a2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SentinelsForge.Core.PoolManager
-  poolConfigs: []
 --- !u!4 &857000870
 Transform:
   m_ObjectHideFlags: 0
@@ -4189,6 +4154,22 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &857000871
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 857000867}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b2620d73f33e6b7469fce97fa159e894, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GameplayLifetimeScope
+  parentReference:
+    TypeName: 
+  autoRun: 1
+  autoInjectGameObjects: []
 --- !u!1 &911790341
 GameObject:
   m_ObjectHideFlags: 0
@@ -8082,6 +8063,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b6175141cfe1abd41bfc6abcae6e2e1e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WaveManager
+  _currentStageConfig: {fileID: 0}
+  _onWaveStartedChannel: {fileID: 0}
+  _onWaveEndedChannel: {fileID: 0}
 --- !u!4 &1885382146
 Transform:
   m_ObjectHideFlags: 0

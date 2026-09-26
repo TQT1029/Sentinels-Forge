@@ -79,14 +79,20 @@ public class HomingModifier : BaseModifier
     }
 
     private static readonly Collider2D[] _cachedOverlapColliders = new Collider2D[32];
+    private static readonly ContactFilter2D _enemyContactFilter = new ContactFilter2D
+    {
+        useLayerMask = true,
+        layerMask = GameConstants.LayerMasks.ENEMY_HITBOX,
+        useTriggers = true
+    };
 
     private Transform FindNearestTargetInCone(Projectile projectile)
     {
-        int hitCount = Physics2D.OverlapCircleNonAlloc(
+        int hitCount = Physics2D.OverlapCircle(
             projectile.transform.position,
             homingRange,
-            _cachedOverlapColliders,
-            GameConstants.LayerMasks.ENEMY_HITBOX
+            _enemyContactFilter,
+            _cachedOverlapColliders
         );
 
         Transform bestTarget = null;

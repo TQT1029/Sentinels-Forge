@@ -3,10 +3,25 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Pool;
+using SentinelForge.Core.Interfaces;
 
-public abstract class
-    EnemyAI : MonoBehaviour, IHealth
+/// <summary>
+/// Các trạng thái của máy trạng thái hữu hạn (FSM) quái vật (theo quyết định D-009).
+/// </summary>
+public enum EnemyState
 {
+    Approaching,
+    Attacking,
+    Stunned,
+    Dying
+}
+
+public abstract class EnemyAI : MonoBehaviour, IHealth, IPoolable
+{
+    [Header("Enemy State FSM")]
+    public EnemyState CurrentState { get; private set; } = EnemyState.Approaching;
+    public event Action<EnemyState> OnStateChanged;
+
     [Header("Enemy Data")]
     [field: SerializeField] public EnemyData enemyData { get; private set; }
     public Rigidbody2D rb { get; private set; }
@@ -118,18 +133,63 @@ public abstract class
             return effect;
         return null;
     }
+    #region FSM & IPoolable Implementation
+
+    public virtual void ChangeState(EnemyState newState)
+    {
+        if (CurrentState == newState) return;
+        CurrentState = newState;
+
+        switch (newState)
+        {
+            case EnemyState.Stunned:
+                isStunned = true;
+                if (rb != null) rb.linearVelocity = Vector2.zero;
+                break;
+            case EnemyState.Approaching:
+                isStunned = false;
+                break;
+            case EnemyState.Attacking:
+                isStunned = false;
+                if (rb != null) rb.linearVelocity = Vector2.zero;
+                break;
+            case EnemyState.Dying:
+                isInvincible = true;
+                if (rb != null) rb.linearVelocity = Vector2.zero;
+                break;
+        }
+
+        OnStateChanged?.Invoke(newState);
+    }
+
+    public virtual void OnGetFromPool()
+    {
+        ResetStats();
+        ChangeState(EnemyState.Approaching);
+    }
+
+    public virtual void OnReturnToPool()
+    {
+        activeEffects.Clear();
+        CancelInvoke();
+        if (rb != null) rb.linearVelocity = Vector2.zero;
+    }
+
+    #endregion
+
     public virtual void ResetStats()
     {
-        damageMultiplier = WaveManager.Instance.WaveMultiplier;
-        healthMultiplier = WaveManager.Instance.WaveMultiplier;
+        damageMultiplier = WaveManager.Instance != null ? WaveManager.Instance.WaveMultiplier : 1f;
+        healthMultiplier = WaveManager.Instance != null ? WaveManager.Instance.WaveMultiplier : 1f;
 
-        currentHealth = enemyData.maxHealth * healthMultiplier;
+        currentHealth = enemyData != null ? enemyData.maxHealth * healthMultiplier : 100f;
         isInvincible = false;
         checkingTime = 0f;
 
         // Bắt buộc Reset tất cả trạng thái trước khi lấy khỏi Pool
         isStunned = false;
         speedMultiplier = 1f;
+        ChangeState(EnemyState.Approaching);
 
         OnHealthChanged?.Invoke(1f);
         // Xóa sạch hiệu ứng cũ (Không gọi OnRemove để tránh logic chạy đè)
@@ -254,17 +314,22 @@ public abstract class
     /// </summary>
     protected virtual void Die()
     {
+        ChangeState(EnemyState.Dying);
+
         foreach (var effect in activeEffects.Values)
         {
             effect.OnRemove();
         }
         activeEffects.Clear();
 
-        //Debug.Log($"[EnemyAI] {gameObject.name} has died.");
-
-        WaveManager.Instance.EnemyKilled();
+        if (WaveManager.Instance != null)
+        {
+            WaveManager.Instance.EnemyKilled();
+        }
 
         DropLoot();
+
+        OnReturnToPool();
 
         // Xử lý thu hồi về Pool
         if (gameObject.activeInHierarchy && managedPool != null)
